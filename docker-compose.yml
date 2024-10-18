@@ -1,0 +1,76 @@
+version: "3.9"
+services:
+  api:
+    container_name: api
+    image: $API_IMAGE_NAME
+    ports:
+      - 5000:5000
+      - 5001:5001
+    environment:
+      - ASPNETCORE_ENVIRONMENT
+      - ASPNETCORE_HTTP_PORTS=5000
+      # - ASPNETCORE_HTTPS_PORTS=5001
+      - ConnectionStrings__PostgresConnection
+      # - ASPNETCORE_Kestrel__Certificates__Default__Path=/https-certs/aspnetcore.pfx
+      # - ASPNETCORE_Kestrel__Certificates__Default__Password
+    volumes:
+      # - /home/printsev/noizera:/https-certs:ro
+      - /home/printsev/noizera-data:/noizera-data
+    # depends_on:
+    #   - ffmpeg
+
+  seq:
+    container_name: seq
+    image: datalust/seq:latest
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - /home/printsev/noizera/seq-data:/data
+    ports:
+      - 5341:5341
+      - 8081:80
+
+  reactapp:
+    container_name: reactapp
+    image: $REACT_IMAGE_NAME
+    command: npm start
+    ports:
+      - 3000:3000
+
+  dashboard:
+    container_name: dashboard
+    image: $DASHBOARD_IMAGE_NAME
+    stop_grace_period: 60s
+    ports:
+      - 7000:7000
+    environment:
+      - ASPNETCORE_ENVIRONMENT
+      - ASPNETCORE_HTTP_PORTS=7000
+    depends_on:
+      - api
+
+  ffmpeg:
+    container_name: ffmpeg
+    image: jrottenberg/ffmpeg:latest
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - 5050:5050
+    environment:
+      - PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD
+      - PGADMIN_LISTEN_PORT=5050
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+
+  mongoex:
+    image: mongo-express
+    container_name: mongoex
+    environment:
+        - ME_CONFIG_MONGODB_URL=mongodb+srv://printsev:6lq7QNjhR5308n49@db-mongodb-ams3-72588-736c84a8.mongo.ondigitalocean.com/noizera-dev?authSource=admin
+    ports:
+      - "27017:27017"
+

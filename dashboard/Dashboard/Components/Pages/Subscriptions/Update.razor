@@ -1,0 +1,45 @@
+@page "/subscriptions/update/{id}"
+@attribute [Authorize]
+@using Dashboard.Data
+@using Dashboard.Models
+@using Dashboard.Services
+@attribute [StreamRendering]
+@using Dashboard.Services.Subscriptions
+@using Microsoft.AspNetCore.Authorization
+@using Noizera.Shared.Domain.Subscriptions
+@inject SubscriptionService SubscriptionService;
+@inject NavigationManager navManager;
+
+<h1>Edit Person</h1>
+<br/>
+
+<Form ButtonText="Update Subscription" person="@subscription" loading="@loading" OnValidSubmit="@UpdateSubscription" FormName="UpdateSubscription" />
+
+@code {
+    bool loading = false;
+    
+    [Parameter]
+    public string Id { get; set; }
+
+    Subscription subscription = new Subscription();
+    
+    protected async override Task OnParametersSetAsync()
+    {
+        subscription = await SubscriptionService.GetAsync(Guid.Parse(Id));
+    }
+
+    async Task UpdateSubscription()
+    {
+        loading = true;
+        try
+        {
+            await SubscriptionService.UpdateAsync(subscription);
+            navManager.NavigateTo("/subscriptions/list/1");
+        }
+        catch (Exception ex)
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

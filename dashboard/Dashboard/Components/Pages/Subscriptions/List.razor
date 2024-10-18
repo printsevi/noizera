@@ -1,0 +1,137 @@
+﻿@page "/subscriptions/list/{Page}"
+@using Dashboard.Data
+@using Dashboard.Models
+@using Dashboard.Services
+@using Dashboard.Services.Subscriptions
+@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@using Microsoft.AspNetCore.Authorization
+@using Noizera.Shared.Domain.Subscriptions
+@attribute [Authorize]
+@inject SubscriptionService SubscriptionService;
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
+
+<h1>Subscriptions</h1>
+<br />
+
+<div class="row mb-3">
+    <div class="col-md-7">
+        <NavLink href="/subscriptions/new" class="btn btn-sm btn-success mb-2">New Subscription</NavLink>
+    </div>
+    <div class="input-group col-md-5 text-md-right">
+        <input name="SubscriptionSearchInput" type="text" class="form-control" placeholder="Subscription Name" @bind="this.SearchTerm" @onkeyup="SearchBoxKeyPress" />
+        <div class="input-group-btn">
+            <button name="SubscriptionSearchButton" class="btn btn-default" @onclick="SearchClick">
+                <i class="oi oi-magnifying-glass" title="search" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="input-group-btn">
+            <button name="SubscriptionSearchClear" class="btn btn-default" @onclick="ClearSearch">
+                <i class="oi oi-x" title="clear" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+</div>
+@if (subscriptions == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:25%">Id</th>
+                <th style="width:25%">Subscription Type</th>
+                <th style="width:15%">Stripe Price Id</th>
+                <th style="width:30%">Price In Euro</th>
+                <th style="width:5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscription in subscriptions.Results)
+            {
+                <tr>
+                    <td>@subscription.Id</td>
+                    <td>@subscription.SubscriptionType</td>
+                    <td>@subscription.StripePriceId</td>
+                    <td>@subscription.Price</td>
+                    <td style="white-space: nowrap">
+                        <NavLink href="@($"/subscriptions/view/{subscription.Id}")" class="oi oi-eye text-primary mr-3 nounderline"></NavLink>
+                        <NavLink href="@($"/subscriptions/update/{subscription.Id}")" class="oi oi-pencil text-warning mr-2 nounderline"></NavLink>
+
+                        @if (subscription.IsDeleting)
+                        {
+                            <button @onclick="@(() => DeletePerson(subscription))" disabled="@subscription.IsDeleting" class=" btn btn-link oi oi-trash text-danger mr-1 nounderline">
+                                <span class="spinner-border spinner-border-sm"></span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button @onclick="@(() => DeletePerson(subscription))" disabled="@subscription.IsDeleting" class=" btn btn-link oi oi-trash text-danger mr-1 nounderline">
+                                <span></span>
+                            </button>
+                        }
+                    </td>
+                </tr> 
+            }
+        </tbody>
+    </table>
+    <Pager Result=@subscriptions PageChanged=PagerPageChanged />
+}
+
+@code {
+    [Parameter]
+    public string Page { get; set; } = "1";
+
+    [Parameter]
+    public string SearchTerm { get; set; } = string.Empty;
+
+    protected PagedResult<Subscription>? subscriptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        subscriptions = await SubscriptionService.GetSubscriptionsAsync(null, int.Parse(Page));
+    }
+
+    protected async Task SearchBoxKeyPress(KeyboardEventArgs ev)
+    {
+        if (ev.Key == "Enter")
+        {
+            await SearchClick();
+        }
+    }
+
+    protected async Task SearchClick()
+    {
+        if (string.IsNullOrEmpty(SearchTerm))
+        {
+            subscriptions = await SubscriptionService.GetSubscriptionsAsync(null, int.Parse(Page));
+        }
+        else
+        {
+            subscriptions = await SubscriptionService.GetSubscriptionsAsync(SearchTerm, int.Parse(Page));
+            StateHasChanged();
+        }
+    }
+
+    protected async Task ClearSearch()
+    {
+        SearchTerm = string.Empty;
+        subscriptions = await SubscriptionService.GetSubscriptionsAsync(SearchTerm, int.Parse(Page));
+        StateHasChanged();
+    }
+
+    protected void PagerPageChanged(int page)
+    {
+        UriHelper.NavigateTo("/subscriptions/" + page);
+    }
+
+    private async void DeletePerson(Subscription subscription)
+    {
+        subscription.IsDeleting = true;
+        await SubscriptionService.DeleteAsync(subscription);
+        subscriptions = await SubscriptionService.GetSubscriptionsAsync(null, int.Parse(Page));
+        StateHasChanged();
+    }
+}

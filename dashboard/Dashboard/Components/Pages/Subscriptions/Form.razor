@@ -1,0 +1,80 @@
+@using Dashboard.Data
+@using Noizera.Shared.Domain.Subscriptions
+
+<EditForm Model="subscription" OnValidSubmit="@OnValidSubmit" FormName="@FormName">
+    <div class="form-group">
+        <label>Title:</label>
+        <div>
+            <InputText @bind-Value="subscription.Title" class="form-control col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Subscription Type:</label>
+        <div>
+            <InputText @bind-Value="subscription.SubscriptionType" class="form-control col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Profile Types (type1,type2):</label>
+        <div>
+            <InputText @bind-Value="subscription.ProfileTypes" class="form-control col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Price in Euro:</label>
+        <div>
+            <InputNumber @bind-Value="subscription.Price" class="form-control col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Stripe Price ID:</label>
+        <div>
+            <InputText @bind-Value="subscription.StripePriceId" class="form-control col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Free trial (days):</label>
+        <div>
+            <InputNumber @bind-Value="subscription.FreeTrialInDays" class="form-control col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Is Annual:</label>
+        <div>
+            <InputCheckbox @bind-Value="subscription.IsAnnual" class="col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Is Disabled:</label>
+        <div>
+            <InputCheckbox @bind-Value="subscription.IsDisabled" class="col-sm-3" />
+        </div>
+    </div>
+    <div class="form-group">
+        <button disabled="@loading" class="btn btn-primary">
+            @if (loading) 
+            {
+                <span class="spinner-border spinner-border-sm mr-1"></span>
+            }
+            @ButtonText
+        </button>
+        <NavLink href="/subscriptions/list/1" class="btn btn-link">Cancel</NavLink>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Subscription? subscription { get; set; }
+
+    [Parameter]
+    public string ButtonText { get; set; } = "Save";
+
+    [Parameter]
+    public string FormName { get; set; } = "Main";
+
+    [Parameter]
+    public bool loading {get; set;} = false;
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+}

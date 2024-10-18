@@ -1,0 +1,38 @@
+@page "/subscriptions/new"
+@using Dashboard.Data
+@using Dashboard.Models
+@using Dashboard.Services
+@using Dashboard.Services.Subscriptions
+@using Microsoft.EntityFrameworkCore
+@attribute [StreamRendering]
+@using Microsoft.AspNetCore.Authorization
+@using Noizera.Shared.Domain.Subscriptions
+@attribute [Authorize]
+@inject SubscriptionService SubscriptionService;
+@inject NavigationManager navManager;
+
+<h1>Create Subscription</h1>
+<br/>
+<Form ButtonText="New Subscription" subscription="@subscription" loading="@loading" OnValidSubmit="@CreateSubscription" FormName="CreateSubscription"/>
+
+@code {
+    bool loading = false;
+
+    [SupplyParameterFromForm]
+    public Subscription subscription { get; set; } = new();
+
+    async Task CreateSubscription()
+    {
+        loading = true;
+        try
+        {
+            await SubscriptionService.CreateAsync(subscription);
+            navManager.NavigateTo("/subscriptions/list/1");
+        }
+        catch (Exception ex)
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}

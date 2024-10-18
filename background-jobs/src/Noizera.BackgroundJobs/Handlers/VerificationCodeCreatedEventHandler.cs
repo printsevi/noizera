@@ -1,0 +1,23 @@
+﻿using MediatR;
+using Noizera.BackgroundJobs.Common;
+using Noizera.Shared.Domain.Events;
+using Noizera.Shared.Infrastructure.Emails;
+
+namespace Noizera.BackgroundJobs.Handlers;
+
+public class VerificationCodeCreatedEventHandler(EmailService emailService)
+    : INotificationHandler<DomainEventNotification<VerificationCodeCreatedEvent>>
+{
+    public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)
+    {
+        await emailService.SendEmailAsync(
+            EmailTemplateNames.AccountConfirmation,
+            notification.DomainEvent.Email,
+            notification.DomainEvent.Email,
+            "notifications@noizera.com",
+            "Noizera Notifications",
+            "Confirm email",
+            new Dictionary<string, string>() { { "verification-code", notification.DomainEvent.Code } }
+        );
+    }
+}

@@ -1,0 +1,28 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Noizera.Shared.Domain.ProfileRelations;
+using Noizera.Shared.Persistence.SQL.Configurations.Common;
+
+namespace Noizera.Shared.Persistence.SQL.Configurations;
+
+internal sealed class ProfileRelationConfiguration : IEntityTypeConfiguration<ProfileRelation>
+{
+    public void Configure(EntityTypeBuilder<ProfileRelation> builder)
+    {
+        ConfigurationHelper.ConfigureBaseEntity(builder);
+
+        _ = builder.HasKey(pr => new { pr.FollowerProfileId, pr.FollowingProfileId });
+
+        _ = builder
+            .HasOne(e => e.FollowerProfile)
+            .WithMany(e => e.Followings)
+            .HasForeignKey(e => e.FollowerProfileId)
+            .IsRequired(true);
+
+        _ = builder
+            .HasOne(e => e.FollowingProfile)
+            .WithMany(e => e.Followers)
+            .HasForeignKey(e => e.FollowingProfileId)
+            .IsRequired(true);
+    }
+}

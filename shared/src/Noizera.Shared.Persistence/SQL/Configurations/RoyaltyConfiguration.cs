@@ -1,0 +1,28 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Noizera.Shared.Domain.Royalties;
+using Noizera.Shared.Persistence.SQL.Configurations.Common;
+
+namespace Noizera.Shared.Persistence.SQL.Configurations;
+
+internal sealed class RoyaltyConfiguration : IEntityTypeConfiguration<Royalty>
+{
+    public void Configure(EntityTypeBuilder<Royalty> builder)
+    {
+        ConfigurationHelper.ConfigureEntity(builder);
+
+        _ = builder
+            .HasOne(e => e.Payer)
+            .WithMany(e => e.RoyaltiesReceived)
+            .HasForeignKey(e => e.PayerId)
+            .IsRequired(true);
+
+        _ = builder
+            .HasOne(e => e.Payee)
+            .WithMany(e => e.RoyaltiesSent)
+            .HasForeignKey(e => e.PayeeId)
+            .IsRequired(true);
+
+        _ = builder.Property(e => e.Amount);
+    }
+}
