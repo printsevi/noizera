@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   api:
     container_name: api
@@ -37,17 +36,17 @@ services:
     ports:
       - 3000:3000
 
-  dashboard:
-    container_name: dashboard
-    image: $DASHBOARD_IMAGE_NAME
-    stop_grace_period: 60s
-    ports:
-      - 7000:7000
-    environment:
-      - ASPNETCORE_ENVIRONMENT
-      - ASPNETCORE_HTTP_PORTS=7000
-    depends_on:
-      - api
+  # dashboard:
+  #   container_name: dashboard
+  #   image: $DASHBOARD_IMAGE_NAME
+  #   stop_grace_period: 60s
+  #   ports:
+  #     - 7000:7000
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT
+  #     - ASPNETCORE_HTTP_PORTS=7000
+  #   depends_on:
+  #     - api
 
   ffmpeg:
     container_name: ffmpeg
@@ -65,12 +64,10 @@ services:
       - PGADMIN_LISTEN_PORT=5050
     volumes:
       - ./data/pgadmin:/var/lib/pgadmin
-
-  mongoex:
-    image: mongo-express
-    container_name: mongoex
-    environment:
-        - ME_CONFIG_MONGODB_URL=mongodb+srv://printsev:6lq7QNjhR5308n49@db-mongodb-ams3-72588-736c84a8.mongo.ondigitalocean.com/noizera-dev?authSource=admin
-    ports:
-      - "27017:27017"
-
+  # mongoex:
+  #   image: mongo-express
+  #   container_name: mongoex
+  #   environment:
+  #     - ME_CONFIG_MONGODB_URL=mongodb+srv://printsev:6lq7QNjhR5308n49@db-mongodb-ams3-72588-736c84a8.mongo.ondigitalocean.com/noizera-dev?authSource=admin
+  #   ports:
+  #     - "27017:27017"
