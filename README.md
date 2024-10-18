@@ -27,6 +27,8 @@ sudo nano /etc/ssh/sshd_config
 CASignatureAlgorithms +ssh-rsa
 HostKeyAlgorithms +ssh-rsa
 PubkeyAcceptedKeyTypes +ssh-rsa
+PubkeyAuthentication yes
+PasswordAuthentication no
 
 sudo systemctl restart ssh
 
