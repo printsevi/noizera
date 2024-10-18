@@ -35,7 +35,7 @@ sudo systemctl restart ssh
 
 10. Add Actions secrets (token from Digital Ocean API, ssh keys etc)
 
-11. via RDP setup auth 
+11. via RDP setup auth
 
 docker login
 sudo groupadd docker
