@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 env:
-  REACT_IMAGE_NAME: "noizera/noizera:reactapp-latest"
-  API_IMAGE_NAME: "noizera/noizera:api-latest"
+  REACT_IMAGE_NAME: "printsev/noizera:reactapp-latest"
+  API_IMAGE_NAME: "printsev/noizera:api-latest"
   DOTNET_ENV: "Production"
   
 jobs:
@@ -50,7 +50,7 @@ jobs:
         with:
           context: ./reactapp
           push: true
-          tags: noizera/noizera:reactapp-latest,noizera/noizera:reactapp-${{ env.REACTAPP_VERSION }}
+          tags: printsev/noizera:reactapp-latest,printsev/noizera:reactapp-${{ env.REACTAPP_VERSION }}
       
       - name: Extract version from Dockerfile - api
         id: extract_api_version
@@ -63,7 +63,7 @@ jobs:
         with:
           context: ./api
           push: true
-          tags: noizera/noizera:api-latest,noizera/noizera:api-${{ env.API_VERSION }}
+          tags: printsev/noizera:api-latest,printsev/noizera:api-${{ env.API_VERSION }}
 
   deploy_noizera:
     name: Deploy Noizera
