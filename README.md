@@ -20,7 +20,7 @@ to remove containers: sudo systemctl restart docker.socket docker.service; sudo 
 
 7. Add ssh public key to droplet using command "nano ~/.ssh/authorized_keys"
 
-8. A possible fix of auth error would be to add the following to your sshd_config file.
+8. A possible fix of auth error would be to add the following to your sshd_config file. https://github.com/appleboy/scp-action
 
 sudo nano /etc/ssh/sshd_config
 
