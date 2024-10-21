@@ -31,8 +31,16 @@ public class AlbumSubmittedEventHandler(
 
             foreach (var song in album.MusicCollectionSongs.Where(x => !x.HasAudioAttached).Select(x => x.Song).ToList())
             {
-                var mongoFileId = await audioService.ConvertAndSaveAudioFileToMongoAsync(song.PublicId, song.OriginalFileExtension!, cancellationToken);
-                song.SaveAudioFileToMongo(mongoFileId);
+                await audioService.DownloadOriginalFileAsync(song.PublicId, song.OriginalFileExtension!, cancellationToken).ConfigureAwait(false);
+
+                (var flacLength, var flacBucket) = await audioService.ConvertAndSaveFlacAudioFileToS3Async(song.PublicId, song.OriginalFileExtension!, cancellationToken);
+                var duration = await audioService.GetFlacDurationInSecondsAsync(song.PublicId, cancellationToken);
+                song.SaveAudioFileToFlacBucket(flacBucket, flacLength, duration);
+
+                (var mp3Length, var mp3Bucket) = await audioService.ConvertAndSaveMp3AudioFileToS3Async(song.PublicId, song.OriginalFileExtension!, cancellationToken);
+                song.SaveAudioFileToMp3Bucket(mp3Bucket, mp3Length);
+
+                audioService.DeleteAudioFiles(song.PublicId);
             }
 
             album.Release();

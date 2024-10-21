@@ -7,10 +7,8 @@ namespace Noizera.Infrastructure.CoverImages;
 
 public class CoverImageUploader(ICoverImageService service) : ICoverImageUploader
 {
-    public async Task<string> UploadAsync([NotNull] IFormFile file, string fileId, CancellationToken ct)
+    public async Task<(long ContentLength, string BucketName)> UploadAsync([NotNull] IFormFile file, string fileId, CancellationToken ct)
     {
-        var result = await service.UploadImageAsync(file, fileId, ct);
-
-        return result;
+        return await service.UploadImageAsync(file, fileId, ct);
     }
 }

@@ -29,6 +29,7 @@ public class UserSubscriptionActivatedEventHandler(
             "notifications@noizera.com",
             "Noizera Notifications",
             "Your subscription is activated",
+            cancellationToken,
             new Dictionary<string, string>() { { "verification-code", notification.DomainEvent.UserSubscriptionId.ToString() } }
         );
     }

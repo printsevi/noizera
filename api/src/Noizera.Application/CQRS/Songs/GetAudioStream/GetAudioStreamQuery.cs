@@ -1,17 +1,25 @@
 ﻿using MediatR;
+using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Services;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Songs.GetAudioStream;
 
 public sealed record GetAudioStreamQuery(
-    string SongPublicId) : IRequest<Stream>
+    string SongPublicId,
+    string Range,
+    long FileLength,
+    string AudioType) : IRequest<AudioStreamResult>
 {
     public sealed class GetAudioStreamQueryHandler(
-        IAudioMongoService audioService)
-        : IRequestHandler<GetAudioStreamQuery, Stream>
+        IAudioFileService audioFileService)
+        : IRequestHandler<GetAudioStreamQuery, AudioStreamResult>
     {
-        public async Task<Stream> Handle([NotNull] GetAudioStreamQuery request, CancellationToken cancellationToken) 
-            => await audioService.GetAudioAsStreamAsync(request.SongPublicId, cancellationToken).ConfigureAwait(false);
+        public async Task<AudioStreamResult> Handle([NotNull] GetAudioStreamQuery request, CancellationToken cancellationToken)
+        {
+            var result = await audioFileService.GetAudioFileAsStream(request.SongPublicId, request.Range, request.FileLength, request.AudioType, cancellationToken).ConfigureAwait(false);
+
+            return result;
+        }
     }
 }

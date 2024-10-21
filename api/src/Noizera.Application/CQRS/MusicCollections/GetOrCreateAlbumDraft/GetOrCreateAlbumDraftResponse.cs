@@ -5,7 +5,7 @@ public sealed record GetOrCreateAlbumDraftResponse(
     string AlbumPublicId,
     string Title,
     string? Description,
-    string? CoverImageMongoId,
+    string? CoverImageBucketName,
     string? CoverImageOriginalName,
     string ProfileName,
     string ProfileType,
@@ -17,6 +17,8 @@ public sealed record GetOrCreateAlbumDraftSongResponse(
     string? Title,
     string? SongPublicId,
     string? OriginalFileName,
+    long? ContentLength,
+    string? ContentType,
     short Sequence);
 
 public sealed record GetOrCreateAlbumDraftCreditResponse(

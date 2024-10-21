@@ -1,100 +1,121 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.GridFS;
+﻿using Amazon.S3.Model;
+using Microsoft.Extensions.Options;
 using Noizera.Shared.Infrastructure.DataStructure;
-using Noizera.Shared.Persistence.Mongo;
+using Noizera.Shared.Persistence.S3;
+using System.Diagnostics;
+using Xabe.FFmpeg;
 
 namespace Noizera.Shared.Infrastructure.Audio;
 
 public class AudioService(
-    MongoDbContext dbContext,
+    S3Context s3Context,
     IOptions<AudioSettings> audioSettings,
+    IOptions<S3BucketSettings> s3BucketSettings,
     DataStructureProvider dataStructureProvider,
     FfmpegDockerService ffmpegDockerService)
 {
     private readonly AudioSettings settings = audioSettings.Value;
-    private readonly MongoDbContext db = dbContext;
+    private readonly S3BucketSettings s3Settings = s3BucketSettings.Value;
+    private readonly S3Context s3 = s3Context;
 
-    public async Task<string> ConvertAndSaveAudioFileToMongoAsync(string fileName, string inputExtension, CancellationToken ct)
+    public async Task<(long FlacLength, string FlacBucket)> ConvertAndSaveFlacAudioFileToS3Async(string fileId, string inputExtension, CancellationToken ct)
     {
-        string inputFile = $"{fileName}.{inputExtension}";
-        string inputFilePath = $"{dataStructureProvider.AudioPath}/{inputFile}";
+        string inputFile = $"{fileId}.{inputExtension}";
         string dockerInputFilePath = $"{dataStructureProvider.DockerAudioPath}/{inputFile}";
 
-        string outputFile = $"output-{fileName}.{settings.OutputExtension}";
-        string dockerOutputFilePath = $"{dataStructureProvider.DockerAudioPath}/{outputFile}";
-        string outputFilePath = $"{dataStructureProvider.AudioPath}/{outputFile}";
+        string outputFlacFile = $"output-flac-{fileId}.flac";
+        string dockerOutputFlacFilePath = $"{dataStructureProvider.DockerAudioPath}/{outputFlacFile}";
+        string outputFlacFilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
 
-        var command = settings.OutputExtension == "flac" 
-            ? AudioHelper.GenerateConversionToFlacCommand(
+        var flacCommand = AudioHelper.GenerateConversionToFlacCommand(
                 dockerInputFilePath,
-                dockerOutputFilePath,
+                dockerOutputFlacFilePath,
                 settings.OutputSampleRate,
                 settings.TargetLufsInNegative,
                 settings.TruePeakInNegative,
-                settings.BitDepth)
-            : AudioHelper.GenerateConversionToMp3Command(
+                settings.BitDepth);
+
+        await ffmpegDockerService.ProcessAsync(
+            dataStructureProvider.AudioPath,
+            dataStructureProvider.DockerAudioPath,
+            flacCommand,
+            ct);
+
+        long flacLength;
+        string flacBucket;
+        using (FileStream outputFileStream = new(outputFlacFilePath, FileMode.Open))
+        {
+            (flacLength, flacBucket) = await s3.UploadFlacAudioAsync(fileId, "audio/flac", outputFileStream, ct).ConfigureAwait(false);
+        }
+
+        return (flacLength, flacBucket);
+    }
+
+    public async Task<(long Mp3Length, string Mp3Bucket)> ConvertAndSaveMp3AudioFileToS3Async(string fileId, string inputExtension, CancellationToken ct)
+    {
+        string inputFile = $"{fileId}.{inputExtension}";
+        string dockerInputFilePath = $"{dataStructureProvider.DockerAudioPath}/{inputFile}";
+
+        string outputMp3File = $"output-mp3-{fileId}.flac";
+        string dockerOutputMp3FilePath = $"{dataStructureProvider.DockerAudioPath}/{outputMp3File}";
+        string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputMp3File}";
+
+        var mp3Command = AudioHelper.GenerateConversionToMp3Command(
                 dockerInputFilePath,
-                dockerOutputFilePath,
+                dockerOutputMp3FilePath,
                 settings.TargetLufsInNegative,
                 settings.TruePeakInNegative);
 
         await ffmpegDockerService.ProcessAsync(
             dataStructureProvider.AudioPath,
             dataStructureProvider.DockerAudioPath,
-            command,
+            mp3Command,
             ct);
 
-        if (!File.Exists(outputFilePath))
+        long mp3Length;
+        string mp3Bucket;
+        using (FileStream outputFileStream = new(outputMp3FilePath, FileMode.Open))
         {
-            throw new Exception($"File {outputFilePath} doesn't exist");
+            (mp3Length, mp3Bucket) = await s3.UploadMp3AudioAsync(fileId, "audio/mp3", outputFileStream, ct).ConfigureAwait(false);
         }
 
-        await TryDeleteOldAudioAsync(fileName, ct).ConfigureAwait(false);
-
-        string mongoFileId;
-        using (FileStream outputFileStream = new(outputFilePath, FileMode.Open))
-        {
-            GridFSUploadOptions options = new()
-            {
-                Metadata = new BsonDocument { { "fileType", $"audio/{settings.OutputExtension}" } }
-            };
-
-            using var stream = await db.AudioBucketWritable.OpenUploadStreamAsync(fileName, options, ct).ConfigureAwait(false);
-            mongoFileId = stream.Id.ToString();
-            await outputFileStream.CopyToAsync(stream, ct).ConfigureAwait(false);
-            await stream.CloseAsync(ct).ConfigureAwait(false);
-        }
-
-        return mongoFileId;
+        return (mp3Length, mp3Bucket);
     }
 
-    private void DeleteAudioFiles(string fileName)
+    public async Task DownloadOriginalFileAsync(string fileId, string originalExtension, CancellationToken ct)
     {
-        string inputFile = $"{fileName}";
+        string inputFilePath = $"{dataStructureProvider.AudioPath}/{fileId}.{originalExtension}";
+        using (GetObjectResponse response = await s3.GetOriginalAudioFileAsync(fileId, ct))
+        {
+            await using (Stream responseStream = response.ResponseStream)
+            await using (var fileStream = File.Create(inputFilePath))
+            {
+                await responseStream.CopyToAsync(fileStream);
+            }
+        }
+    }
+
+    public async Task<double> GetFlacDurationInSecondsAsync(string fileId, CancellationToken ct)
+    {
+        string outputFlacFile = $"output-flac-{fileId}";
+        var mediaInfo = await FFmpeg.GetMediaInfo($"{dataStructureProvider.AudioPath}/{outputFlacFile}", ct);
+
+        return mediaInfo.Duration.TotalSeconds;
+    }
+
+    public void DeleteAudioFiles(string fileId)
+    {
+        string inputFile = $"{fileId}";
         string inputFilePath = $"{dataStructureProvider.AudioPath}/{inputFile}";
 
-        string outputFile = $"output-{fileName}";
-        string outputFilePath = $"{dataStructureProvider.AudioPath}/{outputFile}";
+        string outputFlacFile = $"output-flac-{fileId}";
+        string outputFlacFilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
 
-        File.Delete(outputFilePath);
+        string outputMp3File = $"output-mp3-{fileId}";
+        string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
+
+        File.Delete(outputFlacFilePath);
+        File.Delete(outputMp3FilePath);
         File.Delete(inputFilePath);
-    }
-
-    public async Task<Stream> GetAudioAsStreamAsync(string mongoFileName, CancellationToken ct)
-    {
-        return await db.AudioBucketReadable.OpenDownloadStreamByNameAsync(mongoFileName, new() { Seekable = true }, ct).ConfigureAwait(false);
-    }
-
-    public async Task TryDeleteOldAudioAsync(string mongoFileName, CancellationToken ct)
-    {
-        var filter = Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, mongoFileName);
-        var fileCursor = await db.AudioBucketReadable.FindAsync(filter, null, ct).ConfigureAwait(false);
-        var gridFiles = await fileCursor.ToListAsync(cancellationToken: ct).ConfigureAwait(false);
-        foreach (var file in gridFiles)
-        {
-            await db.AudioBucketWritable.DeleteAsync(file.Id, ct).ConfigureAwait(false);
-        }
     }
 }

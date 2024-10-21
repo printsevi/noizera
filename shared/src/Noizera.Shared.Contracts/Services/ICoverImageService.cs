@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Shared.Contracts.Services;
 
 public interface ICoverImageService
 {
-    Task<string> UploadImageAsync(IFormFile file, string mongoFileName, CancellationToken ct);
+    Task<(long ContentLength, string BucketName)> UploadImageAsync([NotNull] IFormFile file, string fileId, CancellationToken ct);
 
-    Task<Stream> GetImageFileAsStreamAsync(string mongoFileName, CancellationToken ct);
+    Task<(Stream Stream, string ContentType)> GetImageFileAsStreamAsync(string fileId, CancellationToken ct);
 }

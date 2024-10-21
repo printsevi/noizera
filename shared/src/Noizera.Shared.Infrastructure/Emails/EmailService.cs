@@ -1,26 +1,19 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.AspNetCore.Http;
-using Noizera.Shared.Persistence.Mongo;
+using Noizera.Shared.Persistence.S3;
 
 namespace Noizera.Shared.Infrastructure.Emails;
 
-public class EmailService(
-    EmailSender sender,
-    MongoDbContext db)
+public class EmailService(EmailSender sender, S3Context s3)
 {
-    public async Task UploadEmailTemplate(string emailTemplateType, IFormFile htmlFile)
+    public async Task UploadEmailTemplate(string emailTemplateType, IFormFile htmlFile, CancellationToken ct)
     {
         if (htmlFile == null || htmlFile.Length == 0)
         {
-            throw new Exception("File is empty.");
+            throw new Exception($"File {emailTemplateType} is empty");
         }
 
-        using (var streamReader = new StreamReader(htmlFile.OpenReadStream()))
-        {
-            var htmlContent = await streamReader.ReadToEndAsync();
-
-            await db.UpsertEmailTemplateAsync(emailTemplateType, htmlContent);
-        }
+        await s3.UploadEmailTemplateAsync(emailTemplateType, htmlFile, ct).ConfigureAwait(false);
     }
 
     public async Task SendEmailAsync(
@@ -30,9 +23,10 @@ public class EmailService(
         string emailFrom,
         string nameFrom,
         string subject,
+        CancellationToken ct,
         IDictionary<string, string>? idValuePairs = null)
     {
-        var htmlContent = await db.GetEmailTemplateContent(templateName);
+        var htmlContent = await s3.GetEmailTemplateContentAsync(templateName, ct);
         if (string.IsNullOrWhiteSpace(htmlContent))
         {
             throw new Exception("Template not found.");

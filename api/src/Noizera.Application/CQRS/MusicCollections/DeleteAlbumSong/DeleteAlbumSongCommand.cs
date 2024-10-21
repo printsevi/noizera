@@ -30,7 +30,7 @@ public sealed record DeleteAlbumSongCommand(
             var collectionSong = album.MusicCollectionSongs.FirstOrDefault(x => x.SongId == request.SongId)
                 ?? throw new AppException("Song is not found", ErrorType.NotFound);
 
-            audioService.DeleteOriginalAudioFile(collectionSong.Song.PublicId);
+            await audioService.DeleteOriginalAudioFileAsync(collectionSong.Song.PublicId, cancellationToken).ConfigureAwait(false);
             await songRepository.DeleteAsync(request.SongId, cancellationToken).ConfigureAwait(false);
 
             album = await albumRepository.GetFullAsync(request.AlbumId, cancellationToken).ConfigureAwait(false);

@@ -17,8 +17,8 @@ internal sealed class GetCoverImageEndpoint : IEndpoint
         CancellationToken ct)
     {
         GetCoverImageQuery query = new(musicCollectionPublicId);
-        var stream = await sender.Send(query, ct).ConfigureAwait(false);
+        var result = await sender.Send(query, ct).ConfigureAwait(false);
 
-        return Results.File(stream, "image/jpeg", enableRangeProcessing: false);
+        return Results.File(result.Stream, result.ContentType, enableRangeProcessing: false);
     }
 }

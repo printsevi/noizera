@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Shared.Domain.MusicSets;
 
 public interface ICoverImageUploader
 {
-    Task<string> UploadAsync(IFormFile file, string fileId, CancellationToken ct);
+    Task<(long ContentLength, string BucketName)> UploadAsync([NotNull] IFormFile file, string fileId, CancellationToken ct);
 }

@@ -27,14 +27,14 @@ public sealed record UploadAudioFileCommand(
 
             song.ValidateOwner(request.UserId);
 
-            await audioService.UploadOriginalAudioFileAsync(request.File, song.PublicId, cancellationToken).ConfigureAwait(false);
+            (var fileLength, var contentType, var bucket) = await audioService.UploadOriginalAudioFileAsync(request.File, song.PublicId, cancellationToken).ConfigureAwait(false);
 
             var originalFileName = ValidFileName.New(request.File.FileName);
-            song.UploadOriginalAudioFile(originalFileName, Path.GetExtension(request.File.FileName));
+            song.UploadOriginalAudioFile(originalFileName, Path.GetExtension(request.File.FileName), fileLength, bucket);
 
             await songRepository.UpdateAsync(song, cancellationToken).ConfigureAwait(false);
 
-            return new(originalFileName.Value);
+            return new(originalFileName.Value, contentType, fileLength);
         }
     }
 }

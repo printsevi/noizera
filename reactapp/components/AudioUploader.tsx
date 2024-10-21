@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
-import { FileAudio, Trash2, Upload } from 'lucide-react';
+import { FileAudio, Loader2, Trash2, Upload } from 'lucide-react';
 
 interface AudioUploaderProps {
   existingFileName: string;
   uploadTime: string;
+  audioSrc: string;
+  contentType?: string;
   onFileUpload: (file: File) => Promise<boolean>;
   onFileDelete: () => Promise<void>;
 }
 
-const AudioUploader: React.FC<AudioUploaderProps> = ({ existingFileName: uploadedFileName, uploadTime, onFileUpload, onFileDelete }) => {
+const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFileName: uploadedFileName, uploadTime, audioSrc, onFileUpload, onFileDelete }) => {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -54,6 +56,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ existingFileName: uploade
             accept="audio/wav,.aif,audio/aiff"
             onChange={handleFileChange}
             className="sr-only"
+            disabled={isUploading}
           />
           <label
             htmlFor="audio-file"
@@ -62,7 +65,8 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ existingFileName: uploade
             <span>
               {file ? file.name : "Choose file"}
             </span>
-            <FileAudio size={20} />
+            {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {!isUploading && <FileAudio size={20} />}
           </label>
         </div>)}
       </div>
@@ -74,6 +78,12 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ existingFileName: uploade
             <div>
               <p className="font-medium">{uploadedFileName}</p>
               <p className="text-sm text-muted-foreground">Uploaded: {uploadTime}</p>
+              <div>
+                <audio controls>
+                  <source src={audioSrc} type={contentType} />
+                  Your browser does not support the audio tag.
+                </audio>
+              </div>
             </div>
           </div>
           <Button

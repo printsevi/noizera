@@ -1,21 +1,23 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Noizera.Shared.Contracts.Errors;
+using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Services;
 using Noizera.Shared.Infrastructure.Audio;
 using Noizera.Shared.Infrastructure.DataStructure;
+using Noizera.Shared.Persistence.S3;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Infrastructure.Audio;
 
 public class AudioFileService(
     IOptions<AudioSettings> audioSettings,
-    DataStructureProvider dataStructureProvider) 
+    S3Context s3) 
     : IAudioFileService
 {
     private readonly AudioSettings settings = audioSettings.Value;
 
-    public async Task UploadOriginalAudioFileAsync([NotNull] IFormFile file, string fileName, CancellationToken ct)
+    public async Task<(long ContentLength, string ContentType, string BucketName)> UploadOriginalAudioFileAsync([NotNull] IFormFile file, string fileId, CancellationToken ct)
     {
         string extension = Path.GetExtension(file.FileName).ToLowerInvariant();
         if (!settings.ValidInputExtensions.Contains(extension))
@@ -23,32 +25,42 @@ public class AudioFileService(
             throw new AppException($"Invalid file's extension {extension}", ErrorType.Validation);
         }
 
-        string inputFilePath = Path.Combine(dataStructureProvider.AudioPath, $"{fileName}{extension}");
-        using (Stream fileStream = new FileStream(inputFilePath, FileMode.Create))
+        return await s3.UploadOriginalAudioAsync(fileId, file, ct).ConfigureAwait(false);
+    }
+
+    public async Task DeleteOriginalAudioFileAsync(string fileId, CancellationToken ct)
+    {
+        await s3.DeleteOriginalAudioAsync(fileId, ct).ConfigureAwait(false);
+    }
+
+    public async Task<AudioStreamResult> GetAudioFileAsStream(string fileId, string requestedRange, long fileLength, string audioType, CancellationToken ct)
+    {
+        if (audioType == "original")
         {
-            await file.CopyToAsync(fileStream, ct).ConfigureAwait(false);
+            return await GetOriginalAudioFileAsStream(fileId, requestedRange, fileLength, ct);
+        }
+        else
+        {
+            throw new Exception();
         }
     }
 
-    public void DeleteOriginalAudioFile(string fileName)
+    private async Task<AudioStreamResult> GetOriginalAudioFileAsStream(string fileId, string requestedRange, long fileLength, CancellationToken ct)
     {
-        var inputFilePath = Path.Combine(dataStructureProvider.AudioPath, fileName);
-        if (File.Exists(inputFilePath))
-        {
-            File.Delete(inputFilePath);
-        }
-    }
+        const long FILE_PORTION_SIZE = 2000000; // 2MB
 
-    public FileStream GetAudioFileAsStream(string fileName, CancellationToken ct)
-    {
-        var inputFilePath = Path.Combine(dataStructureProvider.AudioPath, fileName);
-        if (!File.Exists(inputFilePath))
+        var start = 0L;
+        if (!string.IsNullOrEmpty(requestedRange))
         {
-            throw new AppException($"Audio file {fileName} not found", ErrorType.NotFound);
+            var range = requestedRange.Replace("bytes=", "").Split('-');
+            start = long.Parse(range[0]);
         }
 
-        var result = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
+        var end = Math.Min(start + FILE_PORTION_SIZE, fileLength - 1);
+        var partLength = end - start + 1;
 
-        return result;
+        var result = await s3.GetOriginalAudioAsync(fileId, start, end, ct);
+
+        return new(result.Stream, fileLength, result.ContentType, partLength, start, end);
     }
 }

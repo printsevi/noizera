@@ -17,6 +17,7 @@ public class VerificationCodeCreatedEventHandler(EmailService emailService)
             "notifications@noizera.com",
             "Noizera Notifications",
             "Confirm email",
+            cancellationToken,
             new Dictionary<string, string>() { { "verification-code", notification.DomainEvent.Code } }
         );
     }

@@ -14,8 +14,6 @@ internal sealed class SongConfiguration : IEntityTypeConfiguration<Song>
         _ = builder.Property(e => e.Title)
             .HasMaxLength(500);
 
-        _ = builder.Property(e => e.AudioFileMongoId);
-
         _ = builder.Property(e => e.OriginalFileName);
 
         _ = builder.Property(e => e.OriginalFileExtension);

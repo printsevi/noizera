@@ -69,9 +69,9 @@ export default function AudioPlayer() {
       if (playPromise !== undefined) {
         playPromise.then(_ => {
         })
-        .catch(error => {
-          play(false);
-        });
+          .catch(error => {
+            play(false);
+          });
       }
     } else {
       audioRef.current?.pause();
@@ -87,7 +87,7 @@ export default function AudioPlayer() {
     const timeout = setTimeout(() => {
       play(true);
     }, 500);
-    
+
     return () => {
       clearTimeout(timeout);
     };
@@ -131,10 +131,10 @@ export default function AudioPlayer() {
     setVolume(volumeValue);
   };
 
-  if(!queue.length) {
+  if (!queue.length) {
     return <></>;
   }
-  
+
   return (
     <div className="
       bg-slate-900 
@@ -166,7 +166,7 @@ export default function AudioPlayer() {
           onProgress={handleBufferProgress}
           onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
         >
-          <source src={`${getURL()}api/songs/${currentSong.id}/audio`} type="audio/flac" />
+          <source src={`${getURL()}api/songs/${currentSong.id}/flac-audio`} type="audio/flac" />
         </audio>
       )}
       <AudioProgressBar
@@ -207,8 +207,8 @@ export default function AudioPlayer() {
             <MdSkipNext size={24} />
           </IconButton>
           <span className="text-xs">
-          {elapsedDisplay} / {durationDisplay}
-        </span>
+            {elapsedDisplay} / {durationDisplay}
+          </span>
         </div>
         <div className="flex-1 text-center mb-1">
           <p className="text-slate-300 font-bold">
@@ -217,13 +217,13 @@ export default function AudioPlayer() {
           <p className="text-xs">Singer Name</p>
         </div>
         <div className="flex flex-1 gap-3">
-          <Slider 
+          <Slider
             defaultValue={[0.2]}
             min={0}
             max={1}
             step={0.01}
             value={[volume]}
-            onValueChange={(e) => handleVolumeChange(e[0])} 
+            onValueChange={(e) => handleVolumeChange(e[0])}
           />
           <IconButton
             intent="secondary"

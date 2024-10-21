@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { RxDragHandleHorizontal } from "react-icons/rx";
@@ -15,6 +15,7 @@ import { Input } from './ui/input';
 import AudioUploader from './AudioUploader';
 import deleteAudioFile from '@/api/songs/deleteAudioFile';
 import useUser from '@/hooks/useUser';
+import { axiosPublic } from '@/libs/axios';
 
 interface Props {
     id: string,
@@ -22,10 +23,12 @@ interface Props {
     isOpen: boolean,
     title?: string,
     audioFileName?: string;
+    contentLength?: number;
+    contentType?: string;
     songPublicId: string;
     toggleAccordion: () => void,
     onTitleUpdate: (newTitle: string) => Promise<boolean>;
-    onAudioUpload: (file: File) => Promise<string | undefined>;
+    onAudioUpload: (file: File) => Promise<boolean>;
     onSongDelete: () => Promise<void>;
     onAudioDelete: () => Promise<void>;
 }
@@ -45,9 +48,17 @@ export const SongAccordionItem = (props: Props) => {
 
     const [songTitle, setSongTitle] = useState(props.title ?? "");
 
-    const [audioFileName, setAudioFileName] = useState(props.audioFileName);
+    const [audioSrc, setAudioSrc] = useState(props.audioFileName ? `${getURL()}api/songs/${props.songPublicId}/audio?audioType=original&contentLength=${props.contentLength}` : "");
 
     const { user } = useUser();
+
+    useEffect(() => {
+        if (props.songPublicId && props.audioFileName && props.contentLength && props.contentType) {
+            setAudioSrc(`${getURL()}api/songs/${props.songPublicId}/audio?audioType=original&contentLength=${props.contentLength}`);
+        } else {
+            setAudioSrc("");
+        }
+    }, [props.songPublicId, props.audioFileName, props.contentLength, props.contentType]);
 
     const updateTitle = async (newTitle: string) => {
         const result = await props.onTitleUpdate(newTitle);
@@ -56,20 +67,9 @@ export const SongAccordionItem = (props: Props) => {
         }
     }
 
-    const uploadAudio = async (file: File) => {
-        const result = await props.onAudioUpload(file);
-        if (result !== undefined) {
-            setAudioFileName(result);
-            return true;
-        }
-        return false;
-    }
-
     const deleteAudioHandler = async () => {
         const response = await props.onAudioDelete();
     }
-
-    const audioSrc = audioFileName ? `${getURL()}api/songs/${props.songPublicId}/audio` : "";
 
     return (
         <div
@@ -77,10 +77,10 @@ export const SongAccordionItem = (props: Props) => {
             style={style}
             className="border rounded-md mb-1 ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
         >
-            <button
+            <div
                 {...attributes}
                 {...listeners}
-                className="w-full p-2 text-left transition duration-300"
+                className="w-full p-2 text-left transition duration-300 select-none"
                 onClick={props.toggleAccordion}
             >
                 <span className='flex flex-row h-auto items-center w-full gap-x-4 justify-between'>
@@ -90,7 +90,7 @@ export const SongAccordionItem = (props: Props) => {
                                         transition-transform duration-300`}>
                             <ChevronDown size={20} />
                         </span>
-                        <span className='truncate'>{user?.name ?? user?.username} - {songTitle ? songTitle : `ID`}</span>
+                        <span className='truncate'>{user?.name ?? user?.username} - {songTitle ? songTitle : `Track ID`}</span>
                     </span>
 
 
@@ -107,7 +107,7 @@ export const SongAccordionItem = (props: Props) => {
 
 
                 </span>
-            </button>
+            </div>
             {props.isOpen && (
                 <div className="p-4">
                     <Label>Song title</Label>
@@ -118,7 +118,14 @@ export const SongAccordionItem = (props: Props) => {
                         placeholder='type your song title'
                     />
                     <Label>Audio</Label>
-                    <AudioUploader uploadTime='00/00/0000' existingFileName={props.audioFileName ?? ""} onFileUpload={uploadAudio} onFileDelete={deleteAudioHandler} />
+                    <AudioUploader
+                        uploadTime='00/00/0000'
+                        existingFileName={props.audioFileName ?? ""}
+                        onFileUpload={props.onAudioUpload}
+                        onFileDelete={deleteAudioHandler}
+                        audioSrc={audioSrc}
+                        contentType={props.contentType}
+                    />
                 </div>
             )}
         </div>

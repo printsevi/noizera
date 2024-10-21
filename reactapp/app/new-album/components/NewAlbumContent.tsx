@@ -53,11 +53,15 @@ import useUser from '@/hooks/useUser';
 import { Plus } from 'lucide-react';
 import deleteAudioFile from '@/api/songs/deleteAudioFile';
 import deleteAlbumCoverImage from '@/api/musicCollections/deleteAlbumCoverImage';
+import AuthRequired from '@/components/AuthRequired';
+import ActionRequired from '@/components/ActionRequired';
 
 interface SongItem {
   key: string;
   title: string;
   audioFileName?: string;
+  contentLength?: number;
+  contentType?: string;
   songPublicId: string;
   isOpen: boolean;
 }
@@ -87,6 +91,8 @@ const NewAlbumContent = () => {
         title: x.title,
         songPublicId: x.songPublicId,
         audioFileName: x.originalFileName,
+        contentLength: x.contentLength,
+        contentType: x.contentType,
         isOpen: false
       })) ?? []);
       if (data.data?.coverImageMongoId) {
@@ -133,25 +139,29 @@ const NewAlbumContent = () => {
   const uploadAudio = async (key: string, file: File) => {
     const tokenResponse = await getAntiforgeryToken(axiosPrivate);
     if (!tokenResponse.ok) {
-      return undefined;
+      return false;
     }
 
     const response = await uploadAudioFile(axiosPrivate, auth.userId!, key, file, tokenResponse.data!);
     if (!response.ok) {
-      return undefined;
+      return false;
     }
 
-    const fileName = response.data?.originalFileName;
     const updatedSongs = songs.map((songItem) => {
       if (songItem.key === key) {
-        return { ...songItem, audioFileName: fileName };
+        return {
+          ...songItem,
+          audioFileName: response.data?.originalFileName,
+          contentLength: response.data?.contentLength,
+          contentType: response.data?.contentType
+        };
       }
       return songItem;
     });
 
     setSongs(updatedSongs);
 
-    return fileName;
+    return true;
   };
 
   const onUploadCoverImage = async (file: File, fileName: string) => {
@@ -217,7 +227,7 @@ const NewAlbumContent = () => {
     if (response.ok) {
       const updatedSongs = songs.map((songItem) => {
         if (songItem.key === key) {
-          return { ...songItem, audioFileName: "" };
+          return { ...songItem, audioFileName: "", contentLength: undefined, contentType: undefined };
         }
         return songItem;
       });
@@ -295,8 +305,8 @@ const NewAlbumContent = () => {
     }
   }
 
-  if (!isAuthenticated) {
-    return (<>Sign In</>);
+  if (!isReady) {
+    return <></>;
   }
 
   if (isLoading) {
@@ -309,8 +319,12 @@ const NewAlbumContent = () => {
     </div>)
   }
 
+  if (!isAuthenticated) {
+    return <AuthRequired />
+  }
+
   if ((user?.profileType !== ProfileType.Artist && user?.profileType !== ProfileType.Label)) {
-    return (<div className="flex flex-col space-y-3 p-5">Change Profile Type</div>)
+    return <ActionRequired buttonText='Update profile' link='/settings' description='To upload your music please update your profile type to the Artist or Label' />
   }
 
   return (<div className="min-h-screen bg-background p-4 sm:p-8">
@@ -379,6 +393,8 @@ const NewAlbumContent = () => {
                         onAudioUpload={(file) => uploadAudio(songItem.key, file)}
                         songPublicId={songItem.songPublicId}
                         audioFileName={songItem.audioFileName}
+                        contentLength={songItem.contentLength}
+                        contentType={songItem.contentType}
                         onSongDelete={() => onSongDelete(songItem.key)}
                         onAudioDelete={() => onAudioDelete(songItem.key)}
                       />

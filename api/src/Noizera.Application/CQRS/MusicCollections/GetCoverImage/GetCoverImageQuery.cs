@@ -5,13 +5,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace Noizera.Application.CQRS.MusicCollections.GetCoverImage;
 
 public sealed record GetCoverImageQuery(
-    string MusicCollectionPublicId) : IRequest<Stream>
+    string MusicCollectionPublicId) : IRequest<(Stream Stream, string ContentType)>
 {
     public sealed class Handler(
         ICoverImageService coverImageService)
-        : IRequestHandler<GetCoverImageQuery, Stream>
+        : IRequestHandler<GetCoverImageQuery, (Stream Stream, string ContentType)>
     {
-        public async Task<Stream> Handle([NotNull] GetCoverImageQuery request, CancellationToken cancellationToken)
+        public async Task<(Stream Stream, string ContentType)> Handle([NotNull] GetCoverImageQuery request, CancellationToken cancellationToken)
             => await coverImageService.GetImageFileAsStreamAsync(request.MusicCollectionPublicId, cancellationToken).ConfigureAwait(false);
     }
 }

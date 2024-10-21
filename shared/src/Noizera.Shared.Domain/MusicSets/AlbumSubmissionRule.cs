@@ -13,7 +13,7 @@ public sealed record AlbumSubmissionRule(Album Album) : ISyncDomainRule
         //&& Album.ReleaseDate is not null
         && Album.MusicCollectionSongs.Count > 0
         && !Album.MusicCollectionSongs.Any(x => string.IsNullOrWhiteSpace(x.Song.OriginalFileName) || string.IsNullOrWhiteSpace(x.Song.Title))
-        && !string.IsNullOrWhiteSpace(Album.CoverImageMongoId)
+        && Album.CoverImageContentLength > 0
         && (Album.Owner.Profile!.ProfileType == ProfileType.Artist
             || Album.Credits.Any(x => x.ProfileType == ProfileType.Artist));
 }

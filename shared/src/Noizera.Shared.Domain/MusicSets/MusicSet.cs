@@ -12,7 +12,8 @@ public class MusicSet : EntityExtended, IDeletable
 {
     public string Title { get; protected set; } = string.Empty;
     public string? Description { get; private set; }
-    public string? CoverImageMongoId { get; private set; }
+    public string? CoverImageBucketName { get; private set; }
+    public long? CoverImageContentLength { get; private set; }
     public string? CoverImageOriginalName { get; private set; }
     public DateOnly? ReleaseDate { get; private set; }
     public Guid OwnerId { get; private set; }
@@ -35,21 +36,22 @@ public class MusicSet : EntityExtended, IDeletable
     {
         ValidateOwner(userId);
 
-        string mongoFileId = await uploader.UploadAsync(file, PublicId, ct).ConfigureAwait(false);
+        (var contentLength, var bucket) = await uploader.UploadAsync(file, PublicId, ct).ConfigureAwait(false);
 
-        SetCoverImageInformation(mongoFileId, ValidFileName.New(file.FileName));
+        SetCoverImageInformation(contentLength, bucket, ValidFileName.New(file.FileName));
     }
 
     public void DeleteCover(Guid userId)
     {
         ValidateOwner(userId);
 
-        SetCoverImageInformation(string.Empty, ValidFileName.New(string.Empty));
+        SetCoverImageInformation(null, string.Empty, ValidFileName.New(string.Empty));
     }
 
-    private void SetCoverImageInformation(string coverImageMongoId, [NotNull] ValidFileName fileName)
+    private void SetCoverImageInformation(long? contentLength, string bucketName, [NotNull] ValidFileName fileName)
     {
-        CoverImageMongoId = coverImageMongoId;
+        CoverImageContentLength = contentLength;
+        CoverImageBucketName = bucketName;
         CoverImageOriginalName = fileName.Value;
     }
 

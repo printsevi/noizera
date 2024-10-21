@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Noizera.Shared.Contracts.QueryResults;
 
 namespace Noizera.Shared.Contracts.Services;
 
 public interface IAudioFileService
 {
-    Task UploadOriginalAudioFileAsync(IFormFile file, string fileName, CancellationToken ct);
+    Task<(long ContentLength, string ContentType, string BucketName)> UploadOriginalAudioFileAsync(IFormFile file, string fileId, CancellationToken ct);
 
-    void DeleteOriginalAudioFile(string fileName);
+    Task DeleteOriginalAudioFileAsync(string fileId, CancellationToken ct);
 
-    FileStream GetAudioFileAsStream(string fileName, CancellationToken ct);
+    Task<AudioStreamResult> GetAudioFileAsStream(string fileId, string requestedRange, long fileLength, string audioType, CancellationToken ct);
 }

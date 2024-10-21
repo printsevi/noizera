@@ -21,6 +21,8 @@ export interface GetOrCreateAlbumDraftSongResponse {
   title: string;
   songPublicId: string;
   originalFileName?: string;
+  contentLength?: number;
+  contentType?: string;
   sequence: number;
 }
 
@@ -29,8 +31,8 @@ export interface GetOrCreateAlbumDraftCreditResponse {
   value: string;
 }
 
-const getOrCreateAlbumDraft = async (axiosPrivate : AxiosInstance, userId: string): Promise<ApiResponse<GetOrCreateAlbumDraftResponse>> => {
-  const result : ApiResponse<GetOrCreateAlbumDraftResponse> = { ok: true };
+const getOrCreateAlbumDraft = async (axiosPrivate: AxiosInstance, userId: string): Promise<ApiResponse<GetOrCreateAlbumDraftResponse>> => {
+  const result: ApiResponse<GetOrCreateAlbumDraftResponse> = { ok: true };
   try {
     const response = await axiosPrivate.get<GetOrCreateAlbumDraftResponse>(`/music-collections/albums/draft?userId=${userId}`);
     result.data = response.data;

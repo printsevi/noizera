@@ -24,7 +24,7 @@ public sealed record DeleteAudioFileCommand(
 
             song.ValidateOwner(request.UserId);
 
-            audioService.DeleteOriginalAudioFile(song.PublicId);
+            await audioService.DeleteOriginalAudioFileAsync(song.PublicId, cancellationToken).ConfigureAwait(false);
 
             song.DeleteOriginalAudioFile();
 

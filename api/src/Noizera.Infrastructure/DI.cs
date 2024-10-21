@@ -52,13 +52,12 @@ public static class DI
         _ = services.AddScoped<IVerificationCodeGenerator, VerificationCodeGenerator>();
         _ = services.AddScoped<IPasswordHelper, PasswordHelper>();
 
-        _ = services.AddScoped<ICoverImageService, CoverImageMongoService>();
+        _ = services.AddScoped<ICoverImageService, CoverImageS3Service>();
         _ = services.AddScoped<ICoverImageUploader, CoverImageUploader>();
 
         _ = services.AddScoped<ISubscriptionService, SubscriptionService>();
 
         _ = services.AddScoped<IAudioFileService, AudioFileService>();
-        _ = services.AddScoped<IAudioMongoService, AudioMongoService>();
 
         return services;
     }

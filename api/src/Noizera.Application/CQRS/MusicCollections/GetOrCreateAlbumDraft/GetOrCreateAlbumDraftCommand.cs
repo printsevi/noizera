@@ -35,7 +35,7 @@ public sealed record GetOrCreateAlbumDraftCommand(
 
             var songs = albumDraft.MusicCollectionSongs
                 .Select(x => new GetOrCreateAlbumDraftSongResponse(
-                    x.Song.Id, x.Song.Title, x.Song.PublicId, x.Song.OriginalFileName, x.Sequence));
+                    x.Song.Id, x.Song.Title, x.Song.PublicId, x.Song.OriginalFileName, x.Song.OriginalContentLength, x.Song.OriginalContentType, x.Sequence));
 
             var credits = albumDraft.Credits
                 .Select(x => new GetOrCreateAlbumDraftCreditResponse(
@@ -46,7 +46,7 @@ public sealed record GetOrCreateAlbumDraftCommand(
                 albumDraft.PublicId,
                 albumDraft.Title,
                 albumDraft.Description,
-                albumDraft.CoverImageMongoId,
+                albumDraft.CoverImageBucketName,
                 albumDraft.CoverImageOriginalName,
                 user.Profile!.DisplayName,
                 user.Profile.ProfileType.ToString(),

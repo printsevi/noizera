@@ -141,8 +141,11 @@ namespace Noizera.Shared.Persistence.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("character varying(21)");
 
-                    b.Property<string>("CoverImageMongoId")
+                    b.Property<string>("CoverImageBucketName")
                         .HasColumnType("text");
+
+                    b.Property<long?>("CoverImageContentLength")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("CoverImageOriginalName")
                         .HasColumnType("text");
@@ -426,9 +429,6 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AudioFileMongoId")
-                        .HasColumnType("text");
-
                     b.Property<float?>("BPM")
                         .HasColumnType("real");
 
@@ -438,14 +438,38 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.Property<float?>("Danceability")
                         .HasColumnType("real");
 
+                    b.Property<double?>("DurationInSeconds")
+                        .HasColumnType("double precision");
+
                     b.Property<float?>("Energy")
                         .HasColumnType("real");
+
+                    b.Property<string>("FlacBucketName")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("FlacContentLength")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean");
 
                     b.Property<char?>("Key")
                         .HasColumnType("character(1)");
+
+                    b.Property<string>("Mp3BucketName")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("Mp3ContentLength")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalBucketName")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("OriginalContentLength")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalContentType")
+                        .HasColumnType("text");
 
                     b.Property<string>("OriginalFileExtension")
                         .HasColumnType("text");

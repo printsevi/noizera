@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Amazon.S3;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Noizera.Shared.Persistence.Mongo;
+using Noizera.Shared.Persistence.S3;
 using Noizera.Shared.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
@@ -15,7 +16,7 @@ public static class DI
     {
         services
             .AddSqlDb(configuration)
-            .AddMongoDb(configuration)
+            .AddS3(configuration)
             .AddSharedHealthChecks(configuration);
 
         return services;
@@ -32,11 +33,21 @@ public static class DI
         return services;
     }
 
-    private static IServiceCollection AddMongoDb(this IServiceCollection services, [NotNull] IConfiguration configuration)
+    private static IServiceCollection AddS3(this IServiceCollection services, [NotNull] IConfiguration configuration)
     {
-        _ = services.Configure<MongoDbSettings>(configuration.GetSection("MongoDbSettings"));
+        _ = services.Configure<S3BucketSettings>(configuration.GetSection("S3Buckets"));
+        var s3Settings = configuration.GetSection("S3").Get<S3Settings>()!;
 
-        _ = services.AddSingleton<MongoDbContext>();
+        services.AddSingleton<IAmazonS3>(sp =>
+        {
+            return new AmazonS3Client(s3Settings.SpacesKey, s3Settings.SpacesSecret, new AmazonS3Config
+            {
+                ServiceURL = s3Settings.ServiceUrl,
+                ForcePathStyle = true
+            });
+        });
+
+        services.AddSingleton<S3Context>();
 
         return services;
     }
@@ -45,7 +56,6 @@ public static class DI
     {
         services
             .AddHealthChecks()
-            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!)
-            .AddMongoDb(configuration["MongoDbSettings:ConnectionString"]!);
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!);
     }
 }

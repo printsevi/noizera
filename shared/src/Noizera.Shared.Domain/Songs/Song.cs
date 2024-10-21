@@ -13,9 +13,16 @@ namespace Noizera.Shared.Domain.Songs;
 public sealed class Song : EntityExtended
 {
     public string? Title { get; private set; }
-    public string? AudioFileMongoId { get; private set; }
     public string? OriginalFileName { get; private set; }
     public string? OriginalFileExtension { get; private set; }
+    public string? OriginalContentType { get; private set; }
+    public long? OriginalContentLength { get; private set; }
+    public string? OriginalBucketName { get; private set; }
+    public string? Mp3BucketName { get; private set; }
+    public long? Mp3ContentLength { get; private set; }
+    public string? FlacBucketName { get; private set; }
+    public long? FlacContentLength { get; private set; }
+    public double? DurationInSeconds { get; private set; }
     public float? Danceability { get; private set; }
     public float? Energy { get; private set; }
     public char? Key { get; private set; }
@@ -32,7 +39,7 @@ public sealed class Song : EntityExtended
 
     public override string PublicIdPrefix => "t-";
 
-    public bool HasAudioAttached => !string.IsNullOrWhiteSpace(AudioFileMongoId);
+    public bool HasAudioAttached => FlacContentLength > 0 && Mp3ContentLength > 0;
 
     private Song(User user, Album album)
         : base() => OwnerId = user.Id;
@@ -51,20 +58,31 @@ public sealed class Song : EntityExtended
         return result;
     }
 
-    public void UploadOriginalAudioFile([NotNull] ValidFileName fileName, string extension)
+    public void UploadOriginalAudioFile([NotNull] ValidFileName fileName, string extension, long contentLength, string bucket)
     {
         OriginalFileName = fileName.Value;
         OriginalFileExtension = extension;
+        OriginalContentLength = contentLength;
     }
 
     public void DeleteOriginalAudioFile()
     {
         OriginalFileName = null;
+        OriginalFileExtension = null;
+        OriginalContentLength = null;
     }
 
-    public void SaveAudioFileToMongo(string audioFileMongoId)
+    public void SaveAudioFileToMp3Bucket(string bucketName, long contentLength)
     {
-        AudioFileMongoId = audioFileMongoId;
+        Mp3BucketName = bucketName;
+        Mp3ContentLength = contentLength;
+    }
+
+    public void SaveAudioFileToFlacBucket(string bucketName, long contentLength, double duration)
+    {
+        FlacBucketName = bucketName;
+        FlacContentLength = contentLength;
+        DurationInSeconds = duration;
     }
 
     public void SetTitle(string newTitle, Album album, Guid userId)
