@@ -9,7 +9,7 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Users;
 
-public sealed class UserRepository(AppDbContext db) : BaseRepository<User>(db), IUserRepository
+public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>(db), IUserRepository
 {
     public async Task<User?> GetByEmailOrUsernameAsync(string emailOrUsername, CancellationToken ct) => await Db.Users
             .Include(u => u.Profile)

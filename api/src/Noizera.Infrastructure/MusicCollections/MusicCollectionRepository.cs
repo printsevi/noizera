@@ -2,13 +2,15 @@
 using Noizera.Infrastructure.Common;
 using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Repositories;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.MusicSets;
 using Noizera.Shared.Domain.Users;
 using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.MusicCollections;
 
-public sealed class MusicCollectionRepository(AppDbContext db) : BaseRepository<MusicSet>(db), IMusicCollectionRepository
+public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator hashGenerator) 
+    : BaseEntityExtendedRepository<MusicSet>(db, hashGenerator), IMusicCollectionRepository
 {
     public async Task<MusicSet?> GetAsync(Guid id, CancellationToken ct) => await Db.MusicCollections.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
 

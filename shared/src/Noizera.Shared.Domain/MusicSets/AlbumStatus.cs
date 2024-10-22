@@ -4,6 +4,5 @@ public enum AlbumStatus
 {
     Draft,
     Submitted,
-    Processing,
     Released,
 }

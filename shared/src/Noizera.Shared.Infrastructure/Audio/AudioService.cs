@@ -20,7 +20,7 @@ public class AudioService(
 
     public async Task<(long FlacLength, string FlacBucket)> ConvertAndSaveFlacAudioFileToS3Async(string fileId, string inputExtension, CancellationToken ct)
     {
-        string inputFile = $"{fileId}.{inputExtension}";
+        string inputFile = $"{fileId}{inputExtension}";
         string dockerInputFilePath = $"{dataStructureProvider.DockerAudioPath}/{inputFile}";
 
         string outputFlacFile = $"output-flac-{fileId}.flac";
@@ -53,7 +53,7 @@ public class AudioService(
 
     public async Task<(long Mp3Length, string Mp3Bucket)> ConvertAndSaveMp3AudioFileToS3Async(string fileId, string inputExtension, CancellationToken ct)
     {
-        string inputFile = $"{fileId}.{inputExtension}";
+        string inputFile = $"{fileId}{inputExtension}";
         string dockerInputFilePath = $"{dataStructureProvider.DockerAudioPath}/{inputFile}";
 
         string outputMp3File = $"output-mp3-{fileId}.flac";
@@ -84,7 +84,7 @@ public class AudioService(
 
     public async Task DownloadOriginalFileAsync(string fileId, string originalExtension, CancellationToken ct)
     {
-        string inputFilePath = $"{dataStructureProvider.AudioPath}/{fileId}.{originalExtension}";
+        string inputFilePath = $"{dataStructureProvider.AudioPath}/{fileId}{originalExtension}";
         using (GetObjectResponse response = await s3.GetOriginalAudioFileAsync(fileId, ct))
         {
             await using (Stream responseStream = response.ResponseStream)

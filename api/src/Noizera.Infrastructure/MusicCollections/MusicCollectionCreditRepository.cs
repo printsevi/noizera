@@ -6,7 +6,7 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.MusicCollections;
 
-public sealed class MusicCollectionCreditRepository(AppDbContext db) : BaseRepository<MusicCollectionCredit>(db), IMusicCollectionCreditRepository
+public sealed class MusicCollectionCreditRepository(AppDbContext db) : BaseEntityRepository<MusicCollectionCredit>(db), IMusicCollectionCreditRepository
 {
     public async Task DeleteCreditAsync(Guid creditId, CancellationToken ct) => await Db.MusicCollectionCredits
             .Where(x => x.Id == creditId)

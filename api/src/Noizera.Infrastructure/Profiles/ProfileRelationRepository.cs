@@ -6,7 +6,7 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Profiles;
 
-public sealed class ProfileRelationRepository(AppDbContext db) : BaseRepository<ProfileRelation>(db), IProfileRelationRepository
+public sealed class ProfileRelationRepository(AppDbContext db) : BaseEntityRepository<ProfileRelation>(db), IProfileRelationRepository
 {
     public async Task DeleteAsync(Guid followerId, Guid followingId, CancellationToken ct)
     {

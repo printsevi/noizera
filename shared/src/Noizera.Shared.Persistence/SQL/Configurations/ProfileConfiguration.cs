@@ -16,6 +16,6 @@ internal sealed class ProfileConfiguration : IEntityTypeConfiguration<PublicProf
         _ = builder.Property(e => e.ProfileType)
             .HasConversion<string>();
 
-        _ = builder.Property(e => e.Description);
+        _ = builder.Property(e => e.Bio);
     }
 }

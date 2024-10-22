@@ -6,7 +6,13 @@ public abstract class EntityExtended : Entity
 
     public abstract string PublicIdPrefix { get; }
 
-    public void SetPublicId(string value) => PublicId = $"{PublicIdPrefix}{value}";
+    public void SetPublicId(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            PublicId = $"{PublicIdPrefix}{value}";
+        }
+    }
 
     protected EntityExtended(string publicId = "") : base() => PublicId = publicId;
 

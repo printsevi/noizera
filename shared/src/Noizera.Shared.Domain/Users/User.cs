@@ -53,6 +53,7 @@ public sealed class User : Entity
         IUserUniquenessChecker userChecker,
         IProfileUniquenessChecker profileChecker,
         [NotNull] IPasswordHelper passwordHelper,
+        IHashGenerator hashGenerator,
         CancellationToken ct)
     {
         await VerifyEmailAsync(email, userChecker, ct).ConfigureAwait(false);
@@ -63,7 +64,9 @@ public sealed class User : Entity
         var profile = await PublicProfile.CreateAsync(profileUserName.ToLowerInvariant(), ProfileType.Fan, profileChecker, user.Id, ct).ConfigureAwait(false);
         user.Profile = profile;
 
-        user.MusicCollections.Add(Playlist.NewFavourites(user));
+        var favouritesPlaylist = await Playlist.NewFavouritesAsync(user, hashGenerator, ct);
+
+        user.MusicCollections.Add(favouritesPlaylist);
 
         user.AddDomainEvent(new UserCreatedEvent(email));
 
@@ -136,6 +139,16 @@ public sealed class User : Entity
     public async Task UpdateUsernameAsync(string username, IProfileUniquenessChecker profileUniquenessChecker, CancellationToken ct)
     {
         await Profile!.UpdateUsernameAsync(username, profileUniquenessChecker, ct);
+    }
+
+    public void UpdateName(string name)
+    {
+        Profile!.UpdateName(name);
+    }
+
+    public void UpdateBio(string bio)
+    {
+        Profile!.UpdateBio(bio);
     }
 
     public void SetCustomerStripeId(string value) => CustomerStripeId = value;

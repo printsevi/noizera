@@ -7,7 +7,7 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.MusicCollections;
 
-public sealed class SavedMusicCollectionRepository(AppDbContext db) : BaseRepository<SavedMusicSet>(db), ISavedMusicCollectionRepository
+public sealed class SavedMusicCollectionRepository(AppDbContext db) : BaseEntityRepository<SavedMusicSet>(db), ISavedMusicCollectionRepository
 {
     public async Task<List<MusicCollectionCardQueryResult>> GetAllAsync(Guid userId, CancellationToken ct)
     {

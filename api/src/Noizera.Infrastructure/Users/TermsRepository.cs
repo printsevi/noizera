@@ -7,7 +7,7 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Users;
 
-public sealed class TermsRepository(AppDbContext db) : BaseRepository<TermsOfUse>(db), ITermsRepository
+public sealed class TermsRepository(AppDbContext db) : BaseEntityRepository<TermsOfUse>(db), ITermsRepository
 {
     public async Task<TermsOfUse?> GetLatestAsync(CancellationToken ct)
     {

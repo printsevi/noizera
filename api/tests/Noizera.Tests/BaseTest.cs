@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Noizera.Shared.Contracts.Services;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Profiles;
 using Noizera.Shared.Domain.SecretTokens;
 using Noizera.Shared.Domain.Users;
@@ -33,6 +34,7 @@ public abstract class BaseTest(CustomWebApplicationFactory factory) : IClassFixt
         var userChecker = _services.GetRequiredService<IUserUniquenessChecker>();
         var profileChecker = _services.GetRequiredService<IProfileUniquenessChecker>();
         var passwordHelper = _services.GetRequiredService<IPasswordHelper>();
+        var hashGenerator = _services.GetRequiredService<IHashGenerator>();
 
         var hasTestArtist = await _db.Users.AnyAsync(x => x.Email == "test-artist@test.com");
         if (!hasTestArtist)
@@ -45,6 +47,7 @@ public abstract class BaseTest(CustomWebApplicationFactory factory) : IClassFixt
                 userChecker,
                 profileChecker,
                 passwordHelper,
+                hashGenerator,
                 default);
             TestArtist.Profile!.SetProfileType(ProfileType.Artist);
             await _db.Users.AddAsync(TestArtist);
@@ -68,6 +71,7 @@ public abstract class BaseTest(CustomWebApplicationFactory factory) : IClassFixt
                 userChecker,
                 profileChecker,
                 passwordHelper,
+                hashGenerator,
                 default);
             LoggedArtist.Profile!.SetProfileType(ProfileType.Artist);
             await _db.Users.AddAsync(LoggedArtist);

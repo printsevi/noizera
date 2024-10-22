@@ -2,6 +2,7 @@
 using Noizera.Infrastructure.Common;
 using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Repositories;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.ProfileRelations;
 using Noizera.Shared.Domain.Profiles;
 using Noizera.Shared.Persistence.SQL;
@@ -9,7 +10,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Noizera.Infrastructure.Profiles;
 
-public sealed class ProfileRepository(AppDbContext db) : BaseRepository<PublicProfile>(db), IProfileRepository
+public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenerator) 
+    : BaseEntityExtendedRepository<PublicProfile>(db, hashGenerator), IProfileRepository
 {
     public async Task<List<ArtistQueryResult>> GetArtistsByTextAsync(string text, CancellationToken ct)
     {

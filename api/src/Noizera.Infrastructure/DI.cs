@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Noizera.Infrastructure.Audio;
+using Noizera.Infrastructure.Common;
 using Noizera.Infrastructure.CoverImages;
 using Noizera.Infrastructure.MusicCollections;
 using Noizera.Infrastructure.Profiles;
@@ -17,6 +18,7 @@ using Noizera.Infrastructure.Subscriptions;
 using Noizera.Infrastructure.Users;
 using Noizera.Shared.Contracts.Repositories;
 using Noizera.Shared.Contracts.Services;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.MusicSets;
 using Noizera.Shared.Domain.Profiles;
 using Noizera.Shared.Domain.SecretTokens;
@@ -51,6 +53,7 @@ public static class DI
         _ = services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>();
         _ = services.AddScoped<IVerificationCodeGenerator, VerificationCodeGenerator>();
         _ = services.AddScoped<IPasswordHelper, PasswordHelper>();
+        _ = services.AddScoped<IHashGenerator, HashGenerator>();
 
         _ = services.AddScoped<ICoverImageService, CoverImageS3Service>();
         _ = services.AddScoped<ICoverImageUploader, CoverImageUploader>();

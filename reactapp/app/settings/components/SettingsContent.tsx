@@ -28,20 +28,25 @@ import checkUsername from "@/api/users/checkUsername"
 import getSettings, { SettingsResponse } from "@/api/users/getSettings"
 import updateProfileType from "@/api/users/updateProfileType"
 import { Label } from "@/components/ui/label"
+import updateName from "@/api/users/updateName"
+import updateBio from "@/api/users/updateBio"
 
 const usernameRegex = /^[a-zA-Z0-9._-]{2,30}$/
 const MAX_USERNAME_LENGTH = 30
+const MAX_BIO_LENGTH = 150
 
 export default function SettingsContent() {
   const { axiosPrivate, isReady } = useAxiosPrivate();
   const { isAuthenticated, auth } = useAuth();
   const { user, setUser } = useUser();
   const [username, setUsername] = useState(user?.username ?? "");
+  const [name, setName] = useState(user?.name ?? "");
   const [settings, setSettings] = useState<SettingsResponse>();
+  const [bio, setBio] = useState(settings?.bio ?? "");
   const [isUsernameValid, setIsUsernameValid] = useState(true)
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(false)
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
-  const [isUpdatingProfileType, setIsUpdatingProfileType] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [isAlertOpen, setIsAlertOpen] = useState(false)
   const [autoplay, setAutoplay] = useState(true)
   const [profileType, setProfileType] = useState(user?.profileType ?? "")
@@ -73,6 +78,10 @@ export default function SettingsContent() {
   }, [user?.username]);
 
   useEffect(() => {
+    setName(user?.name ?? "");
+  }, [user?.name]);
+
+  useEffect(() => {
     setProfileType(user?.profileType ?? "");
   }, [user?.profileType]);
 
@@ -99,18 +108,40 @@ export default function SettingsContent() {
       setUsername(user?.username ?? "");
     }
     setIsCheckingUsername(false)
-  }, [axiosPrivate, auth.userId, username, user?.username, setUser])
+  }, [axiosPrivate, auth.userId, username, user?.username, setUser]);
+
+  const updateNameHandler = useCallback(async () => {
+    setIsUpdating(true);
+    const updateResult = await updateName(axiosPrivate, auth.userId!, name);
+    if (updateResult.ok) {
+      setUser(prev => ({ ...prev!, name: name }));
+    } else {
+      setName(user?.name ?? "");
+    }
+    setIsUpdating(false)
+  }, [axiosPrivate, auth.userId, name, user?.name, setIsUpdating, setUser])
 
   const updateProfileTypeHandler = useCallback(async (value: string) => {
-    setIsUpdatingProfileType(true)
+    setIsUpdating(true)
     const updateResult = await updateProfileType(axiosPrivate, auth.userId!, value);
     if (updateResult.ok) {
       setUser(prev => ({ ...prev!, profileType: value as ProfileType }));
     } else {
       setProfileType(user?.profileType ?? "");
     }
-    setIsUpdatingProfileType(false)
+    setIsUpdating(false)
   }, [axiosPrivate, auth.userId, user?.profileType, setUser])
+
+  const updateBioHandler = useCallback(async () => {
+    setIsUpdating(true)
+    const updateResult = await updateBio(axiosPrivate, auth.userId!, bio);
+    if (updateResult.ok) {
+      setSettings(prev => ({ ...prev!, bio: bio }));
+    } else {
+      setBio(settings?.bio ?? "");
+    }
+    setIsUpdating(false)
+  }, [axiosPrivate, auth.userId, settings?.bio, setSettings, setBio, bio, setIsUpdating])
 
   useEffect(() => {
     if (username.toLowerCase() == user?.username?.toLowerCase()) {
@@ -141,9 +172,11 @@ export default function SettingsContent() {
               <div className="flex flex-col space-y-2">
                 <Label>Username</Label>
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 relative">
+                    <span className="absolute left-4 top-2.5 h-4 w-4 text-muted-foreground">@</span>
                     <Input
                       value={username}
+                      disabled={isUpdating}
                       onChange={(e) => setUsername(e.target.value.slice(0, MAX_USERNAME_LENGTH))}
                       onKeyPress={(e) => {
                         const char = String.fromCharCode(e.which)
@@ -151,10 +184,10 @@ export default function SettingsContent() {
                           e.preventDefault()
                         }
                       }}
-                      className="w-full"
+                      className="w-full px-6"
                       maxLength={MAX_USERNAME_LENGTH}
                     />
-                    <Button disabled={!isUsernameValid || !isUsernameAvailable || (username.toLowerCase() === user.username.toLowerCase())} onClick={updateUsernameHandler}>Update</Button>
+                    <Button disabled={isUpdating || !isUsernameValid || !isUsernameAvailable || (username.toLowerCase() === user.username.toLowerCase())} onClick={updateUsernameHandler}>Update</Button>
                   </div>
                   <div className={cn("text-sm", username.toLowerCase() === user.username.toLowerCase() ? "hidden" : "")}>
                     {isCheckingUsername ? (
@@ -173,11 +206,26 @@ export default function SettingsContent() {
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
-                <span className="text-foreground">Profile Type</span>
+                <Label>Name</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 relative">
+                    <Input
+                      value={name}
+                      disabled={isUpdating}
+                      onChange={(e) => setName(e.target.value.slice(0, MAX_USERNAME_LENGTH))}
+                      onBlur={updateNameHandler}
+                      className="w-full"
+                      maxLength={MAX_USERNAME_LENGTH}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Profile Type</Label>
                 <Select
                   value={user?.profileType ?? ""}
                   onValueChange={v => updateProfileTypeHandler(v)}
-                  disabled={isUpdatingProfileType}
+                  disabled={isUpdating}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select" />
@@ -194,7 +242,13 @@ export default function SettingsContent() {
               </div>
               <div className="flex flex-col space-y-2">
                 <span className="text-foreground">Bio</span>
-                <Textarea placeholder="Type your bio here" onBlur={() => { }} maxLength={150}></Textarea>
+                <Textarea
+                  disabled={isUpdating}
+                  value={settings?.bio}
+                  onChange={(e) => setBio(e.target.value.slice(0, MAX_BIO_LENGTH))}
+                  placeholder="Type your bio here"
+                  onBlur={updateBioHandler}
+                  maxLength={150} />
               </div>
             </div>
           </TabsContent>

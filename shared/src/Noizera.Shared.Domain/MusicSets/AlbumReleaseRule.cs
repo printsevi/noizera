@@ -7,6 +7,6 @@ public sealed record AlbumReleaseRule(Album Album) : ISyncDomainRule
     public string ErrorMessage => $"Album {Album.Id} Release failed";
 
     public bool Verify() =>
-        Album.AlbumStatus == AlbumStatus.Processing
+        Album.AlbumStatus == AlbumStatus.Submitted
         && !Album.MusicCollectionSongs.Any(x => !x.HasAudioAttached);
 }

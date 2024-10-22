@@ -58,11 +58,12 @@ public sealed class Song : EntityExtended
         return result;
     }
 
-    public void UploadOriginalAudioFile([NotNull] ValidFileName fileName, string extension, long contentLength, string bucket)
+    public void UploadOriginalAudioFile([NotNull] ValidFileName fileName, string extension, long contentLength, string contentType, string bucket)
     {
         OriginalFileName = fileName.Value;
         OriginalFileExtension = extension;
         OriginalContentLength = contentLength;
+        OriginalContentType = contentType;
     }
 
     public void DeleteOriginalAudioFile()
@@ -70,6 +71,7 @@ public sealed class Song : EntityExtended
         OriginalFileName = null;
         OriginalFileExtension = null;
         OriginalContentLength = null;
+        OriginalContentType = null;
     }
 
     public void SaveAudioFileToMp3Bucket(string bucketName, long contentLength)

@@ -20,7 +20,7 @@ public sealed record GetSettingsQuery(Guid UserId)
 
             return new(
                 user.Profile!.Name,
-                user.Profile!.Description);
+                user.Profile!.Bio);
         }
     }
 }

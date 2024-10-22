@@ -23,7 +23,7 @@ export default function ProfileContent(props: Props) {
     revalidateOnReconnect: false
   });
 
-  if(!data?.ok) {
+  if (!data?.ok) {
     return <></>;
   }
 
@@ -45,7 +45,7 @@ export default function ProfileContent(props: Props) {
         <div className="text-center md:text-left flex-grow">
           <h1 className="text-3xl font-bold mb-2">{data.data?.name}</h1>
           <p className="text-xl text-muted-foreground mb-4">@{props.profilePublicId}</p>
-          <p className="mb-4 max-w-md">{data.data?.bio}</p>
+          {data.data?.bio && <p className="mb-4 max-w-md">{data.data?.bio}</p>}
           <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">
             <div>
               <span className="font-semibold">{data?.data?.followersCount ?? 0}</span> followers
@@ -58,8 +58,8 @@ export default function ProfileContent(props: Props) {
             <Button className="flex-1 md:flex-none">
               <PlayCircle className="mr-2 h-4 w-4" /> Play All
             </Button>
-            {user?.username !== props.profilePublicId && <Button 
-              variant={data.data?.isFollowing ? "default" : "outline"} 
+            {user?.username !== props.profilePublicId && <Button
+              variant={data.data?.isFollowing ? "default" : "outline"}
               className="flex-1 md:flex-none"
               onClick={handleFollow}
             >

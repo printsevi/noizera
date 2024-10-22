@@ -30,7 +30,7 @@ public sealed record UploadAudioFileCommand(
             (var fileLength, var contentType, var bucket) = await audioService.UploadOriginalAudioFileAsync(request.File, song.PublicId, cancellationToken).ConfigureAwait(false);
 
             var originalFileName = ValidFileName.New(request.File.FileName);
-            song.UploadOriginalAudioFile(originalFileName, Path.GetExtension(request.File.FileName), fileLength, bucket);
+            song.UploadOriginalAudioFile(originalFileName, Path.GetExtension(request.File.FileName), fileLength, contentType, bucket);
 
             await songRepository.UpdateAsync(song, cancellationToken).ConfigureAwait(false);
 

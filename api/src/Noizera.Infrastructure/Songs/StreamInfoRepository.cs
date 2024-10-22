@@ -6,6 +6,6 @@ using Noizera.Shared.Persistence.SQL;
 namespace Noizera.Infrastructure.Songs;
 
 public sealed class StreamInfoRepository(AppDbContext db)
-    : BaseRepository<StreamInfo>(db), IStreamInfoRepository
+    : BaseEntityRepository<StreamInfo>(db), IStreamInfoRepository
 {
 }

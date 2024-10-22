@@ -7,7 +7,7 @@ using Noizera.Shared.Persistence.SQL;
 namespace Noizera.Infrastructure.Songs;
 
 public sealed class ListeningHistoryRepository(AppDbContext db)
-    : BaseRepository<ListeningHistory>(db), IListeningHistoryRepository
+    : BaseEntityRepository<ListeningHistory>(db), IListeningHistoryRepository
 {
     public async Task<ListeningHistory?> GetAsync(Guid userId, Guid songId) => await Db.ListeningHistories
             .FirstOrDefaultAsync(x => x.ListenerUserId == userId && x.SongId == songId).ConfigureAwait(false);

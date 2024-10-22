@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Noizera.Infrastructure.Common;
 using Noizera.Shared.Contracts.Repositories;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.MusicSets;
 using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.MusicCollections;
 
-public sealed class AlbumRepository(AppDbContext db) : BaseRepository<Album>(db), IAlbumRepository
+public sealed class AlbumRepository(AppDbContext db, IHashGenerator hashGenerator) 
+    : BaseEntityExtendedRepository<Album>(db, hashGenerator), IAlbumRepository
 {
     public async Task<Album?> GetAsync(Guid albumId, CancellationToken ct)
     {

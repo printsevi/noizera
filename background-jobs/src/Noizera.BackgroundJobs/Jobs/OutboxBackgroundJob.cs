@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Noizera.BackgroundJobs.Common;
 using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Outbox;
+using Noizera.Shared.Persistence.S3;
 using Noizera.Shared.Persistence.SQL;
 using Serilog;
 
@@ -45,43 +46,36 @@ public abstract class OutboxBackgroundJob<T>(
                 if (!messages.Any())
                 {
                     Log.Logger.Information("No outbox message is found");
+                    await Task.Delay(5000, stoppingToken);
                     continue;
                 }
 
-                var tasks = messages.Select(async message =>
+                foreach (var message in messages)
                 {
-                    using (var taskScope = factory.CreateScope())
+                    try
                     {
-                        var taskDbContext = taskScope.ServiceProvider.GetRequiredService<AppDbContext>();
-                        try
+                        var domainEvent = OutboxConverter.ConvertToDomainEvent(message);
+                        var genericDispatcherType = typeof(DomainEventNotification<>).MakeGenericType(domainEvent.GetType());
+                        if (Activator.CreateInstance(genericDispatcherType, domainEvent) is not INotification notification)
                         {
-                            var domainEvent = OutboxConverter.ConvertToDomainEvent(message);
-                            var genericDispatcherType = typeof(DomainEventNotification<>).MakeGenericType(domainEvent.GetType());
-                            if (Activator.CreateInstance(genericDispatcherType, domainEvent) is not INotification notification)
-                            {
-                                throw new Exception($"{genericDispatcherType.FullName} is not INotification");
-                            }
+                            throw new Exception($"{genericDispatcherType.FullName} is not INotification");
+                        }
 
-                            await mediator.Publish(notification, stoppingToken);
+                        await mediator.Publish(notification, stoppingToken);
 
-                            message.Process();
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Logger.Error("Message: {messageId} is failed: {errorMessage}", message.Id, ex.Message);
-                            message.Fail();
-                        }
-                        finally
-                        {
-                            taskDbContext.Update(message);
-                            await taskDbContext.SaveChangesAsync(stoppingToken);
-                        }
+                        message.Process();
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        Log.Logger.Error("Message: {messageId} is failed: {errorMessage}", message.Id, ex.Message);
+                        message.Fail(ex.Message);
+                    }
+                }
 
-                await Task.WhenAll(tasks);
+                await db.SaveChangesAsync(stoppingToken);
 
                 executionCount++;
+
                 Log.Logger.Information("{typeName} processed {messagesCount} messages - Count: {executionCount}", typeof(T).Name, messages.Count, executionCount);
             }
             catch (Exception ex)

@@ -11,7 +11,7 @@ public class PublicProfile : EntityExtended, IDeletable
 {
     public string Name { get; private set; } = string.Empty;
     public ProfileType ProfileType { get; private set; }
-    public string? Description { get; private set; } = null!;
+    public string? Bio { get; private set; } = null!;
     public short SongLimitToUpload { get; private set; }
     public bool IsDeleted { get; set; }
     public Guid? UserId { get; private set; }
@@ -52,6 +52,16 @@ public class PublicProfile : EntityExtended, IDeletable
     {
         await VerifyUsernameAsync(username, checker, ct).ConfigureAwait(false);
         PublicId = username;
+    }
+
+    public void UpdateName(string name)
+    {
+        Name = name;
+    }
+
+    public void UpdateBio(string bio)
+    {
+        Bio = bio;
     }
 
     public void SetProfileType(ProfileType profileType)

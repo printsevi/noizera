@@ -47,9 +47,10 @@ public class OutboxMessage : Entity
         ProcessedOn = SystemClock.UtcNow;
     }
 
-    public void Fail()
+    public void Fail(string error)
     {
         FailedOn = SystemClock.UtcNow;
+        ErrorText = error;
         Retries++;
     }
 

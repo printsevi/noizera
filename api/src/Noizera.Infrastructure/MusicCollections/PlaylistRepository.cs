@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Noizera.Infrastructure.Common;
 using Noizera.Shared.Contracts.Repositories;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.MusicSets;
 using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.MusicCollections;
 
-public sealed class PlaylistRepository(AppDbContext db) : BaseRepository<Playlist>(db), IPlaylistRepository
+public sealed class PlaylistRepository(AppDbContext db, IHashGenerator hashGenerator) 
+    : BaseEntityExtendedRepository<Playlist>(db, hashGenerator), IPlaylistRepository
 {
     public async Task<Playlist?> GetAsync(Guid playlistId, CancellationToken ct)
     {

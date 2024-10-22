@@ -50,11 +50,15 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import useUser from '@/hooks/useUser';
-import { Plus } from 'lucide-react';
+import { CalendarIcon, Plus } from 'lucide-react';
 import deleteAudioFile from '@/api/songs/deleteAudioFile';
 import deleteAlbumCoverImage from '@/api/musicCollections/deleteAlbumCoverImage';
 import AuthRequired from '@/components/AuthRequired';
 import ActionRequired from '@/components/ActionRequired';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from "date-fns";
 
 interface SongItem {
   key: string;
@@ -82,6 +86,33 @@ const NewAlbumContent = () => {
   const [albumTitleDb, setAlbumTitleDb] = useState(data?.data?.title ?? "");
   const [submitted, setSubmitted] = useState(false);
 
+  const [date, setDate] = useState<Date>()
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null)
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate)
+    setUploadStatus(null)
+  }
+
+  const uploadToBackend = async () => {
+    if (!date) return
+
+    setIsUploading(true)
+    setUploadStatus(null)
+
+    // Simulating an API call
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      console.log("Date uploaded:", format(date, "yyyy-MM-dd"))
+      setUploadStatus("Date uploaded successfully!")
+    } catch (error) {
+      setUploadStatus("Failed to upload date. Please try again.")
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   useEffect(() => {
     if (data?.ok) {
       setAlbumTitleDb(data.data?.title ?? "");
@@ -95,7 +126,7 @@ const NewAlbumContent = () => {
         contentType: x.contentType,
         isOpen: false
       })) ?? []);
-      if (data.data?.coverImageMongoId) {
+      if (data.data?.coverImageBucketName) {
         setCoverImageSrc(`${getURL()}api/music-collections/${data?.data?.albumPublicId!}/cover-image`);
       }
 
@@ -339,7 +370,7 @@ const NewAlbumContent = () => {
             <CardHeader>
               <CardTitle>Album details</CardTitle>
               <CardDescription>
-                Make changes to your album details.
+                Make changes to your album.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -349,6 +380,32 @@ const NewAlbumContent = () => {
                 onBlur={(e) => updateAlbumTitle(e.target.value)}
                 onChange={(e) => setAlbumTitle(e.target.value)}
               />
+              <Label>Release date</Label>
+              <div className="flex flex-col items-start space-y-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={handleDateSelect}
+                      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
               <Label>Cover image</Label>
               <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
               {/* <ComboboxField 
@@ -368,7 +425,7 @@ const NewAlbumContent = () => {
             <CardHeader>
               <CardTitle>Songs</CardTitle>
               <CardDescription>
-                Add, sort and delete you songs here.
+                Add, sort and edit your songs here.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -420,7 +477,7 @@ const NewAlbumContent = () => {
         <AlertDialogHeader>
           <AlertDialogTitle>Is the album ready to be submitted?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. The album will be released after required checks.
+            This action cannot be undone. The album will be released after processing.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

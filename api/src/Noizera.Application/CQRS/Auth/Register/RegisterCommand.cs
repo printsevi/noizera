@@ -2,6 +2,7 @@
 using Noizera.Shared.Contracts.Errors;
 using Noizera.Shared.Contracts.Repositories;
 using Noizera.Shared.Contracts.Security;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Profiles;
 using Noizera.Shared.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
@@ -19,6 +20,7 @@ public sealed record RegisterCommand(
         IUserUniquenessChecker userUniquenessChecker,
         IProfileUniquenessChecker profileUniquenessChecker,
         IPasswordHelper passwordHelper,
+        IHashGenerator hashGenerator,
         IVerificationCodeRepository verificationCodeRepository) : IRequestHandler<RegisterCommand, Unit>
     {
         public async Task<Unit> Handle([NotNull] RegisterCommand request, CancellationToken cancellationToken)
@@ -39,6 +41,7 @@ public sealed record RegisterCommand(
                 userUniquenessChecker,
                 profileUniquenessChecker,
                 passwordHelper,
+                hashGenerator,
                 cancellationToken).ConfigureAwait(false);
 
             await userRepository.InsertAsync(user, cancellationToken).ConfigureAwait(false);

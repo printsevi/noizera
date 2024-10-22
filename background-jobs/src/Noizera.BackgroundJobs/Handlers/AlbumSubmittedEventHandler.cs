@@ -20,15 +20,8 @@ public class AlbumSubmittedEventHandler(
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.AlbumId)
                 ?? throw new Exception($"Album {notification.DomainEvent.AlbumId} is not found");
 
-        if (!album.IsProcessable)
+        if (album.IsProcessable)
         {
-            return;
-        }
-
-        try
-        {
-            album.StartProcessing();
-
             foreach (var song in album.MusicCollectionSongs.Where(x => !x.HasAudioAttached).Select(x => x.Song).ToList())
             {
                 await audioService.DownloadOriginalFileAsync(song.PublicId, song.OriginalFileExtension!, cancellationToken).ConfigureAwait(false);
@@ -44,15 +37,6 @@ public class AlbumSubmittedEventHandler(
             }
 
             album.Release();
-        }
-        catch
-        {
-            album.StopProcessing();
-            throw;
-        }
-        finally
-        {
-            db.Update(album);
         }
     }
 }

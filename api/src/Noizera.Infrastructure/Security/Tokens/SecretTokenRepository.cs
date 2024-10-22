@@ -5,6 +5,6 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Security.Tokens;
 
-public sealed class SecretTokenRepository(AppDbContext db) : BaseRepository<SecretToken>(db), ISecretTokenRepository
+public sealed class SecretTokenRepository(AppDbContext db) : BaseEntityRepository<SecretToken>(db), ISecretTokenRepository
 {
 }
