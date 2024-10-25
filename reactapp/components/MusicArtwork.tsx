@@ -19,6 +19,8 @@ import { EllipsisVerticalIcon, PlayCircleIcon, PlayIcon, PlusCircleIcon, User } 
 import useSong from "@/hooks/useSong";
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import useUser from "@/hooks/useUser";
+import { useCallback, useEffect, useState } from "react";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   aspectRatio?: "portrait" | "square",
@@ -35,34 +37,52 @@ export function MusicArtwork({
   publicId,
   ...props
 }: Props) {
-  const {updateQueue} = useSong();
+  const { updateQueue } = useSong();
+  const { user } = useUser();
+  const [contentType, setContentType] = useState<"audio/mpeg" | "audio/flac">("audio/mpeg");
 
-  const onPlay = async () => {
-    const response = await getMusicCollectionSongs(publicId);
-    if(response.ok) {
-      const songs = response.data?.songs ?? [];
-      updateQueue(songs.map(s => ({id: s.songPublicId, title: s.title})));
+  useEffect(() => {
+    if (user?.activeSubscriptions && user.activeSubscriptions.length > 0) {
+      setContentType("audio/flac");
+    } else {
+      setContentType("audio/mpeg");
     }
-  };
+  }, [user?.activeSubscriptions?.length]);
+
+  const onPlay = useCallback(async () => {
+    const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
+    const response = await getMusicCollectionSongs(publicId, audioType);
+    if (response.ok) {
+      const songs = response.data?.songs ?? [];
+      updateQueue(songs.map(s => ({
+        id: s.songPublicId,
+        title: s.title,
+        contentLength: s.contentLength,
+        contentType: audioType,
+        durationInSeconds: s.durationInSeconds,
+        coverPath: coverPath
+      })));
+    }
+  }, [updateQueue, user?.activeSubscriptions?.length]);
 
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
-            <div className="overflow-hidden rounded-md cursor-pointer">
-                <Card className="border-none">
-                    <CardContent className="flex aspect-square items-center justify-center group relative">
-                        <Image
-                            src={coverPath}
-                            alt={title}
-                            fill
-                            className={cn(
-                                "object-cover transition-all group-hover:scale-105",
-                                aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-                            )}
-                        />
-                        <div onClick={() => console.log("aaaa")} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
-            {/* <button onClick={(e) => {
+          <div className="overflow-hidden rounded-md cursor-pointer">
+            <Card className="border-none">
+              <CardContent className="flex aspect-square items-center justify-center group relative">
+                <Image
+                  src={coverPath}
+                  alt={title}
+                  fill
+                  className={cn(
+                    "object-cover transition-all group-hover:scale-105",
+                    aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
+                  )}
+                />
+                <div onClick={() => console.log("aaaa")} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
+                  {/* <button onClick={(e) => {
                 e.stopPropagation();
                 console.log("LIKE")}
                 } 
@@ -70,36 +90,36 @@ export function MusicArtwork({
               <PlusCircleIcon/>
             </button> */}
 
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="hover:scale-125 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition">
-                  <EllipsisVerticalIcon size={25}/>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Your profile</span>
-                  </DropdownMenuItem>
-                  </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("PLAY");
-                onPlay();
-              }} 
-              className="hover:scale-150 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition"
-            >
-              <PlayIcon size={35}/>
-            </button>
-            </div>
-                    </CardContent>
-                </Card>
-            </div>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="hover:scale-125 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition">
+                        <EllipsisVerticalIcon size={25} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Your profile</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("PLAY");
+                      onPlay();
+                    }}
+                    className="hover:scale-150 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition"
+                  >
+                    <PlayIcon size={35} />
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">
           <ContextMenuItem>Add to Library</ContextMenuItem>
@@ -140,8 +160,8 @@ export function MusicArtwork({
         </ContextMenuContent>
       </ContextMenu>
       <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none">{title}</h3>
-        {/* <p className="text-xs text-muted-foreground">{album.artist}</p> */}
+        <h3 className="mt-2 text-sm font-medium">{title}</h3>
+        <p className="text-sm text-muted-foreground">Album • Blaze</p>
       </div>
     </div>
   )

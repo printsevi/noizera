@@ -9,6 +9,7 @@ import {
   MdVolumeUp,
   MdVolumeOff,
 } from 'react-icons/md';
+import Image from "next/image"
 import { CgSpinner } from 'react-icons/cg';
 import AudioProgressBar from './AudioProgressBar';
 import IconButton from './IconButton';
@@ -16,8 +17,9 @@ import VolumeInput from './VolumeInput';
 import useSong from '@/hooks/useSong';
 import { useEffect, useRef, useState } from 'react';
 import { getURL } from '@/libs/helpers';
-import { PauseCircleIcon, PlayCircleIcon, Volume2Icon, VolumeIcon, VolumeXIcon } from 'lucide-react';
+import { Loader2, Pause, PauseCircleIcon, Play, PlayCircleIcon, Repeat, Shuffle, SkipBack, SkipForward, Volume2, Volume2Icon, VolumeIcon, VolumeX, VolumeXIcon } from 'lucide-react';
 import { Slider } from './ui/slider';
+import { Button } from './ui/button';
 
 function formatDurationDisplay(duration: number) {
   const min = Math.floor(duration / 60);
@@ -36,6 +38,7 @@ export default function AudioPlayer() {
   const [currrentProgress, setCurrrentProgress] = useState(0);
   const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(0.2);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 
   const durationDisplay = formatDurationDisplay(duration);
   const elapsedDisplay = formatDurationDisplay(currrentProgress);
@@ -137,16 +140,7 @@ export default function AudioPlayer() {
 
   return (
     <div className="
-      bg-slate-900 
-      p-3 
-      sticky 
-      bottom-0
-      bg-black 
-      w-full 
-      py-2 
-      h-[70px] 
-      px-4
-      z-10
+      sticky bottom-0 bg-background border-t p-2 sm:p-4
     ">
       {currentSong?.id && (
         <audio
@@ -166,7 +160,7 @@ export default function AudioPlayer() {
           onProgress={handleBufferProgress}
           onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
         >
-          <source src={`${getURL()}api/songs/${currentSong.id}/flac-audio`} type="audio/flac" />
+          <source src={`${getURL()}api/songs/${currentSong.id}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.contentLength}`} type={currentSong.contentType} />
         </audio>
       )}
       <AudioProgressBar
@@ -178,65 +172,63 @@ export default function AudioPlayer() {
 
       <div className="flex justify-between">
         <div className="flex flex-1 items-center gap-4 justify-self-center">
-          <IconButton
-            onClick={handlePrev}
-            aria-label="go to previous"
-            intent="secondary"
-          >
-            <MdSkipPrevious size={24} />
-          </IconButton>
-          <IconButton
-            disabled={!isReady}
-            onClick={togglePlayPause}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-            size="lg"
-          >
+          <Button onClick={handlePrev} variant="ghost" size="icon" className='hover:shadow-md'>
+            <SkipBack className="h-6 w-6" />
+          </Button>
+          <Button disabled={!isReady} variant="ghost" onClick={togglePlayPause} size="icon">
             {!isReady && currentSong ? (
-              <CgSpinner size={24} className="animate-spin" />
+              <Loader2 className="h-10 w-10 animate-spin" />
             ) : isPlaying ? (
-              <PauseCircleIcon size={30} />
+              <Pause className="h-10 w-10" />
             ) : (
-              <PlayCircleIcon size={30} />
+              <Play className="h-10 w-10" />
             )}
-          </IconButton>
-          <IconButton
-            onClick={handleNext}
-            aria-label="go to next"
-            intent="secondary"
-          >
-            <MdSkipNext size={24} />
-          </IconButton>
-          <span className="text-xs">
-            {elapsedDisplay} / {durationDisplay}
+
+          </Button>
+          <Button onClick={handleNext} variant="ghost" size="icon">
+            <SkipForward className="h-6 w-6" />
+          </Button>
+          <span className="text-xs hidden sm:block">
+            {elapsedDisplay}&nbsp;/&nbsp;{durationDisplay}
           </span>
         </div>
-        <div className="flex-1 text-center mb-1">
-          <p className="text-slate-300 font-bold">
-            {currentSong?.title ?? 'Select a song'}
-          </p>
-          <p className="text-xs">Singer Name</p>
+        <div className="flex items-center justify-center flex-1">
+          <Image
+            src={currentSong?.coverPath ?? ""}
+            alt="Cover"
+            width={500}
+            height={500}
+            className="w-10 h-10 aspect-square object-cover rounded-md flex-col" />
+          <div className="flex flex-col ml-1">
+            <h3 className="font-medium text-sm truncate">{currentSong?.title ?? 'Track ID'}</h3>
+            <p className="text-xs text-muted-foreground truncate">Artist Name</p>
+          </div>
         </div>
-        <div className="flex flex-1 gap-3">
-          <Slider
+        <div onMouseEnter={() => setShowVolumeSlider(true)}
+          onMouseLeave={() => setShowVolumeSlider(false)}
+          className="flex items-center justify-end space-x-2 flex-1">
+          {showVolumeSlider && <Slider
             defaultValue={[0.2]}
             min={0}
             max={1}
             step={0.01}
             value={[volume]}
             onValueChange={(e) => handleVolumeChange(e[0])}
-          />
-          <IconButton
-            intent="secondary"
-            size="sm"
-            onClick={handleMuteUnmute}
-            aria-label={volume === 0 ? 'unmute' : 'mute'}
-          >
+            className='max-w-28 hidden sm:inline-flex'
+          />}
+          <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex">
             {volume === 0 ? (
-              <VolumeXIcon size={20} />
+              <VolumeX className="h-6 w-6" />
             ) : (
-              <Volume2Icon size={20} />
+              <Volume2 className="h-6 w-6" />
             )}
-          </IconButton>
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Shuffle className="h-6 w-6" />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <Repeat className="h-6 w-6" />
+          </Button>
         </div>
       </div>
     </div>

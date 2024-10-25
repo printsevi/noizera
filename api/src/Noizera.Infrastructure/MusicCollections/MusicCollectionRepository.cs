@@ -74,13 +74,48 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
         return result.FirstOrDefault();
     }
 
-    public async Task<List<MusicCollectionSongResult>> GetSongsByCollectionPublicIdAsync(string collectionPublicId, CancellationToken ct)
+    public async Task<List<MusicCollectionSongResult>> GetFlacSongsByCollectionPublicIdAsync(string collectionPublicId, CancellationToken ct)
     {
         FormattableString sql = $"""
             SELECT 
                 s."PublicId" as SongPublicId,
                 s."Title" as Title,
-                mcs."Sequence" as Sequence
+                mcs."Sequence" as Sequence,
+                s."FlacContentLength" as ContentLength,
+                s."DurationInSeconds" as DurationInSeconds
+            FROM 
+                public."Songs" s
+            JOIN 
+                public."MusicCollectionSongs" mcs
+                    ON s."Id" = mcs."SongId"
+            WHERE 
+                mcs."MusicCollectionId" = (                                 
+                    SELECT mc."Id"
+                    FROM public."MusicCollections" mc
+                    WHERE 
+                        mc."PublicId" = {collectionPublicId}
+                        AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
+                            OR mc."CollectionType" = 'collection_playlist')
+                        AND mc."IsDeleted" = false
+                    LIMIT 1
+                );
+            """;
+
+        var result = await Db.Database
+            .SqlQuery<MusicCollectionSongResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+
+        return result;
+    }
+
+    public async Task<List<MusicCollectionSongResult>> GetMp3SongsByCollectionPublicIdAsync(string collectionPublicId, CancellationToken ct)
+    {
+        FormattableString sql = $"""
+            SELECT 
+                s."PublicId" as SongPublicId,
+                s."Title" as Title,
+                mcs."Sequence" as Sequence,
+                s."Mp3ContentLength" as ContentLength,
+                s."DurationInSeconds" as DurationInSeconds
             FROM 
                 public."Songs" s
             JOIN 
@@ -131,8 +166,7 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
             FROM 
                 public."MusicCollections" mc
             WHERE 
-                ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
-                    OR mc."CollectionType" = 'collection_playlist')
+                (mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                 AND mc."IsDeleted" = false
             Limit 20
             """;

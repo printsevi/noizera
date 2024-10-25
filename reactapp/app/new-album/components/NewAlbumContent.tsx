@@ -59,6 +59,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from "date-fns";
+import updateAlbumReleaseDate from '@/api/musicCollections/updateAlbumReleaseDate';
 
 interface SongItem {
   key: string;
@@ -86,37 +87,25 @@ const NewAlbumContent = () => {
   const [albumTitleDb, setAlbumTitleDb] = useState(data?.data?.title ?? "");
   const [submitted, setSubmitted] = useState(false);
 
-  const [date, setDate] = useState<Date>()
+  const [date, setDate] = useState(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined)
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadStatus, setUploadStatus] = useState<string | null>(null)
 
-  const handleDateSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate)
-    setUploadStatus(null)
-  }
-
-  const uploadToBackend = async () => {
-    if (!date) return
-
-    setIsUploading(true)
-    setUploadStatus(null)
-
-    // Simulating an API call
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log("Date uploaded:", format(date, "yyyy-MM-dd"))
-      setUploadStatus("Date uploaded successfully!")
-    } catch (error) {
-      setUploadStatus("Failed to upload date. Please try again.")
-    } finally {
-      setIsUploading(false)
+  const handleDateSelect = async (selectedDate: Date | undefined) => {
+    setIsUploading(true);
+    const response = await updateAlbumReleaseDate(axiosPrivate, auth.userId!, data?.data?.albumId!, selectedDate ? format(selectedDate, "yyyy-MM-dd") : "");
+    if (response.ok) {
+      setDate(selectedDate);
+    } else {
+      setDate(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined);
     }
+    setIsUploading(false);
   }
 
   useEffect(() => {
     if (data?.ok) {
       setAlbumTitleDb(data.data?.title ?? "");
       setAlbumTitle(data.data?.title ?? "");
+      setDate(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined);
       setSongs(data.data?.songs.sort(x => x.sequence).map(x => ({
         key: x.key,
         title: x.title,
@@ -278,7 +267,6 @@ const NewAlbumContent = () => {
 
 
   const updateAlbumTitle = async (value: string) => {
-    console.log(value);
     if (albumTitleDb !== value) {
       const response = await updateMusicCollectionTitle(axiosPrivate, auth.userId!, data?.data?.albumId!, value);
       if (response.ok) {

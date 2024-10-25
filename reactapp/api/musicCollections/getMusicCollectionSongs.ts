@@ -9,14 +9,15 @@ export interface GetMusicCollectionSongsResponse {
 export interface MusicCollectionSongResponse {
   songPublicId: string;
   title: string;
+  contentLength: number;
   sequence: number;
   durationInSeconds: number;
 }
 
-const getMusicCollectionSongs = async (collectionPublicId: string): Promise<ApiResponse<GetMusicCollectionSongsResponse>> => {
-  const result : ApiResponse<GetMusicCollectionSongsResponse> = { ok: true };
+const getMusicCollectionSongs = async (collectionPublicId: string, audioType: string): Promise<ApiResponse<GetMusicCollectionSongsResponse>> => {
+  const result: ApiResponse<GetMusicCollectionSongsResponse> = { ok: true };
   try {
-    const response = await axiosPublic.get<GetMusicCollectionSongsResponse>(`/music-collections/${collectionPublicId}/songs`);
+    const response = await axiosPublic.get<GetMusicCollectionSongsResponse>(`/music-collections/${collectionPublicId}/songs?audioType=${audioType}`);
     result.data = response.data;
   } catch (err) {
     result.ok = false;

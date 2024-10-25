@@ -15,6 +15,7 @@ public class AlbumSubmittedEventHandler(
     public async Task Handle(DomainEventNotification<AlbumSubmittedEvent> notification, CancellationToken cancellationToken)
     {
         var album = await db.Albums
+            .AsTracking()
             .Include(x => x.MusicCollectionSongs)
                     .ThenInclude(x => x.Song)
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.AlbumId)
@@ -27,11 +28,11 @@ public class AlbumSubmittedEventHandler(
                 await audioService.DownloadOriginalFileAsync(song.PublicId, song.OriginalFileExtension!, cancellationToken).ConfigureAwait(false);
 
                 (var flacLength, var flacBucket) = await audioService.ConvertAndSaveFlacAudioFileToS3Async(song.PublicId, song.OriginalFileExtension!, cancellationToken);
-                var duration = await audioService.GetFlacDurationInSecondsAsync(song.PublicId, cancellationToken);
-                song.SaveAudioFileToFlacBucket(flacBucket, flacLength, duration);
+                song.SaveAudioFileToFlacBucket(flacBucket, flacLength);
 
                 (var mp3Length, var mp3Bucket) = await audioService.ConvertAndSaveMp3AudioFileToS3Async(song.PublicId, song.OriginalFileExtension!, cancellationToken);
-                song.SaveAudioFileToMp3Bucket(mp3Bucket, mp3Length);
+                var duration = audioService.GetMp3DurationInSecondsAsync(song.PublicId);
+                song.SaveAudioFileToMp3Bucket(mp3Bucket, mp3Length, duration);
 
                 audioService.DeleteAudioFiles(song.PublicId);
             }

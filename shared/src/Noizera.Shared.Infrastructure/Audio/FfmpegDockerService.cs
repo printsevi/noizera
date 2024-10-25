@@ -19,7 +19,7 @@ public class FfmpegDockerService(IDockerClient dockerClient)
             HostConfig = new HostConfig
             {
                 Binds = new List<string> { volumeBind },
-                //AutoRemove = true
+                AutoRemove = true
             },
             Volumes = new Dictionary<string, EmptyStruct>() { { volumeBind, new EmptyStruct() } },
             Cmd = cmd

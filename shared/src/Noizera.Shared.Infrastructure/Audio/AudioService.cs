@@ -1,9 +1,8 @@
 ﻿using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
+using NAudio.Wave;
 using Noizera.Shared.Infrastructure.DataStructure;
 using Noizera.Shared.Persistence.S3;
-using System.Diagnostics;
-using Xabe.FFmpeg;
 
 namespace Noizera.Shared.Infrastructure.Audio;
 
@@ -56,7 +55,7 @@ public class AudioService(
         string inputFile = $"{fileId}{inputExtension}";
         string dockerInputFilePath = $"{dataStructureProvider.DockerAudioPath}/{inputFile}";
 
-        string outputMp3File = $"output-mp3-{fileId}.flac";
+        string outputMp3File = $"output-mp3-{fileId}.mp3";
         string dockerOutputMp3FilePath = $"{dataStructureProvider.DockerAudioPath}/{outputMp3File}";
         string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputMp3File}";
 
@@ -76,7 +75,7 @@ public class AudioService(
         string mp3Bucket;
         using (FileStream outputFileStream = new(outputMp3FilePath, FileMode.Open))
         {
-            (mp3Length, mp3Bucket) = await s3.UploadMp3AudioAsync(fileId, "audio/mp3", outputFileStream, ct).ConfigureAwait(false);
+            (mp3Length, mp3Bucket) = await s3.UploadMp3AudioAsync(fileId, "audio/mpeg", outputFileStream, ct).ConfigureAwait(false);
         }
 
         return (mp3Length, mp3Bucket);
@@ -95,12 +94,12 @@ public class AudioService(
         }
     }
 
-    public async Task<double> GetFlacDurationInSecondsAsync(string fileId, CancellationToken ct)
+    public double GetMp3DurationInSecondsAsync(string fileId)
     {
-        string outputFlacFile = $"output-flac-{fileId}";
-        var mediaInfo = await FFmpeg.GetMediaInfo($"{dataStructureProvider.AudioPath}/{outputFlacFile}", ct);
+        string outputMp3File = $"output-mp3-{fileId}.mp3";
+        Mp3FileReader reader = new Mp3FileReader($"{dataStructureProvider.AudioPath}/{outputMp3File}");
 
-        return mediaInfo.Duration.TotalSeconds;
+        return reader.TotalTime.TotalSeconds;
     }
 
     public void DeleteAudioFiles(string fileId)
@@ -112,7 +111,7 @@ public class AudioService(
         string outputFlacFilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
 
         string outputMp3File = $"output-mp3-{fileId}";
-        string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
+        string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputMp3File}";
 
         File.Delete(outputFlacFilePath);
         File.Delete(outputMp3FilePath);

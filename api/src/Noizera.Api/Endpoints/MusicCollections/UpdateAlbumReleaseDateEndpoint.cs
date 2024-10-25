@@ -8,7 +8,7 @@ namespace Noizera.Api.Endpoints.MusicCollections;
 
 internal sealed class UpdateAlbumReleaseDateEndpoint : IEndpoint
 {
-    private sealed record Request(string NewDate);
+    private sealed record Request(string? NewDate);
 
     public void Setup(IEndpointRouteBuilder app)
         => app.MapPut("/api/music-collections/albums/{albumId}/release-date", Handle)

@@ -8,7 +8,7 @@ namespace Noizera.Application.CQRS.MusicCollections.UpdateAlbumReleaseDate;
 
 public sealed record UpdateAlbumReleaseDateCommand(
     Guid AlbumId,
-    string NewDate,
+    string? NewDate,
     Guid UserId)
     : IAuthorizeableRequest<Unit>
 {
@@ -18,7 +18,8 @@ public sealed record UpdateAlbumReleaseDateCommand(
     {
         public async Task<Unit> Handle([NotNull] UpdateAlbumReleaseDateCommand request, CancellationToken cancellationToken)
         {
-            if (!DateOnly.TryParse(request.NewDate, out var releaseDate))
+            DateOnly releaseDate = default;
+            if (!string.IsNullOrEmpty(request.NewDate) && !DateOnly.TryParse(request.NewDate, out releaseDate))
             {
                 throw new AppException($"Date {request.NewDate} has incorrect format", ErrorType.BadRequest);
             }
@@ -26,7 +27,7 @@ public sealed record UpdateAlbumReleaseDateCommand(
             var album = await albumRepository.GetAsync(request.AlbumId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException("Album not found", ErrorType.NotFound);
 
-            album.SetReleaseDate(releaseDate);
+            album.SetReleaseDate(!string.IsNullOrEmpty(request.NewDate) ? releaseDate : null);
 
             await albumRepository.UpdateAsync(album, cancellationToken).ConfigureAwait(false);
 

@@ -35,14 +35,13 @@ public class AudioFileService(
 
     public async Task<AudioStreamResult> GetAudioFileAsStream(string fileId, string requestedRange, long fileLength, string audioType, CancellationToken ct)
     {
-        if (audioType == "original")
+        return audioType switch
         {
-            return await GetOriginalAudioFileAsStream(fileId, requestedRange, fileLength, ct);
-        }
-        else
-        {
-            throw new Exception();
-        }
+            "original" => await GetOriginalAudioFileAsStream(fileId, requestedRange, fileLength, ct),
+            "audio/flac" => await GetFlacAudioFileAsStream(fileId, requestedRange, fileLength, ct),
+            "audio/mpeg" => await GetMp3AudioFileAsStream(fileId, requestedRange, fileLength, ct),
+            _ => throw new Exception("Content type is undefined")
+        };
     }
 
     private async Task<AudioStreamResult> GetOriginalAudioFileAsStream(string fileId, string requestedRange, long fileLength, CancellationToken ct)
@@ -60,6 +59,45 @@ public class AudioFileService(
         var partLength = end - start + 1;
 
         var result = await s3.GetOriginalAudioAsync(fileId, start, end, ct);
+
+        return new(result.Stream, fileLength, result.ContentType, partLength, start, end);
+    }
+
+
+    private async Task<AudioStreamResult> GetFlacAudioFileAsStream(string fileId, string requestedRange, long fileLength, CancellationToken ct)
+    {
+        const long FILE_PORTION_SIZE = 500000; // 0.5MB
+
+        var start = 0L;
+        if (!string.IsNullOrEmpty(requestedRange))
+        {
+            var range = requestedRange.Replace("bytes=", "").Split('-');
+            start = long.Parse(range[0]);
+        }
+
+        var end = Math.Min(start + FILE_PORTION_SIZE, fileLength - 1);
+        var partLength = end - start + 1;
+
+        var result = await s3.GetFlacAudioAsync(fileId, start, end, ct).ConfigureAwait(false);
+
+        return new(result.Stream, fileLength, result.ContentType, partLength, start, end);
+    }
+
+    private async Task<AudioStreamResult> GetMp3AudioFileAsStream(string fileId, string requestedRange, long fileLength, CancellationToken ct)
+    {
+        const long FILE_PORTION_SIZE = 500000; // 0.5MB
+
+        var start = 0L;
+        if (!string.IsNullOrEmpty(requestedRange))
+        {
+            var range = requestedRange.Replace("bytes=", "").Split('-');
+            start = long.Parse(range[0]);
+        }
+
+        var end = Math.Min(start + FILE_PORTION_SIZE, fileLength - 1);
+        var partLength = end - start + 1;
+
+        var result = await s3.GetMp3AudioAsync(fileId, start, end, ct).ConfigureAwait(false);
 
         return new(result.Stream, fileLength, result.ContentType, partLength, start, end);
     }

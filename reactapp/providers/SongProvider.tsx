@@ -3,6 +3,7 @@
 import addStream from "@/api/songs/addStream";
 import useAuth from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import useUser from "@/hooks/useUser";
 import { ReactNode, createContext, useEffect, useState } from "react";
 
 interface Props {
@@ -12,10 +13,14 @@ interface Props {
 export interface ISongModel {
     id: string;
     title: string;
+    contentLength: number;
+    contentType: string;
+    durationInSeconds: number;
+    coverPath: string;
 }
 
 export interface ISongContext {
-    currentSong: ISongModel|undefined;
+    currentSong: ISongModel | undefined;
     updateQueue: (newSongs: ISongModel[]) => void;
     queue: ISongModel[];
     next: () => void;
@@ -30,6 +35,7 @@ const STREAM_IN_SECONDS = 15;
 
 const SongContextProvider = ({ children }: Props) => {
     const { auth, isAuthenticated } = useAuth();
+    const { user } = useUser();
     const { isReady, axiosPrivate } = useAxiosPrivate();
     const [queue, setQueue] = useState<ISongModel[]>([]);
     const [currentSong, setCurrentSong] = useState<ISongModel>();
@@ -38,7 +44,7 @@ const SongContextProvider = ({ children }: Props) => {
 
     const updateQueue = (newSongs: ISongModel[]) => {
         setQueue(newSongs);
-        if(newSongs.length > 0) {
+        if (newSongs.length > 0) {
             setCurrentSong(newSongs[0]);
         }
     };
@@ -71,22 +77,22 @@ const SongContextProvider = ({ children }: Props) => {
 
         if (isPlaying) {
             if (intervalId) {
-              clearInterval(intervalId);
+                clearInterval(intervalId);
             }
-      
+
             const id = setInterval(async () => await addStream(axiosPrivate, auth.userId!, currentSong?.id!, STREAM_IN_SECONDS), STREAM_IN_SECONDS * 1000); // call API every 15 seconds
             setIntervalId(id);
         } else if (intervalId) {
             clearInterval(intervalId); // stop the interval when paused
             setIntervalId(undefined);
         }
-      
-          return () => {
+
+        return () => {
             if (intervalId) {
-              clearInterval(intervalId);
+                clearInterval(intervalId);
             }
-          };
-      }, [isPlaying, currentSong?.id, isReady, isAuthenticated]);
+        };
+    }, [isPlaying, currentSong?.id, isReady, isAuthenticated]);
 
     return (
         <SongContext.Provider value={{ currentSong, updateQueue, next, prev, play, isPlaying, queue }}>
@@ -96,7 +102,7 @@ const SongContextProvider = ({ children }: Props) => {
 }
 
 export const SongProvider: React.FC<Props> = ({ children }) => {
-  return <SongContextProvider>{children}</SongContextProvider>;
+    return <SongContextProvider>{children}</SongContextProvider>;
 };
 
 export default SongContext;

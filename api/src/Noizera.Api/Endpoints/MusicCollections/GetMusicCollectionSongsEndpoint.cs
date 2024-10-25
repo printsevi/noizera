@@ -13,10 +13,11 @@ internal sealed class GetMusicCollectionSongsEndpoint : IEndpoint
 
     internal static async Task<IResult> Handle(
         string collectionPublicId,
+        string audioType,
         [FromServices] ISender sender,
         CancellationToken ct)
     {
-        GetMusicCollectionSongsQuery query = new(collectionPublicId);
+        GetMusicCollectionSongsQuery query = new(collectionPublicId, audioType);
         var result = await sender.Send(query, ct).ConfigureAwait(false);
 
         return Results.Ok(result);

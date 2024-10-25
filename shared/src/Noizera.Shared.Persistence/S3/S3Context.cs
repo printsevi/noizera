@@ -66,6 +66,16 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         return await GetFilePartAsync(settings.OriginalAudio, key, start, end, ct).ConfigureAwait(false);
     }
 
+    public async Task<(Stream Stream, string ContentType)> GetFlacAudioAsync(string key, long start, long end, CancellationToken ct)
+    {
+        return await GetFilePartAsync(settings.FlacAudio, key, start, end, ct).ConfigureAwait(false);
+    }
+
+    public async Task<(Stream Stream, string ContentType)> GetMp3AudioAsync(string key, long start, long end, CancellationToken ct)
+    {
+        return await GetFilePartAsync(settings.Mp3Audio, key, start, end, ct).ConfigureAwait(false);
+    }
+
     public async Task<GetObjectResponse> GetOriginalAudioFileAsync(string key, CancellationToken ct)
     {
         var request = new GetObjectRequest

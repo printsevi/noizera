@@ -38,17 +38,17 @@ const fetchCollectionsForPublicCategory = async (category: GetFeedMusicCollectio
     return { ...category, items: [] };
   }
 
-  return { ...category, items: publicCollectionsData.data?.items! };
+  return { ...category, items: publicCollectionsData.data! };
 };
 
 const fetchCollectionsForCategory = async (category: GetFeedMusicCollectionItem, userId: string, axiosPrivate: AxiosInstance)
   : Promise<FeedMusicCategoryItem> => {
-  const publicCollectionsData = await getFeedCollections(category.api, userId, axiosPrivate);
-  if (!publicCollectionsData.ok) {
+  const collectionsData = await getFeedCollections(category.api, userId, axiosPrivate);
+  if (!collectionsData.ok) {
     return { ...category, items: [] };
   }
 
-  return { ...category, items: publicCollectionsData.data?.items! };
+  return { ...category, items: collectionsData.data! };
 };
 
 const PageContent: React.FC<PageContentProps> = ({ songs }) => {
@@ -111,7 +111,7 @@ const PageContent: React.FC<PageContentProps> = ({ songs }) => {
             <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
             <CarouselContent>
               {category.items?.map((item, index) => (
-                <CarouselItem key={item.publicId} className="pl-2 md:pl-4 basis-1/2 md:basis-1/5">
+                <CarouselItem key={item.publicId} className="basis-1/2 pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5 md:pl-4">
                   <MusicArtwork
                     title={item.title}
                     publicId={item.publicId}

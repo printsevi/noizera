@@ -1,12 +1,12 @@
 import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
-import { GetMusicCollectionsResponse } from './getFeedPublicCollections';
+import { MusicCollectionResponse } from './getFeedPublicCollections';
 import { AxiosInstance } from 'axios';
 
 const getFeedCollections = async (api: string, userId: string, axiosPrivate: AxiosInstance)
-  : Promise<ApiResponse<GetMusicCollectionsResponse>> => {
-  const result : ApiResponse<GetMusicCollectionsResponse> = { ok: true };
+  : Promise<ApiResponse<MusicCollectionResponse[]>> => {
+  const result: ApiResponse<MusicCollectionResponse[]> = { ok: true };
   try {
-    const response = await axiosPrivate.get<GetMusicCollectionsResponse>(`/feed/collections/${api}?userId=${userId}`);
+    const response = await axiosPrivate.get<MusicCollectionResponse[]>(`/feed/collections/${api}?userId=${userId}`);
     result.data = response.data;
   } catch (err) {
     result.ok = false;

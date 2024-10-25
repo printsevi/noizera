@@ -64,6 +64,7 @@ public sealed class Song : EntityExtended
         OriginalFileExtension = extension;
         OriginalContentLength = contentLength;
         OriginalContentType = contentType;
+        OriginalBucketName = bucket;
     }
 
     public void DeleteOriginalAudioFile()
@@ -72,19 +73,20 @@ public sealed class Song : EntityExtended
         OriginalFileExtension = null;
         OriginalContentLength = null;
         OriginalContentType = null;
+        OriginalBucketName = null;
     }
 
-    public void SaveAudioFileToMp3Bucket(string bucketName, long contentLength)
+    public void SaveAudioFileToMp3Bucket(string bucketName, long contentLength, double duration)
     {
         Mp3BucketName = bucketName;
         Mp3ContentLength = contentLength;
+        DurationInSeconds = duration;
     }
 
-    public void SaveAudioFileToFlacBucket(string bucketName, long contentLength, double duration)
+    public void SaveAudioFileToFlacBucket(string bucketName, long contentLength)
     {
         FlacBucketName = bucketName;
         FlacContentLength = contentLength;
-        DurationInSeconds = duration;
     }
 
     public void SetTitle(string newTitle, Album album, Guid userId)

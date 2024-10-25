@@ -3,10 +3,6 @@
 import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
 
-export interface GetMusicCollectionsResponse {
-  items: MusicCollectionResponse[];
-}
-
 export interface MusicCollectionResponse {
   publicId: string,
   title: string,
@@ -14,10 +10,10 @@ export interface MusicCollectionResponse {
 }
 
 const getFeedPublicCollections = async (api: string)
-  : Promise<ApiResponse<GetMusicCollectionsResponse>> => {
-  const result : ApiResponse<GetMusicCollectionsResponse> = { ok: true };
+  : Promise<ApiResponse<MusicCollectionResponse[]>> => {
+  const result: ApiResponse<MusicCollectionResponse[]> = { ok: true };
   try {
-    const response = await axiosPublic.get<GetMusicCollectionsResponse>(`/feed/collections/${api}`);
+    const response = await axiosPublic.get<MusicCollectionResponse[]>(`/feed/collections/${api}`);
     result.data = response.data;
   } catch (err) {
     result.ok = false;

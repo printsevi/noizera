@@ -8,6 +8,7 @@ export interface GetOrCreateAlbumDraftResponse {
   albumPublicId: string;
   title: string;
   description?: string;
+  releaseDate?: string;
   coverImageBucketName?: string;
   coverImageOriginalName?: string;
   profileName: string;

@@ -5,7 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Noizera.Application.CQRS.MusicCollections.GetMusicCollectionSongs;
 
 public sealed record GetMusicCollectionSongsQuery(
-    string MusicCollectionPublicId)
+    string MusicCollectionPublicId,
+    string AudioType)
     : IRequest<GetMusicCollectionSongsResponse>
 {
     public sealed class Handler(
@@ -14,7 +15,9 @@ public sealed record GetMusicCollectionSongsQuery(
     {
         public async Task<GetMusicCollectionSongsResponse> Handle([NotNull] GetMusicCollectionSongsQuery request, CancellationToken cancellationToken)
         {
-            var songs = await musicCollectionRepository.GetSongsByCollectionPublicIdAsync(request.MusicCollectionPublicId, cancellationToken).ConfigureAwait(false);
+            var songs = request.AudioType == "audio/flac" 
+                ? await musicCollectionRepository.GetFlacSongsByCollectionPublicIdAsync(request.MusicCollectionPublicId, cancellationToken).ConfigureAwait(false)
+                : await musicCollectionRepository.GetMp3SongsByCollectionPublicIdAsync(request.MusicCollectionPublicId, cancellationToken).ConfigureAwait(false);
             return new(songs);
         }
     }

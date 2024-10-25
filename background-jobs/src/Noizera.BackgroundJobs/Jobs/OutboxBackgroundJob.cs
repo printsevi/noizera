@@ -39,6 +39,7 @@ public abstract class OutboxBackgroundJob<T>(
                 var db = asyncScope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                 var messages = await db.OutboxMessages
+                    .AsTracking()
                     .Where(OutboxMessage.IsProcessableExpression(IsRealTime))
                     .Take(MaxBunchAmount)
                     .ToListAsync();

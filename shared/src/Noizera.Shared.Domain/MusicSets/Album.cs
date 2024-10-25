@@ -28,7 +28,7 @@ public sealed class Album : MusicSet
         return album;
     }
 
-    public void SetReleaseDate(DateOnly date)
+    public void SetReleaseDate(DateOnly? date)
     {
         AlbumReleaseDate = date;
     }
