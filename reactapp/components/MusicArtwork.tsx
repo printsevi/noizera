@@ -21,6 +21,7 @@ import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSo
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import useUser from "@/hooks/useUser";
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   aspectRatio?: "portrait" | "square",
@@ -38,16 +39,8 @@ export function MusicArtwork({
   ...props
 }: Props) {
   const { updateQueue } = useSong();
+  const router = useRouter();
   const { user } = useUser();
-  const [contentType, setContentType] = useState<"audio/mpeg" | "audio/flac">("audio/mpeg");
-
-  useEffect(() => {
-    if (user?.activeSubscriptions && user.activeSubscriptions.length > 0) {
-      setContentType("audio/flac");
-    } else {
-      setContentType("audio/mpeg");
-    }
-  }, [user?.activeSubscriptions?.length]);
 
   const onPlay = useCallback(async () => {
     const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
@@ -81,7 +74,7 @@ export function MusicArtwork({
                     aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
                   )}
                 />
-                <div onClick={() => console.log("aaaa")} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
+                <div onClick={() => router.push(`/collections/${publicId}`)} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
                   {/* <button onClick={(e) => {
                 e.stopPropagation();
                 console.log("LIKE")}

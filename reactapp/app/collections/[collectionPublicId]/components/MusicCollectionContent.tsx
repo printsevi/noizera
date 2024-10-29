@@ -1,91 +1,266 @@
-'use client';
+"use client"
 
-import getFollowersCount from "@/api/profiles/getFollowersCount";
-import getProfile from "@/api/profiles/getProfile";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import useAuth from "@/hooks/useAuth";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import useUser from "@/hooks/useUser";
-import useSWR from "swr";
+import { useCallback, useEffect, useState } from "react"
+import Image from "next/image"
+import { PlayCircle, MoreVertical, Share, ListPlus, Pause, Heart, PauseCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import getMusicCollectionPublic from "@/api/musicCollections/getMusicCollectionPublic"
+import useAuth from "@/hooks/useAuth"
+import useAxiosPrivate from "@/hooks/useAxiosPrivate"
+import getMusicCollection from "@/api/musicCollections/getMusicCollection"
+import useUser from "@/hooks/useUser"
+import { ISongModel } from "@/providers/SongProvider"
+import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
+import { getURL } from "@/libs/helpers"
+import useSong from "@/hooks/useSong"
+
+interface Track {
+  number: number
+  title: string
+  duration: string
+  liked?: boolean
+}
+
+interface AlbumViewProps {
+  coverUrl?: string
+  title?: string
+  artist?: string
+  year?: number
+  tracks?: Track[]
+}
+
+const defaultTracks: Track[] = [
+  { number: 1, title: "Lavender Haze", duration: "3:22" },
+  { number: 2, title: "Maroon", duration: "3:38" },
+  { number: 3, title: "Anti-Hero", duration: "3:20" },
+  { number: 4, title: "Snow On The Beach", duration: "4:16" },
+  { number: 5, title: "You're On Your Own, Kid", duration: "3:14" },
+]
+
+const fetchCollection = async (publicId: string)
+  : Promise<MusicCollection | null> => {
+  const collectionData = await getMusicCollectionPublic(publicId);
+  if (!collectionData.ok) {
+    return null;
+  }
+
+  return { ...collectionData.data! };
+};
+
+interface MusicCollection {
+  title: string;
+  collectionType: string;
+  releaseDate?: string;
+  description?: string;
+}
 
 interface Props {
-  profilePublicId: string,
+  collectionPublicId: string,
 }
 
 export default function MusicCollectionContent(props: Props) {
-  const { auth } = useAuth();
+  const { auth, isAuthenticated } = useAuth();
   const { user } = useUser();
-  const { axiosPrivate, isReady } = useAxiosPrivate();
-  const { data, isLoading } = useSWR(getProfile.name, () => getProfile(props.profilePublicId), {
-    revalidateIfStale: true,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
-  });
+  const { isReady, axiosPrivate } = useAxiosPrivate();
+  const [musicCollection, setMusicCollection] = useState<MusicCollection>();
+  const [songs, setSongs] = useState<ISongModel[]>([]);
+  const { updateQueue } = useSong();
 
-  if(!data?.ok) {
-    return <></>;
+  const fetchCollection = useCallback(async () => {
+    const collectionData = isAuthenticated
+      ? await getMusicCollection(props.collectionPublicId, axiosPrivate, auth.userId!)
+      : await getMusicCollectionPublic(props.collectionPublicId);
+    if (collectionData.ok) {
+      setMusicCollection({ ...collectionData.data! });
+    }
+  }, [isAuthenticated, axiosPrivate, auth.userId]);
+
+  const fetchSongs = useCallback(async () => {
+    const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
+    const songsData = isAuthenticated
+      ? await getMusicCollectionSongs(props.collectionPublicId, audioType)
+      : await getMusicCollectionSongs(props.collectionPublicId, audioType);
+    if (songsData.ok) {
+      setSongs(songsData.data!.songs!.map(s => ({
+        id: s.songPublicId,
+        title: s.title,
+        contentLength: s.contentLength,
+        contentType: audioType,
+        durationInSeconds: s.durationInSeconds,
+        coverPath: ""
+      })));
+    }
+  }, [isAuthenticated, isReady, axiosPrivate, auth.userId, user?.activeSubscriptions?.length]);
+
+  useEffect(() => {
+    if (isReady) {
+      fetchSongs();
+    }
+  }, [isReady, isAuthenticated, fetchSongs]);
+
+  useEffect(() => {
+    if (isReady) {
+      fetchCollection();
+    }
+  }, [isReady, isAuthenticated, fetchCollection]);
+
+  const trackCount = songs?.length ?? 0
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [likedTracks, setLikedTracks] = useState<Set<number>>(new Set())
+
+  const onPlay = useCallback(async () => {
+    updateQueue(songs.map(s => ({
+      id: s.id,
+      title: s.title,
+      contentLength: s.contentLength,
+      contentType: s.contentType,
+      durationInSeconds: s.durationInSeconds,
+      coverPath: ""
+    })));
+  }, [songs]);
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying)
   }
 
-  const onFollowToggle = async () => {
+  const handleTrackPlay = (track: Track) => {
+    setCurrentTrack(track)
+    setIsPlaying(true)
+  }
 
+  const handleLikeTrack = (trackNumber: number) => {
+    setLikedTracks((prev) => {
+      const newLiked = new Set(prev)
+      if (newLiked.has(trackNumber)) {
+        newLiked.delete(trackNumber)
+      } else {
+        newLiked.add(trackNumber)
+      }
+      return newLiked
+    })
+  }
+
+  if (!musicCollection) {
+    return <></>
   }
 
   return (
-    <div className="pl-6 pr-6">
-      <div className="flex">
-      <div className="flex-initial">
-        <Avatar className="w-24 h-24 md:w-36 md:h-36">
-          <AvatarImage src={data.data?.profileImageSrc ?? ""} />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </div>
-      <div className="flex-1 pl-8">
-        <div className="flex">
-          <h1 className="text-xl pl-4">{props.profilePublicId}</h1>
-          {user?.username !== props.profilePublicId && <Button
-            variant={data.data?.isFollowing ? 'secondary' : 'default'}
-            onClick={onFollowToggle}
-          >
-            {data.data?.isFollowing ? 'Following' : 'Follow'}
-          </Button>}
-        </div>
-        <div className="flex">
-          <Button variant="ghost" className=""><span className="font-bold pr-1 text-lg">{data?.data?.followersCount ?? 0}</span>followers</Button>
-          <Button variant="ghost" className=""><span className="font-bold pr-1 text-lg">{data?.data?.followingsCount ?? 0}</span>following</Button>
-        </div>
-        {data.data?.name && <div className="pl-4">
-          <h1 className="font-bold text-lg">{data.data?.name}</h1>
-        </div>}
-        {data.data?.bio && <div className="pl-4">
-          <h1 className="text-sm">{data.data?.bio}</h1>
-        </div>}
-      </div>
-      </div>
-    <div className="w-full mt-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6">
-        {/* {albums.map((album) => (
-          <Card key={album.id} className="shadow-lg hover:shadow-2xl">
-            <img
-              className="w-full h-48 object-cover rounded-t-lg"
-              src={album.coverImage}
-              alt={`${album.title} cover`}
-            />
-            <div className="p-4">
-              <h3 className="text-xl font-semibold text-gray-800">
-                {album.title}
-              </h3>
-              <p className="text-gray-500">{album.releaseDate}</p>
-              <Button className="mt-4" variant="ghost">
-                <CarIcon className="w-5 h-5 mr-2" />
-                Play
-              </Button>
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <div className="flex flex-col md:flex-row gap-8 p-6 flex-grow">
+        <div className="flex flex-col items-center md:items-start gap-4">
+          <Image
+            src={`${getURL()}api/music-collections/${props.collectionPublicId}/cover-image`}
+            alt={`${musicCollection.title} by ${musicCollection.title}`}
+            width={300}
+            height={300}
+            className="rounded-lg shadow-lg"
+          />
+          <div className="text-center md:text-left">
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl font-bold">{musicCollection.title}</h1>
             </div>
-          </Card>
-        ))} */}
+            <p className="text-xl text-muted-foreground">{musicCollection.title}</p>
+            <p className="text-sm text-muted-foreground">{musicCollection.releaseDate} • {trackCount} songs</p>
+          </div>
+          <div className="flex gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <ListPlus className="h-5 w-5" />
+            </Button>
+            <Button
+              disabled={!songs.length}
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log("PLAY");
+                onPlay();
+              }}
+            >
+              {isPlaying ? (
+                <PauseCircle className="h-12 w-12" />
+              ) : (
+                <PlayCircle className="h-12 w-12" />
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              <Share className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+        <ScrollArea className="flex-grow h-[calc(100vh-16rem)] md:h-auto">
+          <div className="space-y-1">
+            {songs!.map((track, index) => (
+              <div
+                key={index + 1}
+                className="flex items-center gap-4 p-2 rounded-md group relative"
+              >
+                <div className="absolute inset-y-0 left-0 flex items-center justify-center w-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-colors"
+                  //onClick={() => handleTrackPlay(track)}
+                  >
+                    <PlayCircle className="h-6 w-6" />
+                    <span className="sr-only">Play</span>
+                  </Button>
+                </div>
+                <span className="w-12 text-center text-muted-foreground group-hover:opacity-0 transition-opacity">
+                  {index + 1}
+                </span>
+                <span className="flex-grow truncate">{track.title}</span>
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all"
+                  //onClick={() => handleLikeTrack(track.number)}
+                  >
+                    <Heart className={`h-5 w-5 ${likedTracks.has(0) ? 'fill-current text-red-500' : ''} transition-colors`} />
+                    <span className="sr-only">Like</span>
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all">
+                        <MoreVertical className="h-5 w-5" />
+                        <span className="sr-only">More options</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>
+                        <Share className="mr-2 h-4 w-4" />
+                        <span>Share</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <ListPlus className="mr-2 h-4 w-4" />
+                        <span>Save to playlist</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <span className="text-muted-foreground w-12 text-right">{10}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
     </div>
-    </div>
-  );
+  )
 }

@@ -10,7 +10,7 @@ public sealed class Album : MusicSet
     public DateOnly? AlbumReleaseDate { get; private set; }
 
 
-    public override string PublicIdPrefix => "a-";
+    public override string PublicIdPrefix => "a_";
 
     public bool IsProcessable => AlbumStatus is AlbumStatus.Submitted;
 

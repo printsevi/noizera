@@ -1,23 +1,22 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Noizera.Api.Common;
-using Noizera.Application.CQRS.MusicCollections.GetMusicCollection;
+using Noizera.Application.CQRS.MusicCollections.GetMusicCollectionPublic;
 
 namespace Noizera.Api.Endpoints.MusicCollections;
 
-internal sealed class GetMusicCollectionEndpoint : IEndpoint
+internal sealed class GetMusicCollectionPublicEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapGet("/api/music-collections/{collectionPublicId}", Handle)
-              .RequireAuthorization();
+        => app.MapGet("/api/public/music-collections/{collectionPublicId}", Handle)
+              .AllowAnonymous();
 
     internal static async Task<IResult> Handle(
         string collectionPublicId,
-        Guid userId,
         [FromServices] ISender sender,
         CancellationToken ct)
     {
-        GetMusicCollectionQuery query = new(collectionPublicId, userId);
+        GetMusicCollectionPublicQuery query = new(collectionPublicId);
         var result = await sender.Send(query, ct).ConfigureAwait(false);
 
         return Results.Ok(result);

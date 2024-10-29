@@ -22,13 +22,38 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
     {
         FormattableString sql = $"""
             SELECT 
+                mc."Title" as Title,
+                mc."CollectionType" as CollectionType,
+                mc."Description" as Description,
+                mc."AlbumReleaseDate" as ReleaseDate
+            FROM 
+                public."MusicCollections" mc
+            WHERE 
+                mc."PublicId" = {collectionPublicId}
+                    AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
+                        OR mc."CollectionType" = 'collection_playlist')
+                    AND mc."IsDeleted" = false
+            LIMIT 1
+         """;
+
+        var result = await Db.Database
+            .SqlQuery<MusicCollectionQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+
+        return result.FirstOrDefault();
+    }
+
+    public async Task<MusicCollectionQueryResult?> GetMusicCollection2Async(string collectionPublicId, Guid? userId, CancellationToken ct)
+    {
+        FormattableString sql = $"""
+            SELECT 
                 s."PublicId" as SongPublicId,
                 s."Title" as Title,
                 mcs."Sequence" as Sequence
                 CASE 
-                    WHEN 
-                        {userId} IS NOT NULL AND fav_mcs."SongId" IS NOT NULL 
-                    THEN true 
+                    WHEN {userId} IS NULL 
+                        THEN NULL
+                    WHEN fav_mcs."SongId" IS NOT NULL 
+                        THEN true
                     ELSE false 
                 END AS IsFavourite
             FROM 
@@ -98,7 +123,8 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
                             OR mc."CollectionType" = 'collection_playlist')
                         AND mc."IsDeleted" = false
                     LIMIT 1
-                );
+                )
+            ORDER BY mcs."Sequence" ASC;
             """;
 
         var result = await Db.Database
@@ -131,7 +157,8 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
                             OR mc."CollectionType" = 'collection_playlist')
                         AND mc."IsDeleted" = false
                     LIMIT 1
-                );
+                )
+            ORDER BY mcs."Sequence" ASC;
             """;
 
         var result = await Db.Database
