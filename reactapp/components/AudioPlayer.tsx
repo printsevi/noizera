@@ -16,17 +16,10 @@ import IconButton from './IconButton';
 import VolumeInput from './VolumeInput';
 import useSong from '@/hooks/useSong';
 import { useEffect, useRef, useState } from 'react';
-import { getURL } from '@/libs/helpers';
+import { formatDurationDisplay, getURL } from '@/libs/helpers';
 import { Loader2, Pause, PauseCircleIcon, Play, PlayCircleIcon, Repeat, Shuffle, SkipBack, SkipForward, Volume2, Volume2Icon, VolumeIcon, VolumeX, VolumeXIcon } from 'lucide-react';
 import { Slider } from './ui/slider';
 import { Button } from './ui/button';
-
-function formatDurationDisplay(duration: number) {
-  const min = Math.floor(duration / 60);
-  const sec = Math.floor(duration - min * 60);
-  const formatted = [min, sec].map((n) => (n < 10 ? '0' + n : n)).join(':');
-  return formatted;
-}
 
 export default function AudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
@@ -170,12 +163,14 @@ export default function AudioPlayer() {
         onValueChange={changeAudioProgress}
       />
 
-      <div className="flex justify-between">
-        <div className="flex flex-1 items-center gap-4 justify-self-center">
-          <Button onClick={handlePrev} variant="ghost" size="icon" className='hover:shadow-md'>
+      <div className="flex justify-between"
+        onMouseEnter={() => setShowVolumeSlider(true)}
+        onMouseLeave={() => setShowVolumeSlider(false)}>
+        <div className="flex flex-1 items-center gap-2 justify-self-center">
+          <Button onClick={handlePrev} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <SkipBack className="h-6 w-6" />
           </Button>
-          <Button disabled={!isReady} variant="ghost" onClick={togglePlayPause} size="icon">
+          <Button disabled={!isReady} variant="ghost" onClick={togglePlayPause} size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             {!isReady && currentSong ? (
               <Loader2 className="h-10 w-10 animate-spin" />
             ) : isPlaying ? (
@@ -185,7 +180,7 @@ export default function AudioPlayer() {
             )}
 
           </Button>
-          <Button onClick={handleNext} variant="ghost" size="icon">
+          <Button onClick={handleNext} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <SkipForward className="h-6 w-6" />
           </Button>
           <span className="text-xs hidden sm:block">
@@ -204,9 +199,7 @@ export default function AudioPlayer() {
             <p className="text-xs text-muted-foreground truncate">Artist Name</p>
           </div>
         </div>
-        <div onMouseEnter={() => setShowVolumeSlider(true)}
-          onMouseLeave={() => setShowVolumeSlider(false)}
-          className="flex items-center justify-end space-x-2 flex-1">
+        <div className="flex items-center justify-end space-x-2 flex-1">
           {showVolumeSlider && <Slider
             defaultValue={[0.2]}
             min={0}
@@ -216,17 +209,19 @@ export default function AudioPlayer() {
             onValueChange={(e) => handleVolumeChange(e[0])}
             className='max-w-28 hidden sm:inline-flex'
           />}
-          <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex">
+        </div>
+        <div className="flex items-center justify-end space-x-2 flex-1">
+          <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
             {volume === 0 ? (
               <VolumeX className="h-6 w-6" />
             ) : (
               <Volume2 className="h-6 w-6" />
             )}
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <Shuffle className="h-6 w-6" />
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <Repeat className="h-6 w-6" />
           </Button>
         </div>

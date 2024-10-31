@@ -43,6 +43,9 @@ const SongContextProvider = ({ children }: Props) => {
     const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
 
     const updateQueue = (newSongs: ISongModel[]) => {
+        setIsPlaying(false);
+        setCurrentSong(undefined);
+        setQueue([]);
         setQueue(newSongs);
         if (newSongs.length > 0) {
             setCurrentSong(newSongs[0]);

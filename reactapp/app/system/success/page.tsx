@@ -1,13 +1,11 @@
-import Header from '@/components/Header';
-import { usePageLoading } from '@/hooks/usePageLoading';
-import Loading from '../../loading';
-import dynamic from 'next/dynamic';
 import SuccessContent from './components/SuccessContent';
 
-const Success = async () => {
-  // const { isPageLoading } = usePageLoading();
-  // return isPageLoading ? <Loading /> : <NewAlbumContent />;
-  return <SuccessContent />;
+interface Props {
+  params: { session_id: string };
+}
+
+const Success = async ({ params }: Props) => {
+  return <SuccessContent sessionId={params.session_id} />;
 };
 
 export default Success;

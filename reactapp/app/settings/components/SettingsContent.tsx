@@ -30,6 +30,7 @@ import updateProfileType from "@/api/users/updateProfileType"
 import { Label } from "@/components/ui/label"
 import updateName from "@/api/users/updateName"
 import updateBio from "@/api/users/updateBio"
+import { useSearchParams } from "next/navigation"
 
 const usernameRegex = /^[a-zA-Z0-9._-]{2,30}$/
 const MAX_USERNAME_LENGTH = 30

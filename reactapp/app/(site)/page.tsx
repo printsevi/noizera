@@ -17,10 +17,6 @@ import dynamic from "next/dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  //const songs = await getSongs();
-  // const { isPageLoading } = usePageLoading();
-
-  //return isPageLoading ? <Loading /> : <PageContent songs={[]} />;
   return (
     <div className='min-h-full px-3'>
       <PageContent songs={[]} />

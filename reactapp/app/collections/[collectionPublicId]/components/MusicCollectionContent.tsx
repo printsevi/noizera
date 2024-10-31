@@ -18,7 +18,7 @@ import getMusicCollection from "@/api/musicCollections/getMusicCollection"
 import useUser from "@/hooks/useUser"
 import { ISongModel } from "@/providers/SongProvider"
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
-import { getURL } from "@/libs/helpers"
+import { formatDurationDisplay, getURL } from "@/libs/helpers"
 import useSong from "@/hooks/useSong"
 
 interface Track {
@@ -71,7 +71,7 @@ export default function MusicCollectionContent(props: Props) {
   const { isReady, axiosPrivate } = useAxiosPrivate();
   const [musicCollection, setMusicCollection] = useState<MusicCollection>();
   const [songs, setSongs] = useState<ISongModel[]>([]);
-  const { updateQueue } = useSong();
+  const { updateQueue, isPlaying, play } = useSong();
 
   const fetchCollection = useCallback(async () => {
     const collectionData = isAuthenticated
@@ -113,7 +113,6 @@ export default function MusicCollectionContent(props: Props) {
 
   const trackCount = songs?.length ?? 0
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
   const [likedTracks, setLikedTracks] = useState<Set<number>>(new Set())
 
   const onPlay = useCallback(async () => {
@@ -125,16 +124,8 @@ export default function MusicCollectionContent(props: Props) {
       durationInSeconds: s.durationInSeconds,
       coverPath: ""
     })));
-  }, [songs]);
-
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying)
-  }
-
-  const handleTrackPlay = (track: Track) => {
-    setCurrentTrack(track)
-    setIsPlaying(true)
-  }
+    play(true);
+  }, [songs, updateQueue, play]);
 
   const handleLikeTrack = (trackNumber: number) => {
     setLikedTracks((prev) => {
@@ -185,15 +176,10 @@ export default function MusicCollectionContent(props: Props) {
               className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("PLAY");
                 onPlay();
               }}
             >
-              {isPlaying ? (
-                <PauseCircle className="h-12 w-12" />
-              ) : (
-                <PlayCircle className="h-12 w-12" />
-              )}
+              <PlayCircle className="h-12 w-12" />
             </Button>
             <Button
               variant="ghost"
@@ -204,62 +190,60 @@ export default function MusicCollectionContent(props: Props) {
             </Button>
           </div>
         </div>
-        <ScrollArea className="flex-grow h-[calc(100vh-16rem)] md:h-auto">
-          <div className="space-y-1">
-            {songs!.map((track, index) => (
-              <div
-                key={index + 1}
-                className="flex items-center gap-4 p-2 rounded-md group relative"
-              >
-                <div className="absolute inset-y-0 left-0 flex items-center justify-center w-12 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-colors"
-                  //onClick={() => handleTrackPlay(track)}
-                  >
-                    <PlayCircle className="h-6 w-6" />
-                    <span className="sr-only">Play</span>
-                  </Button>
-                </div>
-                <span className="w-12 text-center text-muted-foreground group-hover:opacity-0 transition-opacity">
-                  {index + 1}
-                </span>
-                <span className="flex-grow truncate">{track.title}</span>
-                <div className="flex items-center gap-2 ml-auto">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all"
-                  //onClick={() => handleLikeTrack(track.number)}
-                  >
-                    <Heart className={`h-5 w-5 ${likedTracks.has(0) ? 'fill-current text-red-500' : ''} transition-colors`} />
-                    <span className="sr-only">Like</span>
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all">
-                        <MoreVertical className="h-5 w-5" />
-                        <span className="sr-only">More options</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>
-                        <Share className="mr-2 h-4 w-4" />
-                        <span>Share</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <ListPlus className="mr-2 h-4 w-4" />
-                        <span>Save to playlist</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <span className="text-muted-foreground w-12 text-right">{10}</span>
-                </div>
+        <div className="space-y-1 flex-grow">
+          {songs!.map((track, index) => (
+            <div
+              key={index + 1}
+              className="flex items-center gap-4 p-2 rounded-md group relative"
+            >
+              <div className="absolute inset-y-0 left-0 flex items-center justify-center w-12 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-colors"
+                //onClick={() => handleTrackPlay(track)}
+                >
+                  <PlayCircle className="h-6 w-6" />
+                  <span className="sr-only">Play</span>
+                </Button>
               </div>
-            ))}
-          </div>
-        </ScrollArea>
+              <span className="w-12 text-center text-muted-foreground group-hover:opacity-0 transition-opacity">
+                {index + 1}
+              </span>
+              <span className="flex-grow truncate">{track.title}</span>
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all"
+                //onClick={() => handleLikeTrack(track.number)}
+                >
+                  <Heart className={`h-5 w-5 ${likedTracks.has(0) ? 'fill-current text-red-500' : ''} transition-colors`} />
+                  <span className="sr-only">Like</span>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all">
+                      <MoreVertical className="h-5 w-5" />
+                      <span className="sr-only">More options</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Share className="mr-2 h-4 w-4" />
+                      <span>Share</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <ListPlus className="mr-2 h-4 w-4" />
+                      <span>Save to playlist</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <span className="text-muted-foreground w-12 text-right">{formatDurationDisplay(track.durationInSeconds)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

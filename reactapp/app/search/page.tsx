@@ -1,31 +1,17 @@
-import getSongsByTitle from '@/api/getSongsByTitle';
-import SearchInput from '@/components/SearchInput';
-import Header from '@/components/Header';
 import SearchContent from './components/SearchContent';
 
 export const revalidate = 0;
 
-interface ExploreProps {
-  searchParams: { title: string };
+interface Props {
+  searchParams: { query: string };
 }
 
-const Explore = async ({ searchParams: exploreParams }: ExploreProps) => {
-  const songs = await getSongsByTitle(exploreParams.title);
-
+const Search = async ({ searchParams }: Props) => {
   return (
-    <div
-      className='
-        bg-neutral-900 
-        rounded-lg 
-        h-full 
-        w-full 
-        overflow-hidden 
-        overflow-y-auto
-      '
-    >
-      <SearchContent songs={songs} />
+    <div className='min-h-full px-3'>
+      <SearchContent query={searchParams.query} />
     </div>
   );
 };
 
-export default Explore;
+export default Search;

@@ -38,7 +38,7 @@ export function MusicArtwork({
   publicId,
   ...props
 }: Props) {
-  const { updateQueue } = useSong();
+  const { updateQueue, isPlaying, play } = useSong();
   const router = useRouter();
   const { user } = useUser();
 
@@ -55,8 +55,11 @@ export function MusicArtwork({
         durationInSeconds: s.durationInSeconds,
         coverPath: coverPath
       })));
+      if (!isPlaying) {
+        play(true);
+      }
     }
-  }, [updateQueue, user?.activeSubscriptions?.length]);
+  }, [updateQueue, isPlaying, user?.activeSubscriptions?.length, play]);
 
   return (
     <div className={cn("space-y-3", className)} {...props}>

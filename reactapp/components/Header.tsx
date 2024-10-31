@@ -8,7 +8,7 @@ import usePlayer from '@/hooks/usePlayer';
 
 import PurpleButton from './Button';
 import useSignUpModal from '@/hooks/useSignUpModal';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ProfileMenu } from './ProfileMenu';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
@@ -18,6 +18,7 @@ import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { SettingsMenu } from './SettingsMenu';
+import fastSearchPublic from '@/api/search/fastSearchPublic';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -28,6 +29,7 @@ const Header: React.FC = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<string[]>([]);
 
   const [isClient, setIsClient] = useState(false)
 
@@ -46,6 +48,29 @@ const Header: React.FC = () => {
   useEffect(() => {
     setIsClient(true)
   }, []);
+
+  const onSearch = useCallback(async (query: string) => {
+    const response = await fastSearchPublic(query);
+    if (response.ok) {
+      setSearchResults(response.data?.map(x => x.value) ?? [])
+    }
+  }, [])
+
+  const onFullSearch = useCallback(async (query: string) => {
+    setSearchQuery("");
+    setIsSearching(false);
+    router.push(`/search?query=${query}`);
+  }, [router, setSearchQuery, setIsSearching])
+
+  useEffect(() => {
+    if (!searchQuery.length) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      onSearch(searchQuery)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [searchQuery, onSearch])
 
   return (
     <header className="flex items-center justify-between p-6 relative z-10 sticky top-0 bg-background bg-opacity-50">
@@ -88,7 +113,11 @@ const Header: React.FC = () => {
           variant="ghost"
           size="icon"
           className={cn("ml-2 md:hidden", showMobileSearch ? "" : "hidden")}
-          onClick={() => setShowMobileSearch(false)}
+          onClick={() => {
+            setShowMobileSearch(false);
+            setSearchQuery("");
+            setIsSearching(false);
+          }}
         >
           <X className="h-4 w-4" />
         </Button>
@@ -100,17 +129,15 @@ const Header: React.FC = () => {
           >
             <Search className="h-6 w-6" />
           </Button> */}
-        {isSearching && (
+        {isSearching && searchResults.length > 0 && (
           <div className="absolute top-full left-0 right-0 bg-popover border rounded-md mt-1 shadow-lg z-10">
             <ScrollArea className="h-[300px]">
-              {/* {mockSearchResults.map((result) => (
-                  <Button key={result.id} variant="ghost" className="w-full justify-start px-4 py-2">
-                    <div>
-                      <div className="font-medium">{result.title}</div>
-                      <div className="text-sm text-muted-foreground">{result.artist || result.description || result.type}</div>
-                    </div>
-                  </Button>
-                ))} */}
+              {searchResults.map((result, index) => (
+                <Button key={index} variant="ghost" onClick={() => onFullSearch(result)} className="items-center flex w-full justify-start px-4 py-2">
+                  <Search className="h-4 w-4" />
+                  <div className="font-medium">{result}</div>
+                </Button>
+              ))}
             </ScrollArea>
           </div>
         )}

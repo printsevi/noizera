@@ -30,6 +30,71 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
         return result;
     }
 
+    public async Task<List<ArtistQueryResult>> SearchAsync(string searchQuery, CancellationToken ct)
+    {
+        FormattableString sql = $"""
+            SELECT
+                p."Id" as ArtistId,
+                p."Name" as Name
+            FROM public."Profiles" p
+            WHERE
+                p."ProfileType" = 'Artist'
+                AND SIMILARITY(p."Name", {searchQuery}) > 0.4;
+            """;
+
+        var result = await Db.Database.SqlQuery<ArtistQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+
+        return result;
+    }
+
+    public async Task<List<FastSearchQueryResult>> FastSearchAsync(string searchQuery, CancellationToken ct)
+    {
+        if(string.IsNullOrWhiteSpace(searchQuery))
+        {
+            return [];
+        }
+
+        FormattableString sql = $"""
+            WITH Results AS (
+                SELECT 
+                    p."Name" as Value, 
+                    SIMILARITY(p."Name", {searchQuery}) AS Score
+                FROM 
+                    public."Profiles" p
+                WHERE 
+                    SIMILARITY(p."Name", {searchQuery}) > 0.2
+
+                UNION ALL
+
+                SELECT 
+                    s."Title" as Value, 
+                    SIMILARITY(s."Title", {searchQuery}) AS Score
+                FROM 
+                    public."Songs" s
+                WHERE 
+                    SIMILARITY(s."Title", {searchQuery}) > 0.2
+
+                UNION ALL
+
+                SELECT 
+                    mc."Title" as Value, 
+                    SIMILARITY(mc."Title", {searchQuery}) AS Score
+                FROM 
+                    public."MusicCollections" mc
+                WHERE 
+                    SIMILARITY(mc."Title", {searchQuery}) > 0.2
+            )
+            SELECT DISTINCT ON (Value) *
+            FROM Results
+            ORDER BY Value, Score DESC
+            LIMIT 10;
+            """;
+
+        var result = await Db.Database.SqlQuery<FastSearchQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+
+        return result;
+    }
+
     public Task<PublicProfile> GetAsync(Guid profileId, CancellationToken ct) => throw new NotImplementedException();
 
     public async Task<ProfileQueryResult?> GetProfileAsync(string profilePublicId, CancellationToken ct)
