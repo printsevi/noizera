@@ -7,7 +7,7 @@ const config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -55,9 +55,9 @@ const config = {
       },
       variants: {
         extend: {
-            display: ["group-hover"],
+          display: ["group-hover"],
         },
-    },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -85,6 +85,29 @@ const config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
         mono: ['var(--font-geist-mono)'],
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            fontSize: '1rem',
+            lineHeight: '1.6',
+            p: {
+              marginTop: '0.5em',
+              marginBottom: '0.5em',
+            },
+            maxWidth: '100%',
+            'p, li': {
+              marginLeft: '0',
+              marginRight: '0',
+            },
+          },
+        },
+        lg: {
+          css: {
+            fontSize: '1.125rem',
+            lineHeight: '1.75',
+          },
+        },
       },
     },
   },

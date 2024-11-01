@@ -15,6 +15,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/hooks/use-toast';
 import { Form } from '../ui/form';
+import { Button } from '../ui/button';
+import useSignInModal from '@/hooks/useSignInModal';
 
 const FormSchema = z.object({
   email: z.string().email()
@@ -22,6 +24,7 @@ const FormSchema = z.object({
 
 const SignUpModal = () => {
   const { onClose, isOpen } = useSignUpModal();
+  const signInModal = useSignInModal();
   const emailVerificationModal = useEmailVerificationModal();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +42,13 @@ const SignUpModal = () => {
     }
   };
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) =>  {
+  const onSignInClick = () => {
+    onClose();
+    form.reset();
+    signInModal.onOpen();
+  };
+
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsLoading(true);
 
     if (!data.email) {
@@ -61,7 +70,7 @@ const SignUpModal = () => {
     emailVerificationModal.setEmail(data.email);
 
     setIsLoading(false);
-    toast({title: "Verification code has been sent to your email"});
+    toast({ title: "Verification code has been sent to your email" });
     form.reset();
     onClose();
     emailVerificationModal.onOpen();
@@ -79,16 +88,23 @@ const SignUpModal = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className='flex flex-col gap-y-4'
         >
-          <InputFormField 
-              disabled={isLoading} 
-              name="email"
-              label="Email"
-              id="email"
-              placeholder='type email'
+          <InputFormField
+            disabled={isLoading}
+            name="email"
+            label="Email"
+            id="email"
+            placeholder='type email'
           />
           <p className='text-center'>
             By clicking Sign Up, you agree to our <Link target='_blank' href="/terms" key="/terms" className="text-blue-500 hover:underline">Terms of Service and Privacy Policy</Link>
           </p>
+          <div className="mt-4 text-center text-sm">
+            <div>Already have an account?
+              <Button onClick={onSignInClick} variant="link" className="underline">
+                Sign In
+              </Button>
+            </div>
+          </div>
           <PurpleButton className='mt-auto' type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {!isLoading ? 'Sign Up' : 'Signing Up'}

@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 
 import useSignInModal from '@/hooks/useSignInModal';
 import useAuth from '@/hooks/useAuth';
-import usePlayer from '@/hooks/usePlayer';
 
 import PurpleButton from './Button';
 import useSignUpModal from '@/hooks/useSignUpModal';
@@ -121,21 +120,13 @@ const Header: React.FC = () => {
         >
           <X className="h-4 w-4" />
         </Button>
-        {/* <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setShowMobileSearch(true)}
-          >
-            <Search className="h-6 w-6" />
-          </Button> */}
         {isSearching && searchResults.length > 0 && (
           <div className="absolute top-full left-0 right-0 bg-popover border rounded-md mt-1 shadow-lg z-10">
             <ScrollArea className="h-[300px]">
               {searchResults.map((result, index) => (
                 <Button key={index} variant="ghost" onClick={() => onFullSearch(result)} className="items-center flex w-full justify-start px-4 py-2">
-                  <Search className="h-4 w-4" />
-                  <div className="font-medium">{result}</div>
+                  <Search className="h-4 w-4 mr-2" />
+                  <span>{result}</span>
                 </Button>
               ))}
             </ScrollArea>

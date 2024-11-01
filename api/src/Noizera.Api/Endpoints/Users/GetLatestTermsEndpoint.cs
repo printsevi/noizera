@@ -8,7 +8,7 @@ namespace Noizera.Api.Endpoints.Users;
 internal sealed class GetLatestTermsEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapGet("/api/latest-terms", Handle)
+        => app.MapGet("/api/users/latest-terms", Handle)
               .AllowAnonymous();
 
     internal static async Task<IResult> Handle(

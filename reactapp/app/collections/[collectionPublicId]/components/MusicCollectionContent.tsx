@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
-import { PlayCircle, MoreVertical, Share, ListPlus, Pause, Heart, PauseCircle } from "lucide-react"
+import { PlayCircle, MoreVertical, Share, ListPlus, Pause, Heart, PauseCircle, Forward } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -20,6 +20,7 @@ import { ISongModel } from "@/providers/SongProvider"
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
 import { formatDurationDisplay, getURL } from "@/libs/helpers"
 import useSong from "@/hooks/useSong"
+import useSignUpModal from "@/hooks/useSignUpModal"
 
 interface Track {
   number: number
@@ -66,6 +67,7 @@ interface Props {
 }
 
 export default function MusicCollectionContent(props: Props) {
+  const signUpModal = useSignUpModal();
   const { auth, isAuthenticated } = useAuth();
   const { user } = useUser();
   const { isReady, axiosPrivate } = useAxiosPrivate();
@@ -116,16 +118,23 @@ export default function MusicCollectionContent(props: Props) {
   const [likedTracks, setLikedTracks] = useState<Set<number>>(new Set())
 
   const onPlay = useCallback(async () => {
-    updateQueue(songs.map(s => ({
-      id: s.id,
-      title: s.title,
-      contentLength: s.contentLength,
-      contentType: s.contentType,
-      durationInSeconds: s.durationInSeconds,
-      coverPath: ""
-    })));
-    play(true);
-  }, [songs, updateQueue, play]);
+    if (!isReady) {
+      return;
+    }
+    if (!isAuthenticated) {
+      signUpModal.onOpen();
+    } else {
+      updateQueue(songs.map(s => ({
+        id: s.id,
+        title: s.title,
+        contentLength: s.contentLength,
+        contentType: s.contentType,
+        durationInSeconds: s.durationInSeconds,
+        coverPath: ""
+      })));
+      play(true);
+    }
+  }, [songs, updateQueue, play, signUpModal, isReady, isAuthenticated]);
 
   const handleLikeTrack = (trackNumber: number) => {
     setLikedTracks((prev) => {
@@ -186,7 +195,7 @@ export default function MusicCollectionContent(props: Props) {
               size="icon"
               className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
             >
-              <Share className="h-5 w-5" />
+              <Forward className="h-5 w-5" />
             </Button>
           </div>
         </div>
@@ -230,7 +239,7 @@ export default function MusicCollectionContent(props: Props) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem>
-                      <Share className="mr-2 h-4 w-4" />
+                      <Forward className="mr-2 h-4 w-4" />
                       <span>Share</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>

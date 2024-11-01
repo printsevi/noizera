@@ -62,7 +62,7 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
                 FROM 
                     public."Profiles" p
                 WHERE 
-                    SIMILARITY(p."Name", {searchQuery}) > 0.2
+                    SIMILARITY(p."Name", {searchQuery}) > 0.1
 
                 UNION ALL
 
@@ -72,7 +72,7 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
                 FROM 
                     public."Songs" s
                 WHERE 
-                    SIMILARITY(s."Title", {searchQuery}) > 0.2
+                    SIMILARITY(s."Title", {searchQuery}) > 0.1
 
                 UNION ALL
 
@@ -82,7 +82,7 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
                 FROM 
                     public."MusicCollections" mc
                 WHERE 
-                    SIMILARITY(mc."Title", {searchQuery}) > 0.2
+                    SIMILARITY(mc."Title", {searchQuery}) > 0.1
             )
             SELECT DISTINCT ON (Value) *
             FROM Results

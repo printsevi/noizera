@@ -82,7 +82,7 @@ const SignInModal = () => {
 
     setIsLoading(false);
 
-    toast({title: "Verification code has been sent to your email"});
+    toast({ title: "Verification code has been sent to your email" });
 
     form.reset();
     onClose();
@@ -101,15 +101,15 @@ const SignInModal = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className='flex flex-col gap-y-4'
         >
-          <InputFormField 
-              disabled={isLoading} 
-              name="emailOrUsername"
-              label="Email or Username"
-              id="emailOrUsername"
-              placeholder='type email or username'
+          <InputFormField
+            disabled={isLoading}
+            name="emailOrUsername"
+            label="Email or Username"
+            id="emailOrUsername"
+            placeholder='type email or username'
           />
-          <InputFormField 
-            disabled={isLoading} 
+          <InputFormField
+            disabled={isLoading}
             name="password"
             label="Password"
             id="password"
@@ -123,13 +123,14 @@ const SignInModal = () => {
         </form>
       </Form>
       <div className="mt-4 text-center text-sm">
-      <Button onClick={onSignUpClick} variant="link" className="underline">
-            Forgot your password?
-            </Button>
-            <div>Don&apos;t have an account?
-            <Button onClick={onSignUpClick} variant="link" className="underline">
-              Sign up
-            </Button></div>
+        <Button onClick={onSignUpClick} variant="link" className="underline">
+          Forgot your password?
+        </Button>
+        <div>Don&apos;t have an account?
+          <Button onClick={onSignUpClick} variant="link" className="underline">
+            Sign up
+          </Button>
+        </div>
       </div>
     </Modal>
   );
