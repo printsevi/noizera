@@ -1,12 +1,13 @@
 // 'use server'
 
-import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
+import { ApiResponse, CollectionType, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
 
 export interface MusicCollectionResponse {
   publicId: string,
   title: string,
-  collectionType: string
+  collectionType: CollectionType,
+  isSaved: boolean
 }
 
 const getFeedPublicCollections = async (api: string)

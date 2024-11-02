@@ -1,60 +1,64 @@
 'use client';
 
-import getMyUser from "@/api/users/getMyUser";
+import { CollectionType } from "@/api/common";
+import getSavedMusicCollections from "@/api/savedMusicCollections/getSavedMusicCollections";
 import useAuth from "@/hooks/useAuth";
-import { ReactNode, createContext, useEffect, useState } from "react";
-import useSWR from "swr";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { ReactNode, createContext, useCallback, useEffect, useState } from "react";
 
 interface Props {
     children?: ReactNode
 }
 
 export interface IMusicCollectionModel {
-    collectionType: string;
+    collectionType: CollectionType;
     title: string;
     publicId: string;
 }
 
 export interface ILibraryContext {
     addCollection: (newCollection: IMusicCollectionModel) => void;
+    removeCollection: (publicId: string) => void;
     collections: IMusicCollectionModel[];
 }
 
 const LibraryContext = createContext<ILibraryContext | undefined>(undefined);
 
 const LibraryContextProvider = ({ children }: Props) => {
-    // const { axiosPrivate, isReady } = useAxiosPrivate();
-    // const { auth } = useAuth();
-    // const { data, isLoading } = useSWR(isReady && auth.accessToken ? getMyUser.name : null, () => getMyUser(axiosPrivate, auth.userId!), {
-    //     revalidateIfStale: true,
-    //     revalidateOnFocus: false,
-    //     revalidateOnReconnect: false});
-     const [collections, setCollections] = useState<IMusicCollectionModel[]>([]);
+    const { axiosPrivate, isReady } = useAxiosPrivate();
+    const { auth, isAuthenticated } = useAuth();
+    const [collections, setCollections] = useState<IMusicCollectionModel[]>([]);
 
-    // useEffect(() => {
-    //     if (isLoading) {
-    //         return;
-    //     }
+    const fetchCollections = useCallback(async () => {
+        const data = await getSavedMusicCollections(auth.userId!, axiosPrivate)
+        if (data.ok) {
+            setCollections(data.data!);
+        }
+    }, [isAuthenticated, isReady, axiosPrivate, auth.userId]);
 
-    //     if (data?.ok && data.data) {
-    //         setCollections([]);
-    //     }
-        
-    // }, [data, isLoading]);
+    useEffect(() => {
+        if (isReady && isAuthenticated) {
+            fetchCollections();
+        }
+    }, [isReady, isAuthenticated, fetchCollections]);
 
     const addCollection = (newCollection: IMusicCollectionModel) => {
+        setCollections(prevItems => [...prevItems, newCollection]);
+    }
 
+    const removeCollection = (publicId: string) => {
+        setCollections(prevItems => prevItems.filter(x => x.publicId !== publicId));
     }
 
     return (
-        <LibraryContext.Provider value={{ collections, addCollection }}>
+        <LibraryContext.Provider value={{ collections, addCollection, removeCollection }}>
             {children}
         </LibraryContext.Provider>
     )
 }
 
 export const LibraryProvider: React.FC<Props> = ({ children }) => {
-  return <LibraryContextProvider>{children}</LibraryContextProvider>;
+    return <LibraryContextProvider>{children}</LibraryContextProvider>;
 };
 
 export default LibraryContext;

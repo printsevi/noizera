@@ -15,7 +15,7 @@ public sealed record GetFeedRecommendationsQuery(Guid UserId)
     {
         public async Task<List<MusicCollectionCardQueryResult>> Handle([NotNull] GetFeedRecommendationsQuery request, CancellationToken cancellationToken)
         {
-            var result = await musicCollectionRepository.GetPublicRecommendationsAsync(cancellationToken).ConfigureAwait(false);
+            var result = await musicCollectionRepository.GetRecommendationsAsync(request.UserId, cancellationToken).ConfigureAwait(false);
             
             return result;
         }

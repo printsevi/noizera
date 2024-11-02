@@ -14,6 +14,7 @@ import getFeedPublicCollections from '@/api/feed/getFeedPublicCollections';
 import { AxiosInstance } from 'axios';
 import getFeedCollections from '@/api/feed/getFeedCollections';
 import Image from 'next/image';
+import { CollectionType } from '@/api/common';
 
 interface PageContentProps {
   songs: Song[];
@@ -28,7 +29,8 @@ interface FeedMusicCategoryItem {
 interface MusicCollectionResult {
   publicId: string,
   title: string,
-  collectionType: string
+  collectionType: CollectionType,
+  isSaved: boolean
 }
 
 const fetchCollectionsForPublicCategory = async (category: GetFeedMusicCollectionItem)
@@ -51,7 +53,7 @@ const fetchCollectionsForCategory = async (category: GetFeedMusicCollectionItem,
   return { ...category, items: collectionsData.data! };
 };
 
-const PageContent: React.FC<PageContentProps> = ({ songs }) => {
+const PageContent = () => {
   const { auth, isAuthenticated } = useAuth();
   const { isReady, axiosPrivate } = useAxiosPrivate();
   const [musicCategories, setMusicCategories] = useState<FeedMusicCategoryItem[]>([]);
@@ -96,9 +98,9 @@ const PageContent: React.FC<PageContentProps> = ({ songs }) => {
             <h2 className="text-2xl font-semibold tracking-tight">
               {category.title}
             </h2>
-            <p className="text-sm text-muted-foreground">
+            {/* <p className="text-sm text-muted-foreground">
               Your personal playlists. Updated daily.
-            </p>
+            </p> */}
           </div>
           <Carousel
             opts={{
@@ -111,22 +113,12 @@ const PageContent: React.FC<PageContentProps> = ({ songs }) => {
             <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
             <CarouselContent>
               {category.items?.map((item, index) => (
-                <CarouselItem key={item.publicId} className="basis-1/2 pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5 md:pl-4">
+                <CarouselItem key={item.publicId} className="basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
                   <MusicArtwork
                     title={item.title}
+                    collectionType={item.collectionType}
                     publicId={item.publicId}
-                    coverPath={`${getURL()}api/music-collections/${item.publicId}/cover-image`} />
-
-                </CarouselItem>
-              ))}
-              {Array.from({ length: 20 - (category.items?.length ?? 0) }).map((_, index) => (
-                <CarouselItem key={index} className="basis-1/2 pl-2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5 md:pl-4">
-                  <Image
-                    src={`${getURL()}api/music-collections/pdv/cover-image`}
-                    alt="placeholder-image"
-                    width={500}
-                    height={500}
-                    className="w-full h-auto aspect-square object-cover rounded-md"
+                    isSaved={item.isSaved}
                   />
                 </CarouselItem>
               ))}

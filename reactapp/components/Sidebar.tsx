@@ -84,7 +84,7 @@ const Sidebar = ({ children }: SidebarProps) => {
             <Home className="mr-2 h-4 w-4" />
             <span className="hidden md:inline">Home</span>
           </Button>
-          <Button variant="ghost" className="w-full justify-start">
+          <Button variant="ghost" className="w-full justify-start" onClick={() => router.push(`/library`)}>
             <LibraryIcon className="mr-2 h-4 w-4" />
             <span className="hidden md:inline">Library</span>
           </Button>

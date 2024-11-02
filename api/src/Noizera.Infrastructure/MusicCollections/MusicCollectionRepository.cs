@@ -12,7 +12,15 @@ namespace Noizera.Infrastructure.MusicCollections;
 public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator hashGenerator) 
     : BaseEntityExtendedRepository<MusicSet>(db, hashGenerator), IMusicCollectionRepository
 {
-    public async Task<MusicSet?> GetAsync(Guid id, CancellationToken ct) => await Db.MusicCollections.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
+    public async Task<MusicSet?> GetAsync(Guid id, CancellationToken ct)
+    {
+        return await Db.MusicCollections.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
+    }
+
+    public async Task<MusicSet?> GetAsync(string publicId, CancellationToken ct)
+    {
+        return await Db.MusicCollections.FirstOrDefaultAsync(x => x.PublicId == publicId, ct).ConfigureAwait(false);
+    }
 
     public async Task<MusicSet?> GetWithSongsAsync(Guid musicCollectionId, CancellationToken ct) => await Db.MusicCollections
             .Include(x => x.MusicCollectionSongs)
@@ -79,7 +87,8 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
                                     AND fav_mc."IsDeleted" = false
                                     AND fav_mc."PlaylistTag" = 'favourites'
                             LIMIT 1
-                        ))
+                        )
+                    )
             WHERE 
                 mcs."MusicCollectionId" = (                                 
                     SELECT mc."Id"
@@ -169,18 +178,31 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
 
     public async Task<List<MusicCollectionCardQueryResult>> GetRecommendationsAsync(Guid userId, CancellationToken ct)
     {
-        string text = "";
-        FormattableString sql = $@"SELECT 
-                                        p.""Id"" as ""ArtistId"",
-                                        p.""Name"" as ""Name""
-                                   FROM public.""Profiles"" p
-                                   WHERE 
-                                        p.""ProfileType"" = 'Artist' and
-                                        position({text} in p.""Name"") > 0;";
+        FormattableString sql = $"""
+            SELECT 
+                mc."PublicId" as PublicId,
+                mc."Title" as Title,
+                mc."CollectionType" as CollectionType,
+                CASE 
+                    WHEN smc."UserId" IS NOT NULL 
+                    THEN true
+                    ELSE false 
+                END AS IsSaved
+            FROM 
+                public."MusicCollections" mc
+            LEFT JOIN 
+                public."SavedMusicCollections" smc
+                    ON smc."MusicSetId" = mc."Id"
+                    AND smc."UserId" = {userId}
+            WHERE 
+                (mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
+                AND mc."IsDeleted" = false
+            ORDER BY RANDOM()
+            LIMIT 20
+            """;
 
         return await Db.Database
-            .SqlQuery<MusicCollectionCardQueryResult>(sql)
-            .ToListAsync(ct).ConfigureAwait(false);
+            .SqlQuery<MusicCollectionCardQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
     }
 
     public async Task<List<MusicCollectionCardQueryResult>> GetPublicRecommendationsAsync(CancellationToken ct)
@@ -189,7 +211,8 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
             SELECT 
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
-                mc."CollectionType" as CollectionType
+                mc."CollectionType" as CollectionType,
+                FALSE as IsSaved
             FROM 
                 public."MusicCollections" mc
             WHERE 

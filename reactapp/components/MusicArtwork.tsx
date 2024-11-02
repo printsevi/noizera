@@ -15,54 +15,101 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { Card, CardContent } from "./ui/card"
-import { EllipsisVerticalIcon, PlayCircleIcon, PlayIcon, PlusCircleIcon, User } from "lucide-react"
+import { CopyMinus, CopyPlus, EllipsisVerticalIcon, Forward, PlayCircleIcon, PlayIcon, PlusCircleIcon, User } from "lucide-react"
 import useSong from "@/hooks/useSong";
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import useUser from "@/hooks/useUser";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getURL } from "@/libs/helpers";
+import useLibrary from "@/hooks/useLibrary";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import useAuth from "@/hooks/useAuth";
+import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection";
+import { CollectionType } from "@/api/common";
+import useSignUpModal from "@/hooks/useSignUpModal";
+import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection";
 
-interface Props extends React.HTMLAttributes<HTMLDivElement> {
+interface Props {
   aspectRatio?: "portrait" | "square",
-  coverPath: string,
   title: string,
   publicId: string;
+  isSaved: boolean;
+  collectionType: CollectionType
 }
 
 export function MusicArtwork({
   aspectRatio = "square",
-  className,
-  coverPath,
+  collectionType,
   title,
   publicId,
-  ...props
+  isSaved = false
 }: Props) {
+  const { axiosPrivate, isReady } = useAxiosPrivate();
+  const signUpModal = useSignUpModal();
+  const { isAuthenticated, auth } = useAuth();
   const { updateQueue, isPlaying, play } = useSong();
+  const { addCollection, removeCollection } = useLibrary();
   const router = useRouter();
   const { user } = useUser();
+  const [collectionIsSaved, setCollectionIsSaved] = useState(isSaved);
+  const coverPath = `${getURL()}api/music-collections/${publicId}/cover-image`;
 
   const onPlay = useCallback(async () => {
-    const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
-    const response = await getMusicCollectionSongs(publicId, audioType);
-    if (response.ok) {
-      const songs = response.data?.songs ?? [];
-      updateQueue(songs.map(s => ({
-        id: s.songPublicId,
-        title: s.title,
-        contentLength: s.contentLength,
-        contentType: audioType,
-        durationInSeconds: s.durationInSeconds,
-        coverPath: coverPath
-      })));
-      if (!isPlaying) {
-        play(true);
-      }
+    if (!isReady) {
+      return;
     }
-  }, [updateQueue, isPlaying, user?.activeSubscriptions?.length, play]);
+    if (isAuthenticated) {
+      const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
+      const response = await getMusicCollectionSongs(publicId, audioType);
+      if (response.ok) {
+        const songs = response.data?.songs ?? [];
+        updateQueue(songs.map(s => ({
+          id: s.songPublicId,
+          title: s.title,
+          contentLength: s.contentLength,
+          contentType: audioType,
+          durationInSeconds: s.durationInSeconds,
+          coverPath: coverPath
+        })));
+        if (!isPlaying) {
+          play(true);
+        }
+      }
+    } else {
+      signUpModal.onOpen();
+    }
+  }, [updateQueue, isReady, isPlaying, user?.activeSubscriptions?.length, play]);
+
+  const onSaveDeleteToggle = useCallback(async () => {
+    if (!isReady) {
+      return;
+    }
+    if (isAuthenticated) {
+      if (!collectionIsSaved) {
+        const response = await addSavedMusicCollection(axiosPrivate, auth.userId!, publicId);
+        if (response.ok) {
+          addCollection({
+            publicId: publicId,
+            title: title,
+            collectionType: collectionType
+          });
+          setCollectionIsSaved(true);
+        }
+      } else {
+        const response = await deleteSavedMusicCollection(axiosPrivate, auth.userId!, publicId);
+        if (response.ok) {
+          removeCollection(publicId);
+          setCollectionIsSaved(false);
+        }
+      }
+
+    }
+  }, [isAuthenticated, isReady, collectionIsSaved, auth.userId, axiosPrivate, addCollection]);
 
   return (
-    <div className={cn("space-y-3", className)} {...props}>
+    <div className="space-y-3">
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md cursor-pointer">
@@ -72,22 +119,15 @@ export function MusicArtwork({
                   src={coverPath}
                   alt={title}
                   fill
+                  sizes="500"
+                  priority={false}
                   className={cn(
                     "object-cover transition-all group-hover:scale-105",
                     aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
                   )}
                 />
                 <div onClick={() => router.push(`/collections/${publicId}`)} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
-                  {/* <button onClick={(e) => {
-                e.stopPropagation();
-                console.log("LIKE")}
-                } 
-                className="hover:scale-110 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition">
-              <PlusCircleIcon/>
-            </button> */}
-
-
-                  <DropdownMenu>
+                  {isAuthenticated && <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="hover:scale-125 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition">
                         <EllipsisVerticalIcon size={25} />
@@ -95,17 +135,24 @@ export function MusicArtwork({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSaveDeleteToggle();
+                          }}>
+                          {collectionIsSaved ? <CopyMinus className="mr-2 h-4 w-4" /> : <CopyPlus className="mr-2 h-4 w-4" />}
+                          <span>{collectionIsSaved ? "Remove from library" : "Save to library"}</span>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <User className="mr-2 h-4 w-4" />
-                          <span>Your profile</span>
+                          <Forward className="mr-2 h-4 w-4" />
+                          <span>Share</span>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
-                  </DropdownMenu>
+                  </DropdownMenu>}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("PLAY");
                       onPlay();
                     }}
                     className="hover:scale-150 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition"
@@ -117,43 +164,16 @@ export function MusicArtwork({
             </Card>
           </div>
         </ContextMenuTrigger>
-        <ContextMenuContent className="w-40">
-          <ContextMenuItem>Add to Library</ContextMenuItem>
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>Add to Playlist</ContextMenuSubTrigger>
-            <ContextMenuSubContent className="w-48">
-              <ContextMenuItem>
-                {/* <PlusCircledIcon className="mr-2 h-4 w-4" /> */}
-                New Playlist
-              </ContextMenuItem>
-              <ContextMenuSeparator />
-              {/* {playlists.map((playlist) => (
-                <ContextMenuItem key={playlist}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="mr-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM12 12H3M16 6H3M12 18H3" />
-                  </svg>
-                  {playlist}
-                </ContextMenuItem>
-              ))} */}
-            </ContextMenuSubContent>
-          </ContextMenuSub>
-          <ContextMenuSeparator />
-          <ContextMenuItem>Play Next</ContextMenuItem>
-          <ContextMenuItem>Play Later</ContextMenuItem>
-          <ContextMenuItem>Create Station</ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem>Like</ContextMenuItem>
-          <ContextMenuItem>Share</ContextMenuItem>
-        </ContextMenuContent>
+        {isAuthenticated && <ContextMenuContent className="w-40">
+          <ContextMenuItem>
+            <CopyPlus className="mr-2 h-4 w-4" />
+            <span>Save to library</span>
+          </ContextMenuItem>
+          <ContextMenuItem>
+            <Forward className="mr-2 h-4 w-4" />
+            <span>Share</span>
+          </ContextMenuItem>
+        </ContextMenuContent>}
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="mt-2 text-sm font-medium">{title}</h3>

@@ -1,14 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Noizera.Api.Common;
-using Noizera.Application.CQRS.Library.GetSavedMusicCollections;
+using Noizera.Application.CQRS.SavedMusicCollections.GetSavedMusicCollections;
 
-namespace Noizera.Api.Endpoints.Library;
+namespace Noizera.Api.Endpoints.SavedMusicCollections;
 
 internal sealed class GetSavedMusicCollectionsEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapGet("/api/library/saved-collections", Handle)
+        => app.MapGet("/api/saved-collections", Handle)
             .RequireAuthorization();
 
     internal static async Task<IResult> Handle(

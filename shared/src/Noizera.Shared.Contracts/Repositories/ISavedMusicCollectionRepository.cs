@@ -6,4 +6,6 @@ namespace Noizera.Shared.Contracts.Repositories;
 public interface ISavedMusicCollectionRepository : IRepository<SavedMusicSet>
 {
     Task<List<MusicCollectionCardQueryResult>> GetAllAsync(Guid userId, CancellationToken ct);
+
+    Task DeleteAsync(Guid musicCollectionId, Guid userId, CancellationToken ct);
 }

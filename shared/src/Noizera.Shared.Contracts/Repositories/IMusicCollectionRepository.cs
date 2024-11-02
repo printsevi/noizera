@@ -7,6 +7,8 @@ public interface IMusicCollectionRepository : IRepository<MusicSet>
 {
     Task<MusicSet?> GetAsync(Guid id, CancellationToken ct);
 
+    Task<MusicSet?> GetAsync(string publicId, CancellationToken ct);
+
     Task<MusicSet?> GetWithSongsAsync(Guid musicCollectionId, CancellationToken ct);
 
     Task<List<MusicCollectionSongResult>> GetFlacSongsByCollectionPublicIdAsync(string collectionPublicId, CancellationToken ct);

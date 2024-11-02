@@ -12,23 +12,28 @@ export enum ProfileType {
     Label = 'Label'
 };
 
+export enum CollectionType {
+    Album = 'collection_album',
+    Playlist = 'collection_playlist'
+};
+
 export enum SubscriptionType {
     PremiumListeningWithFreeTrial = 'PremiumListeningWithFreeTrial'
 };
 
 export interface ApiResponse<T> {
     ok: boolean,
-    data?: T, 
+    data?: T,
     problem?: Problem
 }
-  
+
 export interface Problem {
     errorCode: string
 }
 
 export interface IdResponse {
     value: string;
-  }
+}
 
 export function handleErrorAndReturnProblem(err: any) {
     const problem: Problem = { errorCode: ErrorCodes.Common };
@@ -38,13 +43,13 @@ export function handleErrorAndReturnProblem(err: any) {
                 variant: "destructive",
                 title: "Oops... server is sleeping",
                 description: "Please try again in a while",
-              });
+            });
         } else if (err.response?.status === 401) {
             toast({
                 variant: "destructive",
                 title: "Please sign in",
                 description: "Please sign in and try again",
-              });
+            });
         } else if (err.response?.status === 400) {
             toast({
                 variant: "destructive",
@@ -56,7 +61,7 @@ export function handleErrorAndReturnProblem(err: any) {
                 variant: "destructive",
                 title: "Oops... something went wrong",
                 description: err.response.data?.detail,
-              });
+            });
             const errorCode = err.response.data?.errorCode as string;
             if (errorCode) {
                 problem.errorCode = errorCode;
@@ -66,7 +71,7 @@ export function handleErrorAndReturnProblem(err: any) {
         toast({
             variant: "destructive",
             title: "Oops... something went wrong"
-          });
+        });
     }
 
     return problem;

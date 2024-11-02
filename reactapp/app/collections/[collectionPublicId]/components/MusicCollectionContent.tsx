@@ -154,7 +154,7 @@ export default function MusicCollectionContent(props: Props) {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <div className="flex flex-col md:flex-row gap-8 p-6 flex-grow">
+      <div className="flex flex-col md:flex-row gap-8 p-10 flex-grow">
         <div className="flex flex-col items-center md:items-start gap-4">
           <Image
             src={`${getURL()}api/music-collections/${props.collectionPublicId}/cover-image`}

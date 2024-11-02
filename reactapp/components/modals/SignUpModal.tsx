@@ -78,8 +78,8 @@ const SignUpModal = () => {
 
   return (
     <Modal
-      title='Create an account'
-      description='Enter your email below to create your account'
+      title='Sign up for free'
+      description='Enter your email below to create an account'
       isOpen={isOpen}
       onChange={onChange}
     >

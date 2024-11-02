@@ -15,7 +15,8 @@ public sealed class SavedMusicCollectionRepository(AppDbContext db) : BaseEntity
             SELECT 
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
-                mc."CollectionType" as CollectionType
+                mc."CollectionType" as CollectionType,
+                TRUE as IsSaved
             FROM
                 public."Users" u
             JOIN 
@@ -34,5 +35,12 @@ public sealed class SavedMusicCollectionRepository(AppDbContext db) : BaseEntity
 
         return await Db.Database
             .SqlQuery<MusicCollectionCardQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task DeleteAsync(Guid musicCollectionId, Guid userId, CancellationToken ct)
+    {
+        await Db.SavedMusicCollections
+            .Where(x => x.MusicSetId == musicCollectionId && x.UserId == userId)
+            .ExecuteDeleteAsync(ct).ConfigureAwait(false);
     }
 }
