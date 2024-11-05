@@ -16,11 +16,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { MAX_USERNAME_LENGTH, USERNAME_REGEX } from '@/libs/helpers';
 
 const FormSchema = z.object({
-  username: z.string().min(1, {
-    message: "Username must be at least 1 character",
-  }),
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters",
+  })
+    .max(MAX_USERNAME_LENGTH, `Username must not exceed ${MAX_USERNAME_LENGTH} characters.`)
+    .regex(USERNAME_REGEX, {
+      message: "Username can only contain letters, numbers, dots, and underscores, cannot start or end with a dot, and must not contain sequences of '..' or '__'."
+    }),
   password: z.string().regex(PASSWORD_REGEX, {
     message: "Password is incorrect"
   })

@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddSharedInfrastructure(builder)
-    .AddServices();
+    .AddServices(builder.Configuration);
 
 var app = builder.Build();
 

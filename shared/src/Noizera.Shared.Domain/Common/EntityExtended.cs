@@ -8,7 +8,7 @@ public abstract class EntityExtended : Entity
 
     public void SetPublicId(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (!string.IsNullOrWhiteSpace(value))
         {
             PublicId = $"{PublicIdPrefix}{value}";
         }

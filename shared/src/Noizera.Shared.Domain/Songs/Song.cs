@@ -37,7 +37,7 @@ public sealed class Song : EntityExtended
     public ICollection<ListeningHistory> ListeningHistories { get; } = [];
     public ICollection<StreamInfo> Streams { get; } = [];
 
-    public override string PublicIdPrefix => "t-";
+    public override string PublicIdPrefix => "t_";
 
     public bool HasAudioAttached => FlacContentLength > 0 && Mp3ContentLength > 0;
 

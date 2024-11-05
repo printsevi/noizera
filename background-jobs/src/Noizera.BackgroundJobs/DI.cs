@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Noizera.BackgroundJobs.Common;
 using Noizera.BackgroundJobs.Jobs;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -8,8 +9,10 @@ namespace Noizera.BackgroundJobs;
 
 internal static class DI
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    public static IServiceCollection AddServices(this IServiceCollection services, [NotNull] IConfiguration configuration)
     {
+        _ = services.Configure<EventSettings>(configuration.GetSection("EventSettings"));
+
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddSingleton<RealTimeOutboxBackgroundJob>();

@@ -1,8 +1,12 @@
-﻿namespace Noizera.BackgroundJobs.Jobs;
+﻿using Microsoft.Extensions.Options;
+using Noizera.BackgroundJobs.Common;
+
+namespace Noizera.BackgroundJobs.Jobs;
 
 public class DelayedOutboxBackgroundJob(
-    IServiceScopeFactory factory)
-    : OutboxBackgroundJob<RealTimeOutboxBackgroundJob>(factory)
+    IServiceScopeFactory factory,
+    IOptions<EventSettings> eventSettings)
+    : OutboxBackgroundJob<RealTimeOutboxBackgroundJob>(factory, eventSettings)
 {
     public override bool IsRealTime => false;
     public override short MaxBunchAmount { get; set; } = 10;

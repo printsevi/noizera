@@ -1,20 +1,19 @@
-﻿using Docker.DotNet.Models;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Outbox;
-using Noizera.Shared.Persistence.S3;
 using Noizera.Shared.Persistence.SQL;
 using Serilog;
 
 namespace Noizera.BackgroundJobs.Jobs;
 
 public abstract class OutboxBackgroundJob<T>(
-    IServiceScopeFactory factory)
+    IServiceScopeFactory factory,
+    IOptions<EventSettings> eventSettings)
     : BackgroundService where T : BackgroundService
 {
+    private readonly EventSettings settings = eventSettings.Value;
     private readonly TimeSpan _period = TimeSpan.FromSeconds(5);
     private int executionCount = 0;
     private int failedCount = 0;
@@ -41,6 +40,7 @@ public abstract class OutboxBackgroundJob<T>(
                 var messages = await db.OutboxMessages
                     .AsTracking()
                     .Where(OutboxMessage.IsProcessableExpression(IsRealTime))
+                    .Where(x => settings.HandleAllEvents || settings.EventsToHandle.Contains(x.Type))
                     .Take(MaxBunchAmount)
                     .ToListAsync();
 

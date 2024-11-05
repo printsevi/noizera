@@ -31,9 +31,8 @@ import { Label } from "@/components/ui/label"
 import updateName from "@/api/users/updateName"
 import updateBio from "@/api/users/updateBio"
 import { useSearchParams } from "next/navigation"
+import { MAX_USERNAME_LENGTH, USERNAME_REGEX } from "@/libs/helpers"
 
-const usernameRegex = /^[a-zA-Z0-9._-]{2,30}$/
-const MAX_USERNAME_LENGTH = 30
 const MAX_BIO_LENGTH = 150
 
 export default function SettingsContent() {
@@ -48,16 +47,8 @@ export default function SettingsContent() {
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(false)
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
-  const [isAlertOpen, setIsAlertOpen] = useState(false)
   const [autoplay, setAutoplay] = useState(true)
   const [profileType, setProfileType] = useState(user?.profileType ?? "")
-  const [volume, setVolume] = useState(50)
-  const [pauseWatchHistory, setPauseWatchHistory] = useState(false)
-  const [usePreciseLocation, setUsePreciseLocation] = useState(true)
-
-  const checkUsernameValidity = (username: string) => {
-    return usernameRegex.test(username)
-  }
 
   const fetchSettings = useCallback(async () => {
     if (isReady && isAuthenticated && auth.userId) {
@@ -86,15 +77,15 @@ export default function SettingsContent() {
     setProfileType(user?.profileType ?? "");
   }, [user?.profileType]);
 
-  const checkUsernameAvailability = useCallback(async (username: string) => {
-    const isValid = checkUsernameValidity(username)
+  const checkUsernameAvailability = useCallback(async (usernameValue: string) => {
+    const isValid = USERNAME_REGEX.test(usernameValue);
     setIsUsernameValid(isValid)
     setIsUsernameAvailable(false);
     if (!isValid) {
       return;
     }
     setIsCheckingUsername(true);
-    const checkResponse = await checkUsername(axiosPrivate, auth.userId!, username);
+    const checkResponse = await checkUsername(axiosPrivate, auth.userId!, usernameValue);
     setIsUsernameAvailable(checkResponse.ok)
     setIsCheckingUsername(false)
   }, [axiosPrivate, auth.userId])
@@ -165,8 +156,6 @@ export default function SettingsContent() {
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">Profile</TabsTrigger>
-            {/* <TabsTrigger value="playback">Playback</TabsTrigger>
-            <TabsTrigger value="privacy">Privacy</TabsTrigger> */}
           </TabsList>
           <TabsContent value="profile" className="mt-6">
             <div className="space-y-6">
@@ -178,14 +167,13 @@ export default function SettingsContent() {
                     <Input
                       value={username}
                       disabled={isUpdating}
-                      onChange={(e) => setUsername(e.target.value.slice(0, MAX_USERNAME_LENGTH))}
-                      onKeyPress={(e) => {
-                        const char = String.fromCharCode(e.which)
-                        if (!char.match(/[a-zA-Z0-9._-]/)) {
-                          e.preventDefault()
-                        }
+                      onChange={(e) => {
+                        const newValue = e.target.value
+                          .slice(0, MAX_USERNAME_LENGTH)
+                          .replace(/[^a-zA-Z0-9._]/g, "");
+                        setUsername(newValue);
                       }}
-                      className="w-full px-6"
+                      className="w-full !ml-0 px-8"
                       maxLength={MAX_USERNAME_LENGTH}
                     />
                     <Button disabled={isUpdating || !isUsernameValid || !isUsernameAvailable || (username.toLowerCase() === user.username.toLowerCase())} onClick={updateUsernameHandler}>Update</Button>
@@ -194,7 +182,7 @@ export default function SettingsContent() {
                     {isCheckingUsername ? (
                       <span className="text-muted-foreground">Checking availability...</span>
                     ) : !isUsernameValid ? (
-                      <span className="text-red-600">Invalid username format</span>
+                      <span className="text-red-600">Format is incorrect</span>
                     ) : isUsernameAvailable ? (
                       <span className="text-green-600">Username is available</span>
                     ) : (
@@ -202,7 +190,7 @@ export default function SettingsContent() {
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Usernames can only use letters, numbers, underscores and periods.
+                    Usernames can only use letters, numbers, underscores and periods.Username must be 2-30 characters, contain only letters, numbers, dots, and underscores, and cannot start or end with a dot or contain sequences of '..' or '__'.
                   </div>
                 </div>
               </div>
@@ -253,84 +241,8 @@ export default function SettingsContent() {
               </div>
             </div>
           </TabsContent>
-          <TabsContent value="playback" className="mt-6">
-            <h2 className="text-2xl font-bold mb-4">Playback Settings</h2>
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                <span className="text-foreground">Autoplay</span>
-                <Switch
-                  checked={autoplay}
-                  onCheckedChange={setAutoplay}
-                />
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                <span className="text-foreground">Audio quality</span>
-                <Select
-                  value={profileType}
-                  onValueChange={setProfileType}
-                >
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                <span className="text-foreground">Default volume</span>
-                <Slider
-                  className="w-full sm:w-[180px]"
-                  value={[volume]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  onValueChange={([value]) => setVolume(value)}
-                />
-              </div>
-            </div>
-          </TabsContent>
-          <TabsContent value="privacy" className="mt-6">
-            <h2 className="text-2xl font-bold mb-4">Privacy Settings</h2>
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                <span className="text-foreground">Pause watch history</span>
-                <Switch
-                  checked={pauseWatchHistory}
-                  onCheckedChange={setPauseWatchHistory}
-                />
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                <span className="text-foreground">Use precise location</span>
-                <Switch
-                  checked={usePreciseLocation}
-                  onCheckedChange={setUsePreciseLocation}
-                />
-              </div>
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
-      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently change your username to {username}.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => {
-              // Implement the actual save logic here
-              setIsAlertOpen(false)
-            }}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }
