@@ -8,7 +8,7 @@ namespace Noizera.Api.Endpoints.Auth;
 internal sealed class ForgotPasswordPublicEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapPatch("/api/password", Handle)
+        => app.MapPatch("/api/auth/password", Handle)
               .AllowAnonymous();
 
     internal static async Task<IResult> Handle(

@@ -8,3 +8,6 @@ services:
     build:
       context: ./reactapp
 
+  job:
+    build:
+      context: ./background-jobs

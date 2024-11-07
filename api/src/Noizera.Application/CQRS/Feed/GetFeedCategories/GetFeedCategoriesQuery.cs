@@ -12,8 +12,10 @@ public sealed record GetFeedCategoriesQuery(Guid UserId)
         public async Task<GetFeedCategoriesResponse> Handle(GetFeedCategoriesQuery request, CancellationToken cancellationToken)
         {
             return await Task.FromResult<GetFeedCategoriesResponse>(
-                new([new("recommendations", "Recommendations")], 
-                []));
+                new([new("recommendations", "Recommendations"),
+                    new("new-releases", "New Releases")], 
+                [new("artists", "Artists"),
+                    new("labels", "Labels")]));
         }
     }
 }

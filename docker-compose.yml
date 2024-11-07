@@ -18,6 +18,21 @@ services:
     # depends_on:
     #   - ffmpeg
 
+  job:
+    container_name: job
+    image: $JOB_IMAGE_NAME
+    ports:
+      - 5125:5125
+    environment:
+      - ASPNETCORE_ENVIRONMENT
+      - ASPNETCORE_HTTP_PORTS=5125
+      - ConnectionStrings__PostgresConnection
+    volumes:
+      - /home/printsev/noizera-data:/noizera-data
+    depends_on:
+      - api
+      - ffmpeg
+
   seq:
     container_name: seq
     image: datalust/seq:latest
@@ -35,6 +50,8 @@ services:
     command: npm start
     ports:
       - 3000:3000
+    depends_on:
+      - api
 
   # dashboard:
   #   container_name: dashboard
@@ -64,10 +81,3 @@ services:
       - PGADMIN_LISTEN_PORT=5050
     volumes:
       - ./data/pgadmin:/var/lib/pgadmin
-  # mongoex:
-  #   image: mongo-express
-  #   container_name: mongoex
-  #   environment:
-  #     - ME_CONFIG_MONGODB_URL=mongodb+srv://printsev:6lq7QNjhR5308n49@db-mongodb-ams3-72588-736c84a8.mongo.ondigitalocean.com/noizera-dev?authSource=admin
-  #   ports:
-  #     - "27017:27017"

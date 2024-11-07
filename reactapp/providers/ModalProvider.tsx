@@ -7,6 +7,7 @@ import SignUpModal from '@/components/modals/SignUpModal';
 import EmailVerificationModal from '@/components/modals/EmailVerificationModal';
 import RegistrationModal from '@/components/modals/RegistrationModal';
 import UploadModal from '@/components/modals/UploadModal';
+import ForgotPasswordModal from '@/components/modals/ForgotPasswordModal';
 
 const ModalProvider: React.FC = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -23,6 +24,7 @@ const ModalProvider: React.FC = () => {
     <>
       <SignInModal />
       <SignUpModal />
+      <ForgotPasswordModal />
       <AuthenticationModal />
       <EmailVerificationModal />
       <RegistrationModal />

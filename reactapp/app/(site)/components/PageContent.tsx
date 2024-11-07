@@ -30,7 +30,10 @@ interface MusicCollectionResult {
   publicId: string,
   title: string,
   collectionType: CollectionType,
-  isSaved: boolean
+  isSaved: boolean,
+  ownerName: string,
+  ownerPublicId: string,
+  songCount: number
 }
 
 const fetchCollectionsForPublicCategory = async (category: GetFeedMusicCollectionItem)
@@ -109,8 +112,8 @@ const PageContent = () => {
             }}
             className="relative w-full"
           >
-            <CarouselPrevious className='absolute left-0 top-1/2 -translate-y-1/2' />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
+            <CarouselPrevious className='left-0 top-1/2 -translate-y-1/2' />
+            <CarouselNext className="right-0 top-1/2 -translate-y-1/2" />
             <CarouselContent>
               {category.items?.map((item, index) => (
                 <CarouselItem key={item.publicId} className="basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
@@ -119,6 +122,9 @@ const PageContent = () => {
                     collectionType={item.collectionType}
                     publicId={item.publicId}
                     isSaved={item.isSaved}
+                    ownerName={item.ownerName}
+                    ownerPublicId={item.ownerPublicId}
+                    songCount={item.songCount}
                   />
                 </CarouselItem>
               ))}

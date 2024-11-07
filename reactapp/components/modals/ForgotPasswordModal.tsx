@@ -19,29 +19,23 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import useSignUpModal from '@/hooks/useSignUpModal';
 import useForgotPasswordModal from '@/hooks/useForgotPasswordModal';
+import forgotPassword from '@/api/auth/forgotPassword';
 
 const FormSchema = z.object({
   emailOrUsername: z.string().min(1, {
     message: "Username or Email must be at least 1 character",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
+  })
 });
 
-const SignInModal = () => {
+const ForgotPasswordModal = () => {
   const router = useRouter();
-  const { onClose, isOpen } = useSignInModal();
-  const authenticationModal = useAuthenticationModal();
-  const signUpModal = useSignUpModal();
-  const forgotPasswordModal = useForgotPasswordModal();
+  const { onClose, isOpen } = useForgotPasswordModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      emailOrUsername: "",
-      password: ""
+      emailOrUsername: ""
     },
   });
 
@@ -52,19 +46,12 @@ const SignInModal = () => {
     }
   };
 
-  const onSignUpClick = () => {
-    onClose();
-    form.reset();
-    signUpModal.onOpen();
-  };
-
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsLoading(true);
 
     const emailOrUsername = data.emailOrUsername;
-    const password = data.password;
 
-    if (!emailOrUsername || !password) {
+    if (!emailOrUsername) {
       toast({
         variant: "destructive",
         title: "Missing fields",
@@ -74,33 +61,25 @@ const SignInModal = () => {
       return;
     }
 
-    const signInResponse = await signIn(emailOrUsername, password);
-    if (!signInResponse.ok) {
+    const response = await forgotPassword(emailOrUsername);
+    if (!response.ok) {
       setIsLoading(false);
       return;
     }
 
-    authenticationModal.setEmailOrUsername(emailOrUsername);
-
     setIsLoading(false);
 
-    toast({ title: "Verification code has been sent to your email" });
+    toast({ title: "Reset password link has been sent to your email" });
 
     form.reset();
+    router.push('/')
     onClose();
-    authenticationModal.onOpen();
-  };
-
-  const onForgotPassword = async () => {
-    onClose();
-    form.reset();
-    forgotPasswordModal.onOpen();
   };
 
   return (
     <Modal
-      title='Sign In'
-      description='Sign in to your account.'
+      title='Reset password'
+      description='Reset your password'
       isOpen={isOpen}
       onChange={onChange}
     >
@@ -116,32 +95,14 @@ const SignInModal = () => {
             id="emailOrUsername"
             placeholder='type email or username'
           />
-          <InputFormField
-            disabled={isLoading}
-            name="password"
-            label="Password"
-            id="password"
-            type="password"
-            placeholder='type your password'
-          />
           <PurpleButton className='mt-auto' type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {!isLoading ? 'Sign In' : 'Signing In'}
+            {!isLoading ? 'Reset' : 'Resetting'}
           </PurpleButton>
         </form>
       </Form>
-      <div className="mt-4 text-center text-sm">
-        <Button onClick={onForgotPassword} variant="link" className="underline">
-          Forgot your password?
-        </Button>
-        <div>Don&apos;t have an account?
-          <Button onClick={onSignUpClick} variant="link" className="underline">
-            Sign up
-          </Button>
-        </div>
-      </div>
     </Modal>
   );
 };
 
-export default SignInModal;
+export default ForgotPasswordModal;

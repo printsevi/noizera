@@ -459,7 +459,7 @@ const NewAlbumContent = () => {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         {/* {submitted && <Button disabled={submitted} variant="outline">Edit</Button>} */}
-        <PurpleButton className='bg-white px-6 py-2' disabled={submitted}>Submit album</PurpleButton>
+        <PurpleButton className='px-6 py-2' disabled={submitted}>Submit album</PurpleButton>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

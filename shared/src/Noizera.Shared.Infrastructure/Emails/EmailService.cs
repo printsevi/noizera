@@ -29,7 +29,7 @@ public class EmailService(EmailSender sender, S3Context s3)
         var htmlContent = await s3.GetEmailTemplateContentAsync(templateName, ct);
         if (string.IsNullOrWhiteSpace(htmlContent))
         {
-            throw new Exception("Template not found.");
+            throw new Exception($"Template not found: {templateName}");
         }
 
         var htmlDoc = new HtmlDocument();
@@ -39,7 +39,7 @@ public class EmailService(EmailSender sender, S3Context s3)
         {
             foreach (var pair in idValuePairs)
             {
-                var div = htmlDoc.DocumentNode.SelectSingleNode($"//div[@id='{pair.Key}']");
+                var div = htmlDoc.DocumentNode.SelectSingleNode(pair.Key);
                 if (div is not null)
                 {
                     div.InnerHtml = pair.Value;

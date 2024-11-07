@@ -92,7 +92,7 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         var request = new GetObjectRequest
         {
             BucketName = settings.EmailTemplates,
-            Key = key
+            Key = $"{key}.html"
         };
 
         string result;

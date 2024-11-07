@@ -30,13 +30,17 @@ import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCo
 import { CollectionType } from "@/api/common";
 import useSignUpModal from "@/hooks/useSignUpModal";
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection";
+import Link from "next/link";
 
 interface Props {
   aspectRatio?: "portrait" | "square",
   title: string,
   publicId: string;
   isSaved: boolean;
-  collectionType: CollectionType
+  collectionType: CollectionType,
+  ownerName: string,
+  ownerPublicId: string,
+  songCount: number
 }
 
 export function MusicArtwork({
@@ -44,6 +48,9 @@ export function MusicArtwork({
   collectionType,
   title,
   publicId,
+  ownerName,
+  ownerPublicId,
+  songCount,
   isSaved = false
 }: Props) {
   const { axiosPrivate, isReady } = useAxiosPrivate();
@@ -176,8 +183,8 @@ export function MusicArtwork({
         </ContextMenuContent>}
       </ContextMenu>
       <div className="space-y-1 text-sm">
-        <h3 className="mt-2 text-sm font-medium">{title}</h3>
-        <p className="text-sm text-muted-foreground">Album • Blaze</p>
+        <h3 className="mt-2 text-sm font-medium"><Link href={`/collections/${publicId}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
+        <p className="text-sm text-muted-foreground">{songCount} songs • <Link href={`/profiles/${ownerPublicId}`} key={`/profiles/${ownerPublicId}`} className="hover:underline">{ownerName}</Link></p>
       </div>
     </div>
   )

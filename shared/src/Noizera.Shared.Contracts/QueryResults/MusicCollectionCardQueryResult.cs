@@ -4,4 +4,7 @@ public record MusicCollectionCardQueryResult(
     string PublicId,
     string Title,
     string CollectionType,
-    bool IsSaved);
+    bool IsSaved,
+    string OwnerPublicId,
+    string OwnerName,
+    short SongCount);

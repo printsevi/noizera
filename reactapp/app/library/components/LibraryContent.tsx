@@ -36,7 +36,7 @@ const LibraryContent: React.FC = () => {
       <CardFooter className="flex flex-col space-y-4">
         <PurpleButton
           onClick={() => router.push("/")}
-          className='bg-white px-6 py-2'
+          className='px-6 py-2'
         >
           Listen
         </PurpleButton>

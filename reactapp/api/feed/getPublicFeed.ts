@@ -22,7 +22,7 @@ export interface GetPublicFeedProfileItem {
 export interface MusicCollectionQueryResult {
   publicId: string,
   title: string,
-  collectionType: string
+  collectionType: string,
 }
 
 export interface ProfileQueryResult {
@@ -32,7 +32,7 @@ export interface ProfileQueryResult {
 }
 
 const getPublicFeed = async (): Promise<ApiResponse<GetPublicFeedResponse>> => {
-  const result : ApiResponse<GetPublicFeedResponse> = { ok: true };
+  const result: ApiResponse<GetPublicFeedResponse> = { ok: true };
   try {
     const response = await axiosPublic.get<GetPublicFeedResponse>(`/public-feed`);
     result.data = response.data;

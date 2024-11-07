@@ -183,6 +183,9 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
+                p."PublicId" as OwnerPublicId,
+                p."Name" as OwnerName,
+                COUNT(mcs."Id") AS SongCount,
                 CASE 
                     WHEN smc."UserId" IS NOT NULL 
                     THEN true
@@ -194,9 +197,20 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
                 public."SavedMusicCollections" smc
                     ON smc."MusicSetId" = mc."Id"
                     AND smc."UserId" = {userId}
+            LEFT JOIN 
+                public."Users" u
+                    ON mc."OwnerId" = u."Id"
+            LEFT JOIN 
+                public."Profiles" p
+                    ON p."UserId" = u."Id"
+            LEFT JOIN 
+                public."MusicCollectionSongs" mcs
+                    ON mcs."MusicCollectionId" = mc."Id"
             WHERE 
                 (mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                 AND mc."IsDeleted" = false
+            GROUP BY 
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id", smc."UserId"
             ORDER BY RANDOM()
             LIMIT 20
             """;
@@ -205,20 +219,119 @@ public sealed class MusicCollectionRepository(AppDbContext db, IHashGenerator ha
             .SqlQuery<MusicCollectionCardQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
     }
 
-    public async Task<List<MusicCollectionCardQueryResult>> GetPublicRecommendationsAsync(CancellationToken ct)
+    public async Task<List<MusicCollectionCardQueryResult>> GetRecommendationsAsync(CancellationToken ct)
     {
         FormattableString sql = $"""
             SELECT 
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
+                p."PublicId" as OwnerPublicId,
+                p."Name" as OwnerName,
+                COUNT(mcs."Id") AS SongCount,
                 FALSE as IsSaved
             FROM 
                 public."MusicCollections" mc
+            LEFT JOIN 
+                public."Users" u
+                    ON mc."OwnerId" = u."Id"
+            LEFT JOIN 
+                public."Profiles" p
+                    ON p."UserId" = u."Id"
+            LEFT JOIN 
+                public."MusicCollectionSongs" mcs
+                    ON mcs."MusicCollectionId" = mc."Id"
             WHERE 
                 (mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                 AND mc."IsDeleted" = false
-            Limit 20
+            GROUP BY 
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id"
+            ORDER BY RANDOM()
+            LIMIT 20
+            """;
+
+        return await Db.Database
+            .SqlQuery<MusicCollectionCardQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task<List<MusicCollectionCardQueryResult>> GetNewReleasesAsync(Guid userId, CancellationToken ct)
+    {
+        FormattableString sql = $"""
+            SELECT 
+                mc."PublicId" as PublicId,
+                mc."Title" as Title,
+                mc."CollectionType" as CollectionType,
+                p."PublicId" as OwnerPublicId,
+                p."Name" as OwnerName,
+                COUNT(mcs."Id") AS SongCount,
+                CASE 
+                    WHEN smc."UserId" IS NOT NULL 
+                    THEN true
+                    ELSE false 
+                END AS IsSaved
+            FROM 
+                (SELECT * 
+                 FROM public."MusicCollections" mc1
+                 WHERE 
+                    (mc1."CollectionType" = 'collection_album' AND mc1."AlbumStatus" = 'Released')
+                    AND mc1."IsDeleted" = false
+                 ORDER BY mc1."CreatedAt" DESC
+                 LIMIT 50) mc
+            LEFT JOIN 
+                public."SavedMusicCollections" smc
+                    ON smc."MusicSetId" = mc."Id"
+                    AND smc."UserId" = {userId}
+            LEFT JOIN 
+                public."Users" u
+                    ON mc."OwnerId" = u."Id"
+            LEFT JOIN 
+                public."Profiles" p
+                    ON p."UserId" = u."Id"
+            LEFT JOIN 
+                public."MusicCollectionSongs" mcs
+                    ON mcs."MusicCollectionId" = mc."Id"
+            GROUP BY 
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id", smc."UserId"
+            ORDER BY RANDOM()
+            LIMIT 20
+            """;
+
+        return await Db.Database
+            .SqlQuery<MusicCollectionCardQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task<List<MusicCollectionCardQueryResult>> GetNewReleasesAsync(CancellationToken ct)
+    {
+        FormattableString sql = $"""
+            SELECT 
+                mc."PublicId" as PublicId,
+                mc."Title" as Title,
+                mc."CollectionType" as CollectionType,
+                p."PublicId" as OwnerPublicId,
+                p."Name" as OwnerName,
+                COUNT(mcs."Id") AS SongCount,
+                FALSE as IsSaved
+            FROM 
+                (SELECT * 
+                 FROM public."MusicCollections" mc1
+                 WHERE 
+                    (mc1."CollectionType" = 'collection_album' AND mc1."AlbumStatus" = 'Released')
+                    AND mc1."IsDeleted" = false
+                 ORDER BY mc1."CreatedAt" DESC
+                 LIMIT 50) mc
+            LEFT JOIN 
+                public."Users" u
+                    ON mc."OwnerId" = u."Id"
+            LEFT JOIN 
+                public."Profiles" p
+                    ON p."UserId" = u."Id"
+            LEFT JOIN 
+                public."MusicCollectionSongs" mcs
+                    ON mcs."MusicCollectionId" = mc."Id"
+            GROUP BY 
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id"
+            ORDER BY RANDOM()
+            LIMIT 20
             """;
 
         return await Db.Database

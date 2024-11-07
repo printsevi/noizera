@@ -12,13 +12,13 @@ public class VerificationCodeCreatedEventHandler(EmailService emailService)
     {
         await emailService.SendEmailAsync(
             EmailTemplateNames.AccountConfirmation,
-            notification.DomainEvent.Email,
-            notification.DomainEvent.Email,
+            "ildarprintsev@gmail.com",//notification.DomainEvent.Email,
+            "ildarprintsev@gmail.com",//notification.DomainEvent.Email,
             "notifications@noizera.com",
             "Noizera Notifications",
             "Confirm email",
             cancellationToken,
-            new Dictionary<string, string>() { { "verification-code", notification.DomainEvent.Code } }
+            new Dictionary<string, string>() { { "//p[@id='verification-code']", notification.DomainEvent.Code } }
         );
     }
 }

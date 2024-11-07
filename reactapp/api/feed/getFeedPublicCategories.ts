@@ -6,9 +6,9 @@ import { GetFeedCategoriesResponse } from './getFeedCategories';
 
 const getFeedPublicCategories = async ()
   : Promise<ApiResponse<GetFeedCategoriesResponse>> => {
-  const result : ApiResponse<GetFeedCategoriesResponse> = { ok: true };
+  const result: ApiResponse<GetFeedCategoriesResponse> = { ok: true };
   try {
-    const response = await axiosPublic.get<GetFeedCategoriesResponse>(`/feed/public-categories`);
+    const response = await axiosPublic.get<GetFeedCategoriesResponse>(`public/feed/categories`);
     result.data = response.data;
   } catch (err) {
     result.ok = false;

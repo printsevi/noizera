@@ -145,7 +145,7 @@ const Header: React.FC = () => {
         {isClient && isReady && isAuthenticated && (
           <>
             <div>
-              <PurpleButton onClick={() => router.push('/subscriptions')} className='bg-white px-6 py-2'>
+              <PurpleButton onClick={() => router.push('/subscriptions')} className='px-6 py-2'>
                 Start free trial
               </PurpleButton>
             </div>
@@ -172,7 +172,7 @@ const Header: React.FC = () => {
             <div>
               <PurpleButton
                 onClick={signInModal.onOpen}
-                className='bg-white px-6 py-2'
+                className='px-6 py-2'
               >
                 Sign in
               </PurpleButton>

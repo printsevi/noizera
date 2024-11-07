@@ -1,15 +1,19 @@
 'use client';
 
-import { BounceLoader } from 'react-spinners';
-
-import Box from '@/components/Box';
+import { useEffect, useState } from 'react';
+import { Progress } from '@/components/ui/progress';
 
 const Loading = () => {
-  return (
-    <Box className='h-full flex items-center justify-center'>
-      <BounceLoader color='#22c55e' size={40} />
-    </Box>
-  );
+  const [progress, setProgress] = useState(13)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgress(66), 300)
+    return () => clearTimeout(timer)
+  }, [])
+
+  return <div className='h-full flex items-center justify-center'>
+    <Progress value={progress} className="w-[60%] bg-purple-500" />
+  </div>
 };
 
 export default Loading;

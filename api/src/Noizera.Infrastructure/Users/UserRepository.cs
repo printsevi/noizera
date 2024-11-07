@@ -33,7 +33,7 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
             .FirstOrDefaultAsync(u => u.Id == userId, ct).ConfigureAwait(false);
 
     public async Task<User?> GetByEmailWithLatestResetTokenAsync(string email, CancellationToken ct) => await Db.Users
-            .Include(u => u.SecretTokens.Where(x => x.TokenType == SecretTokenType.Reset).OrderByDescending(r => r.CreatedAt).FirstOrDefault())
+            .Include(u => u.SecretTokens.Where(x => x.TokenType == SecretTokenType.Reset && !x.IsRevoked))
             .FirstOrDefaultAsync(u => EF.Functions.ILike(u.Email, email), ct).ConfigureAwait(false);
 
     public async Task<User?> GetWithSubscriptionsAsync(Guid userId, CancellationToken ct) => await Db.Users

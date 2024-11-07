@@ -29,7 +29,7 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { PASSWORD_REGEX } from "@/libs/inputValidation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, Loader2, MinusIcon, ReceiptEuro } from "lucide-react";
-import { useRouter, useSearchParams  } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -43,7 +43,7 @@ const FormSchema = z.object({
 
 export default function ResetContent() {
   const router = useRouter();
-  const searchParams  = useSearchParams();
+  const searchParams = useSearchParams();
   const email = searchParams.get('email');
   const token = searchParams.get('token');
 
@@ -76,7 +76,7 @@ export default function ResetContent() {
       return;
     }
 
-    if(!email || !token) {
+    if (!email || !token) {
       return;
     }
 
@@ -87,17 +87,17 @@ export default function ResetContent() {
     }
 
     setIsLoading(false);
-    toast({title: "Your password is updated."});
+    toast({ title: "Your password is updated." });
     form.reset();
     setIsLoading(false);
     router.push('/');
   };
 
-  if(!email || !token) {
-    return(<></>);
+  if (!email || !token) {
+    return (<></>);
   }
 
-  return (<Card className="border-primary">
+  return (<Card>
     <CardHeader className="text-center pb-2">
       <CardTitle className="!mb-7">Update your password</CardTitle>
     </CardHeader>
@@ -105,13 +105,13 @@ export default function ResetContent() {
       Fill in a new password
     </CardDescription>
     <CardContent>
-    <Form {...form}>
+      <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className='flex flex-col gap-y-4'
         >
-          <InputFormField 
-            disabled={isLoading} 
+          <InputFormField
+            disabled={isLoading}
             name="password"
             label="Password"
             id="password"
@@ -120,13 +120,13 @@ export default function ResetContent() {
             onChange={onPasswordChange}
           />
           <PasswordChecklist
-              rules={["minLength","specialChar","number","capital"]}
-              iconSize={12}
-              minLength={8}
-              value={inputPassword}
-              onChange={(isValid) => {}}
-              className='text-sm'
-			      />
+            rules={["minLength", "specialChar", "number", "capital"]}
+            iconSize={12}
+            minLength={8}
+            value={inputPassword}
+            onChange={(isValid) => { }}
+            className='text-sm'
+          />
           <PurpleButton className='mt-auto' type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {!isLoading ? 'Update password' : 'Updating password'}

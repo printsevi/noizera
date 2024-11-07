@@ -12,7 +12,9 @@ public sealed record GetFeedPublicCategoriesQuery()
         public async Task<GetFeedPublicCategoriesResponse> Handle(GetFeedPublicCategoriesQuery request, CancellationToken cancellationToken)
         {
             return await Task.FromResult<GetFeedPublicCategoriesResponse>(
-                new([new("new-releases", "New releases")],
+                new([
+                    new("popular", "Popular"),
+                    new("new-releases", "New releases")],
                 []));
         }
     }

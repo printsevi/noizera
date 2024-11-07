@@ -102,7 +102,7 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
         FormattableString sql = $"""
             SELECT 
                 p."Name" as Name,
-                p."Description" as Bio,
+                p."Bio" as Bio,
                 (
                     SELECT
                         COUNT(*)

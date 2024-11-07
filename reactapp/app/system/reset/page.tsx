@@ -5,9 +5,11 @@ import dynamic from 'next/dynamic';
 import ResetContent from './components/ResetContent';
 
 const Success = async () => {
-  // const { isPageLoading } = usePageLoading();
-  // return isPageLoading ? <Loading /> : <NewAlbumContent />;
-  return <ResetContent />;
+  return (
+    <div className='my-0 mx-auto max-w-xl'>
+      <ResetContent />
+    </div>
+  );
 };
 
 export default Success;

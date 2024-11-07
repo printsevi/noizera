@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Button } from './ui/button';
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> { }
 
 const PurpleButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, children, disabled, ...props }, ref) => {
@@ -14,7 +14,7 @@ const PurpleButton = forwardRef<HTMLButtonElement, ButtonProps>(
         w-full 
         rounded-full 
         bg-purple-500
-        hover:bg-purple-500
+        hover:bg-purple-700
         border
         border-transparent
         px-3 

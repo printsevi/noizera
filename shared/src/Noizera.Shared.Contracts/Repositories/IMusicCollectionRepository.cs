@@ -19,5 +19,9 @@ public interface IMusicCollectionRepository : IRepository<MusicSet>
 
     Task<List<MusicCollectionCardQueryResult>> GetRecommendationsAsync(Guid userId, CancellationToken ct);
 
-    Task<List<MusicCollectionCardQueryResult>> GetPublicRecommendationsAsync(CancellationToken ct);
+    Task<List<MusicCollectionCardQueryResult>> GetRecommendationsAsync(CancellationToken ct);
+
+    Task<List<MusicCollectionCardQueryResult>> GetNewReleasesAsync(Guid userId, CancellationToken ct);
+
+    Task<List<MusicCollectionCardQueryResult>> GetNewReleasesAsync(CancellationToken ct);
 }

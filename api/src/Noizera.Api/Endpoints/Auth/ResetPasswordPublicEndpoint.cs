@@ -10,7 +10,7 @@ internal sealed class ResetPasswordPublicEndpoint : IEndpoint
     internal sealed record Request(string Email, string Token, string NewPassword);
 
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapPut("/api/password", Handle)
+        => app.MapPut("/api/auth/password", Handle)
               .AllowAnonymous();
 
     internal static async Task<IResult> Handle(
