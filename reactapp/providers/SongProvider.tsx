@@ -17,6 +17,8 @@ export interface ISongModel {
     contentType: string;
     durationInSeconds: number;
     coverPath: string;
+    ownerName: string;
+    ownerPublicId: string;
 }
 
 export interface ISongContext {

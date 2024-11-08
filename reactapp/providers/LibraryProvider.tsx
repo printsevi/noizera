@@ -14,6 +14,9 @@ export interface IMusicCollectionModel {
     collectionType: CollectionType;
     title: string;
     publicId: string;
+    ownerName: string,
+    ownerPublicId: string,
+    songCount: number
 }
 
 export interface ILibraryContext {

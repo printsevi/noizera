@@ -58,7 +58,11 @@ const LibraryContent: React.FC = () => {
               title={collection.title}
               publicId={collection.publicId}
               collectionType={collection.collectionType}
-              isSaved={true} />
+              isSaved={true}
+              ownerName={collection.ownerName}
+              ownerPublicId={collection.ownerPublicId}
+              songCount={collection.songCount}
+            />
           </div>
         ))}
       </div>

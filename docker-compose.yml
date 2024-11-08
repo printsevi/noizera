@@ -8,15 +8,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_HTTP_PORTS=5000
-      # - ASPNETCORE_HTTPS_PORTS=5001
       - ConnectionStrings__PostgresConnection
-      # - ASPNETCORE_Kestrel__Certificates__Default__Path=/https-certs/aspnetcore.pfx
-      # - ASPNETCORE_Kestrel__Certificates__Default__Password
     volumes:
-      # - /home/printsev/noizera:/https-certs:ro
       - /home/printsev/noizera-data:/noizera-data
-    # depends_on:
-    #   - ffmpeg
 
   job:
     container_name: job

@@ -96,7 +96,9 @@ export default function MusicCollectionContent(props: Props) {
         contentLength: s.contentLength,
         contentType: audioType,
         durationInSeconds: s.durationInSeconds,
-        coverPath: ""
+        coverPath: "",
+        ownerName: "",
+        ownerPublicId: ""
       })));
     }
   }, [isAuthenticated, isReady, axiosPrivate, auth.userId, user?.activeSubscriptions?.length]);
@@ -130,7 +132,9 @@ export default function MusicCollectionContent(props: Props) {
         contentLength: s.contentLength,
         contentType: s.contentType,
         durationInSeconds: s.durationInSeconds,
-        coverPath: ""
+        coverPath: "",
+        ownerName: "",
+        ownerPublicId: ""
       })));
       play(true);
     }
@@ -230,7 +234,7 @@ export default function MusicCollectionContent(props: Props) {
                   <Heart className={`h-5 w-5 ${likedTracks.has(0) ? 'fill-current text-red-500' : ''} transition-colors`} />
                   <span className="sr-only">Like</span>
                 </Button>
-                <DropdownMenu>
+                {/* <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all">
                       <MoreVertical className="h-5 w-5" />
@@ -247,7 +251,7 @@ export default function MusicCollectionContent(props: Props) {
                       <span>Save to playlist</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
+                </DropdownMenu> */}
                 <span className="text-muted-foreground w-12 text-right">{formatDurationDisplay(track.durationInSeconds)}</span>
               </div>
             </div>

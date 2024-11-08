@@ -16,6 +16,9 @@ public sealed class SavedMusicCollectionRepository(AppDbContext db) : BaseEntity
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
+                p."PublicId" as OwnerPublicId,
+                p."Name" as OwnerName,
+                COUNT(mcs."Id") AS SongCount,
                 TRUE as IsSaved
             FROM
                 public."Users" u
@@ -25,11 +28,19 @@ public sealed class SavedMusicCollectionRepository(AppDbContext db) : BaseEntity
             JOIN 
                 public."MusicCollections" mc 
                     ON mc."Id" = smc."MusicSetId"
+            LEFT JOIN 
+                public."Profiles" p
+                    ON p."UserId" = u."Id"
+            LEFT JOIN 
+                public."MusicCollectionSongs" mcs
+                    ON mcs."MusicCollectionId" = mc."Id"
             WHERE 
                 ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                     OR mc."CollectionType" = 'collection_playlist')
                 AND mc."IsDeleted" = false
                 AND u."Id" = {userId}
+            GROUP BY 
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId"
             Limit 300
             """;
 

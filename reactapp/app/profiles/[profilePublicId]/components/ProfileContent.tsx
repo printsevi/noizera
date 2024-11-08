@@ -46,7 +46,7 @@ export default function ProfileContent(props: Props) {
           <h1 className="text-3xl font-bold mb-2">{data.data?.name}</h1>
           <p className="text-xl text-muted-foreground mb-4">@{props.profilePublicId}</p>
           {data.data?.bio && <p className="mb-4 max-w-md">{data.data?.bio}</p>}
-          <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">
+          {/* <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">
             <div>
               <span className="font-semibold">{data?.data?.followersCount ?? 0}</span> followers
             </div>
@@ -68,11 +68,11 @@ export default function ProfileContent(props: Props) {
             <Button variant="outline" size="icon">
               <Share2 className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-4">Albums</h2>
+      <h2 className="text-2xl font-bold mb-4">Released Music</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {/* {albums.map((album) => (
           <Card key={album.id} className="overflow-hidden">

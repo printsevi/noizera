@@ -20,9 +20,12 @@ import { formatDurationDisplay, getURL } from '@/libs/helpers';
 import { Loader2, Pause, PauseCircleIcon, Play, PlayCircleIcon, Repeat, Shuffle, SkipBack, SkipForward, Volume2, Volume2Icon, VolumeIcon, VolumeX, VolumeXIcon } from 'lucide-react';
 import { Slider } from './ui/slider';
 import { Button } from './ui/button';
+import Link from 'next/link';
+import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 
 export default function AudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -30,7 +33,7 @@ export default function AudioPlayer() {
   const [duration, setDuration] = useState(0);
   const [currrentProgress, setCurrrentProgress] = useState(0);
   const [buffered, setBuffered] = useState(0);
-  const [volume, setVolume] = useState(0.2);
+  const [volume, setVolume] = useState(isDesktop ? 0.2 : 1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 
   const durationDisplay = formatDurationDisplay(duration);
@@ -73,6 +76,14 @@ export default function AudioPlayer() {
       audioRef.current?.pause();
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    const volumeValue = isDesktop ? 0.2 : 1;
+    setVolume(volumeValue);
+    if (audioRef.current) {
+      audioRef.current.volume = volumeValue;
+    }
+  }, [isDesktop]);
 
   useEffect(() => {
     play(false);
@@ -196,11 +207,11 @@ export default function AudioPlayer() {
             className="w-10 h-10 aspect-square object-cover rounded-md flex-col" />
           <div className="flex flex-col ml-1">
             <h3 className="font-medium text-sm truncate">{currentSong?.title ?? 'Track ID'}</h3>
-            <p className="text-xs text-muted-foreground truncate">Artist Name</p>
+            <p className="text-xs text-muted-foreground truncate"><Link href={`/profiles/${currentSong?.ownerPublicId}`} key={`/profiles/${currentSong?.ownerPublicId}`} className="hover:underline">{currentSong?.ownerName}</Link></p>
           </div>
         </div>
         <div className="flex items-center justify-end space-x-2 flex-1">
-          {showVolumeSlider && <Slider
+          {isDesktop && showVolumeSlider && <Slider
             defaultValue={[0.2]}
             min={0}
             max={1}
@@ -211,19 +222,19 @@ export default function AudioPlayer() {
           />}
         </div>
         <div className="flex items-center justify-end space-x-2 flex-1">
-          <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
+          {isDesktop && <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
             {volume === 0 ? (
               <VolumeX className="h-6 w-6" />
             ) : (
               <Volume2 className="h-6 w-6" />
             )}
-          </Button>
-          <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
+          </Button>}
+          {/* <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <Shuffle className="h-6 w-6" />
           </Button>
           <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <Repeat className="h-6 w-6" />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

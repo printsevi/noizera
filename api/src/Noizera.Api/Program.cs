@@ -4,8 +4,6 @@ using Noizera.Api.Middlewares;
 using Noizera.Application;
 using Noizera.Infrastructure;
 using Noizera.Shared.Persistence.SQL;
-using Serilog;
-using SerilogTracing;
 using System.Reflection;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -15,32 +13,25 @@ builder.Services
     .AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN")
     .AddEndpoints(Assembly.GetExecutingAssembly())
     .AddApplication(builder.Configuration)
-    .AddInfrastructure(builder);
+    .AddInfrastructure(builder)
+    .AddMemoryCache();
 
 string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigins, policy => policy.WithOrigins(builder.Configuration["FrontendUrl"]!)
+var frontendUrls = builder.Configuration.GetSection("FrontendUrls").Get<string[]>();
+builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigins, policy => policy.WithOrigins(frontendUrls!)
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()));
 
-if (builder.Environment.IsProduction())
-{
-    _ = builder.WebHost.UseKestrelHttpsConfiguration();
-}
-
 var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>(); //Always FIRST
+app.UseMiddleware<RateLimitingMiddleware>();
 app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints();
-
-if (app.Environment.IsProduction())
-{
-    _ = app.UseHttpsRedirection();
-}
 
 if (!builder.Environment.EnvironmentName.Equals("Local"))
 {

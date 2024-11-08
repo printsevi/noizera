@@ -78,7 +78,9 @@ export function MusicArtwork({
           contentLength: s.contentLength,
           contentType: audioType,
           durationInSeconds: s.durationInSeconds,
-          coverPath: coverPath
+          coverPath: coverPath,
+          ownerName: ownerName,
+          ownerPublicId: ownerPublicId
         })));
         if (!isPlaying) {
           play(true);
@@ -100,7 +102,10 @@ export function MusicArtwork({
           addCollection({
             publicId: publicId,
             title: title,
-            collectionType: collectionType
+            collectionType: collectionType,
+            ownerName: ownerName,
+            ownerPublicId: ownerPublicId,
+            songCount: songCount
           });
           setCollectionIsSaved(true);
         }

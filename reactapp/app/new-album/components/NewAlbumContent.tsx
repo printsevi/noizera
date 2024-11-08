@@ -463,9 +463,9 @@ const NewAlbumContent = () => {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Is the album ready to be submitted?</AlertDialogTitle>
+          <AlertDialogTitle>Are you ready to release your album?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. The album will be released after processing.
+            This action cannot be undone. The album will be released after processing. You won't be able to change your profile type later.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

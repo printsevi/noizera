@@ -214,7 +214,7 @@ export default function SettingsContent() {
                 <Select
                   value={user?.profileType ?? ""}
                   onValueChange={v => updateProfileTypeHandler(v)}
-                  disabled={isUpdating}
+                  disabled={isUpdating || user.songCount > 0}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select" />
@@ -226,7 +226,7 @@ export default function SettingsContent() {
                   </SelectContent>
                 </Select>
                 <div className="text-xs text-muted-foreground">
-                  To upload music change your profile type to the Artist or Label.
+                  To upload music change the type to the Artist or Label. If you have released music the type can't be changed.
                 </div>
               </div>
               <div className="flex flex-col space-y-2">

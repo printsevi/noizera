@@ -7,10 +7,11 @@ export interface GetMyUserResponse {
   username: string;
   name: string;
   activeSubscriptions: string[];
+  songCount: number;
 }
 
-const getMyUser = async (axiosPrivate : AxiosInstance, userId: string): Promise<ApiResponse<GetMyUserResponse>> => {
-  const result : ApiResponse<GetMyUserResponse> = { ok: true };
+const getMyUser = async (axiosPrivate: AxiosInstance, userId: string): Promise<ApiResponse<GetMyUserResponse>> => {
+  const result: ApiResponse<GetMyUserResponse> = { ok: true };
   try {
     const response = await axiosPrivate.get<GetMyUserResponse>(`/users/${userId}/me`);
     result.data = response.data;

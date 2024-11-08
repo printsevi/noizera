@@ -15,6 +15,7 @@ export interface IUserModel {
     username: string;
     name: string;
     activeSubscriptions: string[];
+    songCount: number;
 }
 
 export interface IUserContext {
@@ -32,16 +33,16 @@ const UserContextProvider = ({ children }: Props) => {
     const fetchUser = useCallback(async () => {
         if (isReady && isAuthenticated) {
             const data = await getMyUser(axiosPrivate, auth.userId!)
-            if(data.ok) {
+            if (data.ok) {
                 setUser(data.data);
             }
         }
     }, [isAuthenticated, isReady, axiosPrivate, auth.userId]);
 
     useEffect(() => {
-    if (isReady && isAuthenticated) {
-        fetchUser();
-    }
+        if (isReady && isAuthenticated) {
+            fetchUser();
+        }
     }, [isReady, isAuthenticated, fetchUser]);
 
     return (
@@ -52,7 +53,7 @@ const UserContextProvider = ({ children }: Props) => {
 }
 
 export const UserProvider: React.FC<Props> = ({ children }) => {
-  return <UserContextProvider>{children}</UserContextProvider>;
+    return <UserContextProvider>{children}</UserContextProvider>;
 };
 
 export default UserContext;
