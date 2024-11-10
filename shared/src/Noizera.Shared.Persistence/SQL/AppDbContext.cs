@@ -45,7 +45,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<SongSimilarity> SongSimilarities { get; set; }
     public DbSet<SongPreference> SongPreferences { get; set; }
     public DbSet<VerificationCode> VerificationCodes { get; set; }
-    public DbSet<SecretToken> RefreshTokens { get; set; }
+    public DbSet<SecretToken> SecretTokens { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<TermsOfUse> Terms { get; set; }
 

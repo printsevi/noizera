@@ -49,7 +49,7 @@ public sealed record GetOrCreateAlbumDraftCommand(
                 albumDraft.AlbumReleaseDate,
                 albumDraft.CoverImageBucketName,
                 albumDraft.CoverImageOriginalName,
-                user.Profile!.DisplayName,
+                user.Profile.DisplayName,
                 user.Profile.ProfileType.ToString(),
                 songs,
                 []);
