@@ -11,7 +11,7 @@ namespace Noizera.Shared.Persistence;
 public static class DI
 {
     public static IServiceCollection AddSharedPersistence(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         [NotNull] IConfiguration configuration)
     {
         services

@@ -6,11 +6,10 @@ using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.ProfileRelations;
 using Noizera.Shared.Domain.Profiles;
 using Noizera.Shared.Persistence.SQL;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Noizera.Infrastructure.Profiles;
 
-public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenerator) 
+public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenerator)
     : BaseEntityExtendedRepository<PublicProfile>(db, hashGenerator), IProfileRepository
 {
     public async Task<List<ArtistQueryResult>> GetArtistsByTextAsync(string text, CancellationToken ct)
@@ -49,7 +48,7 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
 
     public async Task<List<FastSearchQueryResult>> FastSearchAsync(string searchQuery, CancellationToken ct)
     {
-        if(string.IsNullOrWhiteSpace(searchQuery))
+        if (string.IsNullOrWhiteSpace(searchQuery))
         {
             return [];
         }
@@ -80,7 +79,7 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
                     mc."Title" as Value, 
                     SIMILARITY(mc."Title", {searchQuery}) AS Score
                 FROM 
-                    public."MusicCollections" mc
+                    public."MusicSets" mc
                 WHERE 
                     SIMILARITY(mc."Title", {searchQuery}) > 0.1
             )

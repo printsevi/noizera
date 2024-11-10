@@ -21,7 +21,7 @@ public sealed record UpdateProfileTypeCommand(
             var user = await userRepository.GetAsync(request.UserId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException($"User not found", ErrorType.NotFound);
 
-            if(!Enum.TryParse(request.NewProfileType, out ProfileType newProfileType))
+            if (!Enum.TryParse(request.NewProfileType, out ProfileType newProfileType))
             {
                 throw new AppException($"{request.NewProfileType} is unknown", ErrorType.BadRequest);
             }

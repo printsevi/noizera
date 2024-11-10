@@ -1,10 +1,10 @@
 ﻿namespace Noizera.Application.CQRS.Feed.GetFeedCategories;
 
 public record GetFeedCategoriesResponse(
-    ICollection<GetFeedMusicCollectionItem> MusicCategories,
+    ICollection<GetFeedMusicSetItem> MusicCategories,
     ICollection<GetFeedProfileItem> ProfileCategories);
 
-public record GetFeedMusicCollectionItem(
+public record GetFeedMusicSetItem(
     string Api,
     string Title
 );

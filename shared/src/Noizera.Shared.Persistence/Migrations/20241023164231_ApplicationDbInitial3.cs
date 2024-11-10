@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,11 +12,11 @@ namespace Noizera.Shared.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ReleaseDate",
-                table: "MusicCollections");
+                table: "MusicSets");
 
             migrationBuilder.AlterColumn<DateOnly>(
                 name: "AlbumReleaseDate",
-                table: "MusicCollections",
+                table: "MusicSets",
                 type: "DATE",
                 nullable: true,
                 oldClrType: typeof(DateOnly),
@@ -30,7 +29,7 @@ namespace Noizera.Shared.Persistence.Migrations
         {
             migrationBuilder.AlterColumn<DateOnly>(
                 name: "AlbumReleaseDate",
-                table: "MusicCollections",
+                table: "MusicSets",
                 type: "date",
                 nullable: true,
                 oldClrType: typeof(DateOnly),
@@ -39,7 +38,7 @@ namespace Noizera.Shared.Persistence.Migrations
 
             migrationBuilder.AddColumn<DateOnly>(
                 name: "ReleaseDate",
-                table: "MusicCollections",
+                table: "MusicSets",
                 type: "date",
                 nullable: true);
         }

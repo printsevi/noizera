@@ -4,7 +4,7 @@ using Noizera.Shared.Persistence.SQL;
 namespace Noizera.Infrastructure.Common;
 
 public abstract class BaseEntityExtendedRepository<TEntityExtended>(
-    AppDbContext dbContext, 
+    AppDbContext dbContext,
     IHashGenerator hashGenerator)
     : BaseEntityRepository<TEntityExtended>(dbContext)
     where TEntityExtended : EntityExtended

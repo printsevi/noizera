@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Auth.SignUp;
 
-public sealed record SignUpCommand(string Email) 
+public sealed record SignUpCommand(string Email)
     : IRequest<Unit>, ISensitiveRequest
 {
     public sealed class Handler(

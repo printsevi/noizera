@@ -16,14 +16,14 @@ public class AlbumSubmittedEventHandler(
     {
         var album = await db.Albums
             .AsTracking()
-            .Include(x => x.MusicCollectionSongs)
+            .Include(x => x.MusicSetSongs)
                     .ThenInclude(x => x.Song)
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.AlbumId)
                 ?? throw new Exception($"Album {notification.DomainEvent.AlbumId} is not found");
 
         if (album.IsProcessable)
         {
-            foreach (var song in album.MusicCollectionSongs.Where(x => !x.HasAudioAttached).Select(x => x.Song).ToList())
+            foreach (var song in album.MusicSetSongs.Where(x => !x.HasAudioAttached).Select(x => x.Song).ToList())
             {
                 await audioService.DownloadOriginalFileAsync(song.PublicId, song.OriginalFileExtension!, cancellationToken).ConfigureAwait(false);
 

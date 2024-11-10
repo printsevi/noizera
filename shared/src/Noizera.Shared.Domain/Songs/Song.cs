@@ -1,7 +1,7 @@
 ﻿using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.ListeningHistories;
-using Noizera.Shared.Domain.MusicCollectionSongs;
 using Noizera.Shared.Domain.MusicSets;
+using Noizera.Shared.Domain.MusicSetSongs;
 using Noizera.Shared.Domain.Royalties;
 using Noizera.Shared.Domain.SongCredits;
 using Noizera.Shared.Domain.Streams;
@@ -31,7 +31,7 @@ public sealed class Song : EntityExtended
     public bool IsPublic { get; private set; }
     public Guid OwnerId { get; private set; }
     public User Owner { get; } = null!;
-    public ICollection<MusicCollectionSong> MusicCollectionSongs { get; } = [];
+    public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
     public ICollection<SongCredit> Credits { get; } = [];
     public ICollection<Royalty> AssignedRoyalties { get; } = [];
     public ICollection<ListeningHistory> ListeningHistories { get; } = [];
@@ -51,10 +51,10 @@ public sealed class Song : EntityExtended
         EnsureRule(new OwnerSongAmountRule(user));
 
         Song result = new(user, album);
-        short maxSequence = album.MusicCollectionSongs.Count > 0 ? album.MusicCollectionSongs.Max(x => x.Sequence) : (short)0;
-        MusicCollectionSong musicCollectionSong = MusicCollectionSong.Create(result, album, ++maxSequence);
-        result.MusicCollectionSongs.Add(musicCollectionSong);
-        album.MusicCollectionSongs.Add(musicCollectionSong);
+        short maxSequence = album.MusicSetSongs.Count > 0 ? album.MusicSetSongs.Max(x => x.Sequence) : (short)0;
+        MusicSetSong MusicSetSong = MusicSetSong.Create(result, album, ++maxSequence);
+        result.MusicSetSongs.Add(MusicSetSong);
+        album.MusicSetSongs.Add(MusicSetSong);
         return result;
     }
 

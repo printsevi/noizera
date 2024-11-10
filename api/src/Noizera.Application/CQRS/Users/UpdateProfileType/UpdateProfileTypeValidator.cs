@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Noizera.Shared.Domain.Profiles;
 
 namespace Noizera.Application.CQRS.Users.UpdateProfileType;
 

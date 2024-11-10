@@ -8,8 +8,10 @@ namespace Noizera.BackgroundJobs.Handlers;
 public class ResetTokenCreatedEventHandler(AppDbContext db)
     : INotificationHandler<DomainEventNotification<ResetTokenCreatedEvent>>
 {
-    public async Task Handle(DomainEventNotification<ResetTokenCreatedEvent> notification, CancellationToken cancellationToken)
+    public void Handle(DomainEventNotification<ResetTokenCreatedEvent> notification, CancellationToken cancellationToken)
     {
-        
+
     }
+
+    Task INotificationHandler<DomainEventNotification<ResetTokenCreatedEvent>>.Handle(DomainEventNotification<ResetTokenCreatedEvent> notification, CancellationToken cancellationToken) => throw new NotImplementedException();
 }

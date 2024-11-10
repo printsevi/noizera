@@ -15,7 +15,7 @@ internal sealed class SavedMusicSetConfiguration : IEntityTypeConfiguration<Save
 
         _ = builder
             .HasOne(e => e.User)
-            .WithMany(e => e.SavedMusicCollections)
+            .WithMany(e => e.SavedMusicSets)
             .HasForeignKey(e => e.UserId)
             .IsRequired(true);
 

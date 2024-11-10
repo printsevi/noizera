@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Profiles.GetProfile;
 
-public sealed record GetProfileQuery(string ProfilePublicId) 
+public sealed record GetProfileQuery(string ProfilePublicId)
     : IRequest<ProfileQueryResult>
 {
     public sealed class Handler(

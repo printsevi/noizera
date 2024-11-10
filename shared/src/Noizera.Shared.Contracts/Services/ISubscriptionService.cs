@@ -8,7 +8,7 @@ namespace Noizera.Shared.Contracts.Services;
 public interface ISubscriptionService
 {
     Task<Uri> CreateCheckoutSessionAsync(User user, Subscription subscription, IConfiguration configuration, CancellationToken ct);
-    
+
     Task InitializeCustomerAsync(User user, CancellationToken ct);
 
     Task StartSubscriptionAsync(string checkoutSessionId, UserSubscription userSubscription, CancellationToken ct);

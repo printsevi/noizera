@@ -5,15 +5,15 @@ using Noizera.Shared.Contracts.Repositories;
 namespace Noizera.Application.CQRS.Feed.GetFeedNewReleasesPublic;
 
 public sealed record GetFeedNewReleasesPublicQuery()
-    : IRequest<List<MusicCollectionCardQueryResult>>
+    : IRequest<List<MusicSetCardQueryResult>>
 {
     public sealed class Handler(
-        IMusicCollectionRepository musicCollectionRepository)
-        : IRequestHandler<GetFeedNewReleasesPublicQuery, List<MusicCollectionCardQueryResult>>
+        IMusicSetRepository MusicSetRepository)
+        : IRequestHandler<GetFeedNewReleasesPublicQuery, List<MusicSetCardQueryResult>>
     {
-        public async Task<List<MusicCollectionCardQueryResult>> Handle(GetFeedNewReleasesPublicQuery request, CancellationToken cancellationToken)
+        public async Task<List<MusicSetCardQueryResult>> Handle(GetFeedNewReleasesPublicQuery request, CancellationToken cancellationToken)
         {
-            var result = await musicCollectionRepository.GetNewReleasesAsync(cancellationToken).ConfigureAwait(false);
+            var result = await MusicSetRepository.GetNewReleasesAsync(cancellationToken).ConfigureAwait(false);
 
             return result;
         }

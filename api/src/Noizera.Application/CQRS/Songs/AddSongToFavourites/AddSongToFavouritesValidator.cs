@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Noizera.Application.CQRS.Songs.AddSongToPlaylist;
 
 namespace Noizera.Application.CQRS.Songs.AddSongToFavourites;
 

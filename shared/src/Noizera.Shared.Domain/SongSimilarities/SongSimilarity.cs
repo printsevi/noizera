@@ -1,9 +1,4 @@
 ﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicCollectionSongs;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.Users;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Shared.Domain.SongSimilarities;
 

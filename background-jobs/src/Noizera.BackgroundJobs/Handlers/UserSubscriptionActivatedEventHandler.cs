@@ -1,10 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Events;
 using Noizera.Shared.Infrastructure.Emails;
-using Noizera.Shared.Infrastructure.Subscriptions;
 using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;

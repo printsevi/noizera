@@ -1,9 +1,9 @@
 ﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicCollectionSongs;
+using Noizera.Shared.Domain.MusicSetSongs;
 
 namespace Noizera.Shared.Domain.MusicSets;
 
-public sealed record SequenceUpdatingRule(MusicCollectionSong? ActiveSong, MusicCollectionSong? OverSong) : ISyncDomainRule
+public sealed record SequenceUpdatingRule(MusicSetSong? ActiveSong, MusicSetSong? OverSong) : ISyncDomainRule
 {
     public string ErrorMessage => $"Sequence update failed";
 

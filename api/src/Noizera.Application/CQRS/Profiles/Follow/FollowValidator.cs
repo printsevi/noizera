@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Noizera.Application.CQRS.Profiles.GetFollowings;
 
 namespace Noizera.Application.CQRS.Profiles.Follow;
 

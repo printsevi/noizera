@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -18,7 +17,7 @@ namespace Noizera.Shared.Persistence.Migrations
 
             migrationBuilder.AddColumn<DateOnly>(
                 name: "AlbumReleaseDate",
-                table: "MusicCollections",
+                table: "MusicSets",
                 type: "date",
                 nullable: true);
         }
@@ -28,7 +27,7 @@ namespace Noizera.Shared.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "AlbumReleaseDate",
-                table: "MusicCollections");
+                table: "MusicSets");
 
             migrationBuilder.RenameColumn(
                 name: "Bio",

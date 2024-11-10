@@ -189,7 +189,7 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
             ByteRange = new ByteRange(start, end)
         };
 
-        var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false) 
+        var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false)
             ?? throw new Exception($"File with Id {key} has not been found in bucket {bucketName}.");
 
 

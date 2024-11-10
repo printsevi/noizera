@@ -12,7 +12,7 @@ namespace Noizera.Application.CQRS.Auth.Register;
 public sealed record RegisterCommand(
     string Email,
     string Password,
-    string ProfileUserName) 
+    string ProfileUserName)
     : IRequest<Unit>, ISensitiveRequest
 {
     public sealed class Handler(

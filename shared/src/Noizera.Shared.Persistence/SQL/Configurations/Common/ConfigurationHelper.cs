@@ -5,12 +5,12 @@ namespace Noizera.Shared.Persistence.SQL.Configurations.Common;
 
 internal static class ConfigurationHelper
 {
-    public static void ConfigureBaseEntity<TEntity>(EntityTypeBuilder<TEntity> builder) 
+    public static void ConfigureBaseEntity<TEntity>(EntityTypeBuilder<TEntity> builder)
         where TEntity : BaseEntity
     {
     }
 
-    public static void ConfigureEntity<TEntity>(EntityTypeBuilder<TEntity> builder) 
+    public static void ConfigureEntity<TEntity>(EntityTypeBuilder<TEntity> builder)
         where TEntity : Entity
     {
         ConfigureBaseEntity<TEntity>(builder);
@@ -23,7 +23,7 @@ internal static class ConfigurationHelper
         _ = builder.Property(e => e.CreatedAt);
     }
 
-    public static void ConfigureEntityExtended<TEntity>(EntityTypeBuilder<TEntity> builder) 
+    public static void ConfigureEntityExtended<TEntity>(EntityTypeBuilder<TEntity> builder)
         where TEntity : EntityExtended
     {
         ConfigureEntity<TEntity>(builder);

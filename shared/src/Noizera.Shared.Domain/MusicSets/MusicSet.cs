@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicCollectionCredits;
-using Noizera.Shared.Domain.MusicCollectionSongs;
+using Noizera.Shared.Domain.MusicSetSongs;
 using Noizera.Shared.Domain.SavedMusicSets;
 using Noizera.Shared.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
@@ -19,8 +18,7 @@ public class MusicSet : EntityExtended, IDeletable
     public User Owner { get; } = null!;
     public bool AllowedAsPreview { get; private set; }
     public bool IsDeleted { get; set; }
-    public ICollection<MusicCollectionSong> MusicCollectionSongs { get; } = [];
-    public ICollection<MusicCollectionCredit> Credits { get; } = [];
+    public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
     public ICollection<SavedMusicSet> UserLibraries { get; } = [];
 
     public override string PublicIdPrefix => "m_";
@@ -71,7 +69,7 @@ public class MusicSet : EntityExtended, IDeletable
     public void FixSongSequences()
     {
         short sequence = 1;
-        foreach (var song in MusicCollectionSongs.OrderBy(x => x.Sequence).ToList())
+        foreach (var song in MusicSetSongs.OrderBy(x => x.Sequence).ToList())
         {
             song.SetSequence(sequence);
             sequence++;
@@ -82,8 +80,8 @@ public class MusicSet : EntityExtended, IDeletable
     {
         ValidateOwner(userId);
 
-        var activeSong = MusicCollectionSongs.FirstOrDefault(x => x.SongId == activeSongId);
-        var overSong = MusicCollectionSongs.FirstOrDefault(x => x.SongId == overSongId);
+        var activeSong = MusicSetSongs.FirstOrDefault(x => x.SongId == activeSongId);
+        var overSong = MusicSetSongs.FirstOrDefault(x => x.SongId == overSongId);
 
         EnsureRule(new SequenceUpdatingRule(activeSong, overSong));
 

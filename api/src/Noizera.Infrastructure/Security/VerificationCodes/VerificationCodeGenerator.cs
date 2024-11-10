@@ -11,7 +11,6 @@ public class VerificationCodeGenerator : IVerificationCodeGenerator
         return (GenerateRandomNumber(1000, 9999).ToString(CultureInfo.InvariantCulture), SystemClock.UtcNow.AddMinutes(5));
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "<Pending>")]
     private static int GenerateRandomNumber(int min, int max)
     {
         int _min = 1000;

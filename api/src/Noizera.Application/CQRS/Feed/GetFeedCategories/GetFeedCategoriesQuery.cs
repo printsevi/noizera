@@ -13,7 +13,7 @@ public sealed record GetFeedCategoriesQuery(Guid UserId)
         {
             return await Task.FromResult<GetFeedCategoriesResponse>(
                 new([new("recommendations", "Recommendations"),
-                    new("new-releases", "New Releases")], 
+                    new("new-releases", "New Releases")],
                 [new("artists", "Artists"),
                     new("labels", "Labels")]));
         }

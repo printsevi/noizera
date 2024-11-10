@@ -71,7 +71,7 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.ToTable("ListeningHistories");
                 });
 
-            modelBuilder.Entity("Noizera.Shared.Domain.MusicCollectionCredits.MusicCollectionCredit", b =>
+            modelBuilder.Entity("Noizera.Shared.Domain.MusicSetCredits.MusicSetCredit", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -79,7 +79,7 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("MusicCollectionId")
+                    b.Property<Guid>("MusicSetId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ProfileId")
@@ -95,13 +95,13 @@ namespace Noizera.Shared.Persistence.Migrations
 
                     b.HasIndex("ProfileId");
 
-                    b.HasIndex("MusicCollectionId", "ProfileId")
+                    b.HasIndex("MusicSetId", "ProfileId")
                         .IsUnique();
 
-                    b.ToTable("MusicCollectionCredits");
+                    b.ToTable("MusicSetCredits");
                 });
 
-            modelBuilder.Entity("Noizera.Shared.Domain.MusicCollectionSongs.MusicCollectionSong", b =>
+            modelBuilder.Entity("Noizera.Shared.Domain.MusicSetSongs.MusicSetSong", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -109,7 +109,7 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("MusicCollectionId")
+                    b.Property<Guid>("MusicSetId")
                         .HasColumnType("uuid");
 
                     b.Property<short>("Sequence")
@@ -122,10 +122,10 @@ namespace Noizera.Shared.Persistence.Migrations
 
                     b.HasIndex("SongId");
 
-                    b.HasIndex("MusicCollectionId", "SongId")
+                    b.HasIndex("MusicSetId", "SongId")
                         .IsUnique();
 
-                    b.ToTable("MusicCollectionSongs");
+                    b.ToTable("MusicSetSongs");
                 });
 
             modelBuilder.Entity("Noizera.Shared.Domain.MusicSets.MusicSet", b =>
@@ -176,7 +176,7 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.HasIndex("PublicId")
                         .IsUnique();
 
-                    b.ToTable("MusicCollections");
+                    b.ToTable("MusicSets");
 
                     b.HasDiscriminator<string>("CollectionType").HasValue("collection_base");
 
@@ -325,7 +325,7 @@ namespace Noizera.Shared.Persistence.Migrations
 
                     b.HasIndex("MusicSetId");
 
-                    b.ToTable("SavedMusicCollections");
+                    b.ToTable("SavedMusicSets");
                 });
 
             modelBuilder.Entity("Noizera.Shared.Domain.SecretTokens.SecretToken", b =>
@@ -739,38 +739,38 @@ namespace Noizera.Shared.Persistence.Migrations
                     b.Navigation("Song");
                 });
 
-            modelBuilder.Entity("Noizera.Shared.Domain.MusicCollectionCredits.MusicCollectionCredit", b =>
+            modelBuilder.Entity("Noizera.Shared.Domain.MusicSetCredits.MusicSetCredit", b =>
                 {
-                    b.HasOne("Noizera.Shared.Domain.MusicSets.MusicSet", "MusicCollection")
+                    b.HasOne("Noizera.Shared.Domain.MusicSets.MusicSet", "MusicSet")
                         .WithMany("Credits")
-                        .HasForeignKey("MusicCollectionId")
+                        .HasForeignKey("MusicSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Noizera.Shared.Domain.Profiles.PublicProfile", "Profile")
-                        .WithMany("MusicCollectionCredits")
+                        .WithMany("MusicSetCredits")
                         .HasForeignKey("ProfileId");
 
-                    b.Navigation("MusicCollection");
+                    b.Navigation("MusicSet");
 
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("Noizera.Shared.Domain.MusicCollectionSongs.MusicCollectionSong", b =>
+            modelBuilder.Entity("Noizera.Shared.Domain.MusicSetSongs.MusicSetSong", b =>
                 {
-                    b.HasOne("Noizera.Shared.Domain.MusicSets.MusicSet", "MusicCollection")
-                        .WithMany("MusicCollectionSongs")
-                        .HasForeignKey("MusicCollectionId")
+                    b.HasOne("Noizera.Shared.Domain.MusicSets.MusicSet", "MusicSet")
+                        .WithMany("MusicSetSongs")
+                        .HasForeignKey("MusicSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Noizera.Shared.Domain.Songs.Song", "Song")
-                        .WithMany("MusicCollectionSongs")
+                        .WithMany("MusicSetSongs")
                         .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MusicCollection");
+                    b.Navigation("MusicSet");
 
                     b.Navigation("Song");
                 });
@@ -778,7 +778,7 @@ namespace Noizera.Shared.Persistence.Migrations
             modelBuilder.Entity("Noizera.Shared.Domain.MusicSets.MusicSet", b =>
                 {
                     b.HasOne("Noizera.Shared.Domain.Users.User", "Owner")
-                        .WithMany("MusicCollections")
+                        .WithMany("MusicSets")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -846,7 +846,7 @@ namespace Noizera.Shared.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Noizera.Shared.Domain.Users.User", "User")
-                        .WithMany("SavedMusicCollections")
+                        .WithMany("SavedMusicSets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -937,7 +937,7 @@ namespace Noizera.Shared.Persistence.Migrations
                 {
                     b.Navigation("Credits");
 
-                    b.Navigation("MusicCollectionSongs");
+                    b.Navigation("MusicSetSongs");
 
                     b.Navigation("UserLibraries");
                 });
@@ -948,7 +948,7 @@ namespace Noizera.Shared.Persistence.Migrations
 
                     b.Navigation("Followings");
 
-                    b.Navigation("MusicCollectionCredits");
+                    b.Navigation("MusicSetCredits");
 
                     b.Navigation("SongCredits");
                 });
@@ -961,7 +961,7 @@ namespace Noizera.Shared.Persistence.Migrations
 
                     b.Navigation("ListeningHistories");
 
-                    b.Navigation("MusicCollectionSongs");
+                    b.Navigation("MusicSetSongs");
 
                     b.Navigation("Streams");
                 });
@@ -975,7 +975,7 @@ namespace Noizera.Shared.Persistence.Migrations
                 {
                     b.Navigation("ListeningHistories");
 
-                    b.Navigation("MusicCollections");
+                    b.Navigation("MusicSets");
 
                     b.Navigation("Profile");
 
@@ -983,7 +983,7 @@ namespace Noizera.Shared.Persistence.Migrations
 
                     b.Navigation("RoyaltiesSent");
 
-                    b.Navigation("SavedMusicCollections");
+                    b.Navigation("SavedMusicSets");
 
                     b.Navigation("SecretTokens");
 

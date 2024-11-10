@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Noizera.Api.Common;
 using Noizera.Application.CQRS.Users.UpdateProfileType;
-using Noizera.Application.CQRS.Users.UpdateUsername;
 
 namespace Noizera.Api.Endpoints.Users;
 

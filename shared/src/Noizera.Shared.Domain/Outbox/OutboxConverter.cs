@@ -17,9 +17,9 @@ public static class OutboxConverter
 
     public static DomainEvent ConvertToDomainEvent([NotNull] OutboxMessage message)
     {
-        var eventType = Type.GetType($"Noizera.Shared.Domain.Events.{message.Type}") 
+        var eventType = Type.GetType($"Noizera.Shared.Domain.Events.{message.Type}")
             ?? throw new Exception($"{message.Type} is unknown");
-        var domainEvent = JsonSerializer.Deserialize(message.Data, eventType) 
+        var domainEvent = JsonSerializer.Deserialize(message.Data, eventType)
             ?? throw new Exception($"{message.Data} cannot be deserialized to {eventType.FullName}");
 
         return (DomainEvent)domainEvent;

@@ -1,5 +1,5 @@
 ﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicCollectionSongs;
+using Noizera.Shared.Domain.MusicSetSongs;
 using Noizera.Shared.Domain.Songs;
 using Noizera.Shared.Domain.Users;
 
@@ -10,6 +10,8 @@ public sealed class Playlist : MusicSet
     public override string PublicIdPrefix => "p_";
 
     public string? PlaylistTag { get; private set; }
+
+    public bool IsPublic { get; private set; }
 
     private Playlist(User user, string title, string? playlistTag = null, string? publicId = null) : base(user, title)
     {
@@ -36,9 +38,9 @@ public sealed class Playlist : MusicSet
     {
         EnsureRule(new SongToPlaylistRule(this, song));
 
-        short maxSequence = MusicCollectionSongs.Count > 0 ? MusicCollectionSongs.Max(x => x.Sequence) : (short)0;
-        var musicCollectionSong = MusicCollectionSong.Create(song, this, ++maxSequence);
-        MusicCollectionSongs.Add(musicCollectionSong);
+        short maxSequence = MusicSetSongs.Count > 0 ? MusicSetSongs.Max(x => x.Sequence) : (short)0;
+        var musicSetSong = MusicSetSong.Create(song, this, ++maxSequence);
+        MusicSetSongs.Add(musicSetSong);
     }
 
     private Playlist() { }

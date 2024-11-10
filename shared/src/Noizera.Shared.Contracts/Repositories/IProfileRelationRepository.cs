@@ -1,5 +1,4 @@
 ﻿using Noizera.Shared.Domain.ProfileRelations;
-using Noizera.Shared.Domain.Profiles;
 
 namespace Noizera.Shared.Contracts.Repositories;
 

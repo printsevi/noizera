@@ -81,7 +81,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
     public async Task<Uri?> GetSubscriptionPortalUrlAsync(User user, IConfiguration configuration, CancellationToken ct)
     {
         var result = await stripeService.GetBillingPortalLinkAsync(user.CustomerStripeId!, new Uri(configuration["FrontendUrl"]!), ct).ConfigureAwait(false);
-        
+
         return result;
     }
 

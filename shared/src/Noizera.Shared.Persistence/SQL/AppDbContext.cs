@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.ListeningHistories;
-using Noizera.Shared.Domain.MusicCollectionCredits;
-using Noizera.Shared.Domain.MusicCollectionSongs;
 using Noizera.Shared.Domain.MusicSets;
+using Noizera.Shared.Domain.MusicSetSongs;
 using Noizera.Shared.Domain.Outbox;
 using Noizera.Shared.Domain.ProfileRelations;
 using Noizera.Shared.Domain.Profiles;
@@ -37,13 +36,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
     public DbSet<Royalty> Royalties { get; set; }
     public DbSet<Song> Songs { get; set; }
-    public DbSet<MusicSet> MusicCollections { get; set; }
-    public DbSet<SavedMusicSet> SavedMusicCollections { get; set; }
+    public DbSet<MusicSet> MusicSets { get; set; }
+    public DbSet<SavedMusicSet> SavedMusicSets { get; set; }
     public DbSet<Album> Albums { get; set; }
     public DbSet<Playlist> Playlists { get; set; }
-    public DbSet<MusicCollectionCredit> MusicCollectionCredits { get; set; }
     public DbSet<SongCredit> SongCredits { get; set; }
-    public DbSet<MusicCollectionSong> MusicCollectionSongs { get; set; }
+    public DbSet<MusicSetSong> MusicSetSongs { get; set; }
     public DbSet<SongSimilarity> SongSimilarities { get; set; }
     public DbSet<SongPreference> SongPreferences { get; set; }
     public DbSet<VerificationCode> VerificationCodes { get; set; }

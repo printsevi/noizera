@@ -6,7 +6,7 @@ using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Subscriptions;
 
-public sealed class SubscriptionRepository(AppDbContext db) 
+public sealed class SubscriptionRepository(AppDbContext db)
     : BaseEntityRepository<Subscription>(db), ISubscriptionRepository
 {
     public async Task<Subscription?> GetAsync(Guid subscriptionId, CancellationToken ct) => await Db.Subscriptions

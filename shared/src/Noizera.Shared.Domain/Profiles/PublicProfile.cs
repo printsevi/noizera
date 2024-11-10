@@ -1,7 +1,5 @@
 ﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicCollectionCredits;
 using Noizera.Shared.Domain.ProfileRelations;
-using Noizera.Shared.Domain.Royalties;
 using Noizera.Shared.Domain.SongCredits;
 using Noizera.Shared.Domain.Users;
 
@@ -16,7 +14,6 @@ public class PublicProfile : EntityExtended, IDeletable
     public bool IsDeleted { get; set; }
     public Guid? UserId { get; private set; }
     public User? User { get; }
-    public ICollection<MusicCollectionCredit> MusicCollectionCredits { get; } = [];
     public ICollection<SongCredit> SongCredits { get; } = [];
     public ICollection<ProfileRelation> Followers { get; } = [];
     public ICollection<ProfileRelation> Followings { get; } = [];

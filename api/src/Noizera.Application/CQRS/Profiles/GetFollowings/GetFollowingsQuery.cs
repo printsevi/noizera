@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Noizera.Application.CQRS.Profiles.GetFollowers;
 using Noizera.Shared.Contracts.Repositories;
 using Noizera.Shared.Contracts.Security;
 using System.Diagnostics.CodeAnalysis;

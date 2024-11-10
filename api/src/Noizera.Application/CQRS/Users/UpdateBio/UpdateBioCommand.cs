@@ -2,7 +2,6 @@
 using Noizera.Shared.Contracts.Errors;
 using Noizera.Shared.Contracts.Repositories;
 using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Domain.Profiles;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Users.UpdateBio;

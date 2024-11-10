@@ -4,7 +4,6 @@ using Noizera.Shared.Contracts.Errors;
 using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Services;
 using Noizera.Shared.Infrastructure.Audio;
-using Noizera.Shared.Infrastructure.DataStructure;
 using Noizera.Shared.Persistence.S3;
 using System.Diagnostics.CodeAnalysis;
 
@@ -12,7 +11,7 @@ namespace Noizera.Infrastructure.Audio;
 
 public class AudioFileService(
     IOptions<AudioSettings> audioSettings,
-    S3Context s3) 
+    S3Context s3)
     : IAudioFileService
 {
     private readonly AudioSettings settings = audioSettings.Value;

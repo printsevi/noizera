@@ -6,18 +6,18 @@ using Noizera.Shared.Persistence.SQL;
 namespace Dashboard.Jobs;
 
 public class ProcessSongPreferencesJob(
-    AppDbContext db, 
+    AppDbContext db,
     ILogger<ProcessSongSimilaritiesJob> logger)
 {
     public async Task ProcessAsync()
     {
         var pairs = await (from t1 in db.Songs
-                            from t2 in db.Songs
-                            where t1.Id != t2.Id && t1.Danceability.HasValue && t2.Danceability.HasValue
-                                && t1.Energy.HasValue && t2.Energy.HasValue //Add if song is released
-                                && !db.SongSimilarities.Any(ts => (ts.FirstSongId == t1.Id && ts.SecondSongId == t2.Id) ||
-                                                                        (ts.FirstSongId == t2.Id && ts.SecondSongId == t1.Id))
-                            select new { Song1Id = t1.Id, Song2Id = t2.Id })
+                           from t2 in db.Songs
+                           where t1.Id != t2.Id && t1.Danceability.HasValue && t2.Danceability.HasValue
+                               && t1.Energy.HasValue && t2.Energy.HasValue //Add if song is released
+                               && !db.SongSimilarities.Any(ts => (ts.FirstSongId == t1.Id && ts.SecondSongId == t2.Id) ||
+                                                                       (ts.FirstSongId == t2.Id && ts.SecondSongId == t1.Id))
+                           select new { Song1Id = t1.Id, Song2Id = t2.Id })
                             .Select(pair => new Tuple<Guid, Guid>(pair.Song1Id, pair.Song2Id))
                             .Take(100)
                             .ToListAsync();

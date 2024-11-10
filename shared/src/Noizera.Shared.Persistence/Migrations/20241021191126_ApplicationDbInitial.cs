@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -137,7 +136,7 @@ namespace Noizera.Shared.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MusicCollections",
+                name: "MusicSets",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -158,9 +157,9 @@ namespace Noizera.Shared.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MusicCollections", x => x.Id);
+                    table.PrimaryKey("PK_MusicSets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MusicCollections_Users_OwnerId",
+                        name: "FK_MusicSets_Users_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -285,7 +284,7 @@ namespace Noizera.Shared.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SavedMusicCollections",
+                name: "SavedMusicSets",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -293,15 +292,15 @@ namespace Noizera.Shared.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SavedMusicCollections", x => new { x.UserId, x.MusicSetId });
+                    table.PrimaryKey("PK_SavedMusicSets", x => new { x.UserId, x.MusicSetId });
                     table.ForeignKey(
-                        name: "FK_SavedMusicCollections_MusicCollections_MusicSetId",
+                        name: "FK_SavedMusicSets_MusicSets_MusicSetId",
                         column: x => x.MusicSetId,
-                        principalTable: "MusicCollections",
+                        principalTable: "MusicSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SavedMusicCollections_Users_UserId",
+                        name: "FK_SavedMusicSets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -309,11 +308,11 @@ namespace Noizera.Shared.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MusicCollectionCredits",
+                name: "MusicSetCredits",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    MusicCollectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MusicSetId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProfileType = table.Column<int>(type: "integer", nullable: true),
                     ProfileName = table.Column<string>(type: "text", nullable: true),
                     ProfileId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -321,15 +320,15 @@ namespace Noizera.Shared.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MusicCollectionCredits", x => x.Id);
+                    table.PrimaryKey("PK_MusicSetCredits", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MusicCollectionCredits_MusicCollections_MusicCollectionId",
-                        column: x => x.MusicCollectionId,
-                        principalTable: "MusicCollections",
+                        name: "FK_MusicSetCredits_MusicSets_MusicSetId",
+                        column: x => x.MusicSetId,
+                        principalTable: "MusicSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MusicCollectionCredits_Profiles_ProfileId",
+                        name: "FK_MusicSetCredits_Profiles_ProfileId",
                         column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id");
@@ -394,26 +393,26 @@ namespace Noizera.Shared.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MusicCollectionSongs",
+                name: "MusicSetSongs",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     SongId = table.Column<Guid>(type: "uuid", nullable: false),
-                    MusicCollectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MusicSetId = table.Column<Guid>(type: "uuid", nullable: false),
                     Sequence = table.Column<short>(type: "smallint", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MusicCollectionSongs", x => x.Id);
+                    table.PrimaryKey("PK_MusicSetSongs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MusicCollectionSongs_MusicCollections_MusicCollectionId",
-                        column: x => x.MusicCollectionId,
-                        principalTable: "MusicCollections",
+                        name: "FK_MusicSetSongs_MusicSets_MusicSetId",
+                        column: x => x.MusicSetId,
+                        principalTable: "MusicSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MusicCollectionSongs_Songs_SongId",
+                        name: "FK_MusicSetSongs_Songs_SongId",
                         column: x => x.SongId,
                         principalTable: "Songs",
                         principalColumn: "Id",
@@ -511,35 +510,35 @@ namespace Noizera.Shared.Persistence.Migrations
                 column: "SongId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MusicCollectionCredits_MusicCollectionId_ProfileId",
-                table: "MusicCollectionCredits",
-                columns: new[] { "MusicCollectionId", "ProfileId" },
+                name: "IX_MusicSetCredits_MusicSetId_ProfileId",
+                table: "MusicSetCredits",
+                columns: new[] { "MusicSetId", "ProfileId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MusicCollectionCredits_ProfileId",
-                table: "MusicCollectionCredits",
+                name: "IX_MusicSetCredits_ProfileId",
+                table: "MusicSetCredits",
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MusicCollectionSongs_MusicCollectionId_SongId",
-                table: "MusicCollectionSongs",
-                columns: new[] { "MusicCollectionId", "SongId" },
+                name: "IX_MusicSetSongs_MusicSetId_SongId",
+                table: "MusicSetSongs",
+                columns: new[] { "MusicSetId", "SongId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MusicCollectionSongs_SongId",
-                table: "MusicCollectionSongs",
+                name: "IX_MusicSetSongs_SongId",
+                table: "MusicSetSongs",
                 column: "SongId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MusicCollections_OwnerId",
-                table: "MusicCollections",
+                name: "IX_MusicSets_OwnerId",
+                table: "MusicSets",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MusicCollections_PublicId",
-                table: "MusicCollections",
+                name: "IX_MusicSets_PublicId",
+                table: "MusicSets",
                 column: "PublicId",
                 unique: true);
 
@@ -581,8 +580,8 @@ namespace Noizera.Shared.Persistence.Migrations
                 column: "SongId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SavedMusicCollections_MusicSetId",
-                table: "SavedMusicCollections",
+                name: "IX_SavedMusicSets_MusicSetId",
+                table: "SavedMusicSets",
                 column: "MusicSetId");
 
             migrationBuilder.CreateIndex(
@@ -640,10 +639,10 @@ namespace Noizera.Shared.Persistence.Migrations
                 name: "ListeningHistories");
 
             migrationBuilder.DropTable(
-                name: "MusicCollectionCredits");
+                name: "MusicSetCredits");
 
             migrationBuilder.DropTable(
-                name: "MusicCollectionSongs");
+                name: "MusicSetSongs");
 
             migrationBuilder.DropTable(
                 name: "OutboxMessages");
@@ -658,7 +657,7 @@ namespace Noizera.Shared.Persistence.Migrations
                 name: "Royalties");
 
             migrationBuilder.DropTable(
-                name: "SavedMusicCollections");
+                name: "SavedMusicSets");
 
             migrationBuilder.DropTable(
                 name: "SongCredits");
@@ -682,7 +681,7 @@ namespace Noizera.Shared.Persistence.Migrations
                 name: "VerificationCodes");
 
             migrationBuilder.DropTable(
-                name: "MusicCollections");
+                name: "MusicSets");
 
             migrationBuilder.DropTable(
                 name: "Profiles");

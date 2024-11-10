@@ -21,10 +21,10 @@ public sealed class User : Entity
     public string PasswordHash { get; private set; } = null!;
     public byte[] PasswordSalt { get; private set; } = [];
     public string Roles { get; private set; } = null!;
-    public PublicProfile? Profile { get; private set; }
+    public PublicProfile Profile { get; private set; }
     public ICollection<Song> Songs { get; } = [];
-    public ICollection<MusicSet> MusicCollections { get; } = [];
-    public ICollection<SavedMusicSet> SavedMusicCollections { get; } = [];
+    public ICollection<MusicSet> MusicSets { get; } = [];
+    public ICollection<SavedMusicSet> SavedMusicSets { get; } = [];
     public ICollection<UserSubscription> Subscriptions { get; } = [];
     public ICollection<ListeningHistory> ListeningHistories { get; } = [];
     public ICollection<StreamInfo> Streams { get; } = [];
@@ -66,7 +66,7 @@ public sealed class User : Entity
 
         var favouritesPlaylist = await Playlist.NewFavouritesAsync(user, hashGenerator, ct);
 
-        user.MusicCollections.Add(favouritesPlaylist);
+        user.MusicSets.Add(favouritesPlaylist);
 
         user.AddDomainEvent(new UserCreatedEvent(email));
 
@@ -81,8 +81,8 @@ public sealed class User : Entity
 
     public bool HasActiveSubscriptionOfType(string subscriptionType)
     {
-        return Subscriptions.Any(x => 
-            x.Subscription.SubscriptionType.ToLowerInvariant() == subscriptionType.ToLowerInvariant() 
+        return Subscriptions.Any(x =>
+            x.Subscription.SubscriptionType.ToLowerInvariant() == subscriptionType.ToLowerInvariant()
             && x.IsActive);
     }
 
@@ -104,7 +104,7 @@ public sealed class User : Entity
 
     public short? GetTrialDaysIfEntitled(string subscriptionType)
     {
-        var previousSubscription = Subscriptions.FirstOrDefault(x => 
+        var previousSubscription = Subscriptions.FirstOrDefault(x =>
             x.Subscription.SubscriptionType.ToLowerInvariant() == subscriptionType.ToLowerInvariant()
             && x.CheckoutSessionIsProcessed);
         return previousSubscription is not null ? previousSubscription.Subscription.FreeTrialInDays : null;
@@ -115,11 +115,11 @@ public sealed class User : Entity
         return passwordHelper.VerifyPassword(passwordToVerify, PasswordHash, PasswordSalt);
     }
 
-    public void SaveMusicCollection(MusicSet collection)
+    public void SaveMusicSet(MusicSet collection)
     {
-        EnsureRule(new SavedMusicCollectionRule(this, collection));
+        EnsureRule(new SavedMusicSetRule(this, collection));
 
-        SavedMusicCollections.Add(SavedMusicSet.New(this, collection));
+        SavedMusicSets.Add(SavedMusicSet.New(this, collection));
     }
 
     public void UpdatePassword(string newPassword, [NotNull] IPasswordHelper passwordHelper)

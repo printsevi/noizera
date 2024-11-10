@@ -3,9 +3,9 @@
 namespace Noizera.Shared.Domain.Events;
 
 public sealed record RoyaltyPaymentPlannedEvent(
-    Guid UserId, 
-    DateTimeOffset EffectiveDate, 
-    DateTimeOffset EndDate, 
+    Guid UserId,
+    DateTimeOffset EffectiveDate,
+    DateTimeOffset EndDate,
     float RoyaltyShare,
     decimal SubscriptionPrice) : DomainEvent
 {

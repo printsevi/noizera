@@ -7,15 +7,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace Noizera.Application.CQRS.Feed.GetFeedNewReleases;
 
 public sealed record GetFeedNewReleasesQuery(Guid UserId)
-    : IAuthorizeableRequest<List<MusicCollectionCardQueryResult>>
+    : IAuthorizeableRequest<List<MusicSetCardQueryResult>>
 {
     public sealed class Handler(
-        IMusicCollectionRepository musicCollectionRepository)
-        : IRequestHandler<GetFeedNewReleasesQuery, List<MusicCollectionCardQueryResult>>
+        IMusicSetRepository MusicSetRepository)
+        : IRequestHandler<GetFeedNewReleasesQuery, List<MusicSetCardQueryResult>>
     {
-        public async Task<List<MusicCollectionCardQueryResult>> Handle([NotNull] GetFeedNewReleasesQuery request, CancellationToken cancellationToken)
+        public async Task<List<MusicSetCardQueryResult>> Handle([NotNull] GetFeedNewReleasesQuery request, CancellationToken cancellationToken)
         {
-            var result = await musicCollectionRepository.GetNewReleasesAsync(request.UserId, cancellationToken).ConfigureAwait(false);
+            var result = await MusicSetRepository.GetNewReleasesAsync(request.UserId, cancellationToken).ConfigureAwait(false);
 
             return result;
         }

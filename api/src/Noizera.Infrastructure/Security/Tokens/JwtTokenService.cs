@@ -1,9 +1,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Noizera.Shared.Contracts.Errors;
 using Noizera.Shared.Contracts.Security;
 using Noizera.Shared.Contracts.Services;
-using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -47,7 +45,6 @@ public class JwtTokenService(IOptions<JwtSettings> jwtOptions) : IJwtTokenServic
         return Guid.TryParse(principal?.Claims.FirstOrDefault(c => c.Type == ClaimType.UserId)?.Value, out var result) ? result : null;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5404:Do not disable token validation checks", Justification = "<Pending>")]
     private ClaimsPrincipal? GetTokenPrincipal(string accessToken)
     {
         TokenValidationParameters validationParameters = new()

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Noizera.Application.CQRS.Feed.GetFeedPublicCategories;
 using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Repositories;
 

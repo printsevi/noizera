@@ -8,5 +8,5 @@ public sealed record AlbumReleaseRule(Album Album) : ISyncDomainRule
 
     public bool Verify() =>
         Album.AlbumStatus == AlbumStatus.Submitted
-        && !Album.MusicCollectionSongs.Any(x => !x.HasAudioAttached);
+        && !Album.MusicSetSongs.Any(x => !x.HasAudioAttached);
 }

@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Noizera.Shared.Contracts.Services;
 using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Domain.SecretTokens;
 using Noizera.Shared.Domain.Users;
 using Noizera.Shared.Persistence.SQL;
 using System.Net.Http.Headers;

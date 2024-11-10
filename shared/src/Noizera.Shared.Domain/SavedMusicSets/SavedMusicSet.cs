@@ -11,15 +11,15 @@ public sealed class SavedMusicSet : BaseEntity
     public Guid MusicSetId { get; private set; }
     public MusicSet MusicSet { get; private set; } = null!;
 
-    private SavedMusicSet(User user, MusicSet musicSet)
+    private SavedMusicSet(User user, MusicSet MusicSet)
     {
         UserId = user.Id;
-        MusicSetId = musicSet.Id;
+        MusicSetId = MusicSet.Id;
     }
 
-    public static SavedMusicSet New(User user, MusicSet musicSet)
+    public static SavedMusicSet New(User user, MusicSet MusicSet)
     {
-        return new(user, musicSet);
+        return new(user, MusicSet);
     }
 
     private SavedMusicSet() { }

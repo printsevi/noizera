@@ -19,7 +19,7 @@ public sealed class UploadAudioFileValidator : AbstractValidator<UploadAudioFile
             .LessThanOrEqualTo(210_000_000) //a bit greater than 200mb
             .WithMessage("File size is larger than allowed");
 
-        _ = RuleFor(x => x.File.ContentType).Must(x 
+        _ = RuleFor(x => x.File.ContentType).Must(x
             => x.StartsWith("audio/wav", StringComparison.InvariantCultureIgnoreCase)
             || x.StartsWith("audio/aif", StringComparison.InvariantCultureIgnoreCase)
             || x.StartsWith("audio/aiff", StringComparison.InvariantCultureIgnoreCase))

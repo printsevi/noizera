@@ -10,10 +10,12 @@ public sealed record AlbumSubmissionRule(Album Album) : ISyncDomainRule
     public bool Verify() =>
         Album.AlbumStatus == AlbumStatus.Draft
         && !string.IsNullOrWhiteSpace(Album.Title)
-        //&& Album.ReleaseDate is not null
-        && Album.MusicCollectionSongs.Count > 0
-        && !Album.MusicCollectionSongs.Any(x => string.IsNullOrWhiteSpace(x.Song.OriginalFileName) || string.IsNullOrWhiteSpace(x.Song.Title))
+        && Album.AlbumReleaseDate is not null
         && Album.CoverImageContentLength > 0
-        && (Album.Owner.Profile!.ProfileType == ProfileType.Artist
-            || Album.Credits.Any(x => x.ProfileType == ProfileType.Artist));
+        && Album.MusicSetSongs.Count > 0
+        && Album.MusicSetSongs.All(x =>
+            !string.IsNullOrWhiteSpace(x.Song.OriginalFileName)
+            && !string.IsNullOrWhiteSpace(x.Song.Title)
+            && (x.Song.Owner.Profile.ProfileType == ProfileType.Artist
+                || x.Song.Credits.Any(s => s.ProfileType == ProfileType.Artist)));
 }

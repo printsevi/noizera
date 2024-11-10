@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Noizera.BackgroundJobs.Common;
 using Noizera.BackgroundJobs.Jobs;
 using System.Diagnostics.CodeAnalysis;
@@ -28,11 +27,13 @@ internal static class DI
 
     public static IApplicationBuilder MapEndpoints(this WebApplication app)
     {
-        app.MapPatch("/real-time-job", ([FromServices] RealTimeOutboxBackgroundJob job, bool enabled) => {
+        app.MapPatch("/real-time-job", ([FromServices] RealTimeOutboxBackgroundJob job, bool enabled) =>
+        {
             job.IsEnabled = enabled;
         });
 
-        app.MapPatch("/delayed-job", ([FromServices] DelayedOutboxBackgroundJob job, bool enabled) => {
+        app.MapPatch("/delayed-job", ([FromServices] DelayedOutboxBackgroundJob job, bool enabled) =>
+        {
             job.IsEnabled = enabled;
         });
 

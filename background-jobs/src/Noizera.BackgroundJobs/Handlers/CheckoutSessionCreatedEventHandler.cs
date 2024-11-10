@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Infrastructure.Emails;
 using Noizera.Shared.Infrastructure.Subscriptions;
 
 namespace Noizera.BackgroundJobs.Handlers;

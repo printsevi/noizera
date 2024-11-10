@@ -1,13 +1,10 @@
-﻿using Amazon;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore;
 using Noizera.Infrastructure.Common;
 using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Repositories;
 using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.SecretTokens;
 using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.UserSubscriptions;
 using Noizera.Shared.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Users;
@@ -23,7 +20,7 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
         .FirstOrDefaultAsync(u => u.Id == userId, ct).ConfigureAwait(false);
 
     public async Task<User?> GetWithSavedCollectionsAsync(Guid userId, CancellationToken ct) => await Db.Users
-        .Include(u => u.SavedMusicCollections)
+        .Include(u => u.SavedMusicSets)
         .FirstOrDefaultAsync(u => u.Id == userId, ct).ConfigureAwait(false);
 
     public async Task<User?> GetWithSongsAsync(Guid userId, CancellationToken ct) => await Db.Users
