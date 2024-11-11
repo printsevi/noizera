@@ -11,7 +11,7 @@ public abstract class BaseEntityExtendedRepository<TEntityExtended>(
 {
     public override async Task InsertAsync(TEntityExtended entity, CancellationToken ct)
     {
-        var hash = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
+        //var hash = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
 
         //entity.SetPublicId(hash);
 

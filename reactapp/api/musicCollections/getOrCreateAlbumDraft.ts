@@ -9,7 +9,7 @@ export interface GetOrCreateAlbumDraftResponse {
   title: string;
   description?: string;
   releaseDate?: string;
-  coverImageBucketName?: string;
+  coverImageS3Folder?: string;
   coverImageOriginalName?: string;
   profileName: string;
   profileType: ProfileType;

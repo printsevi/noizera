@@ -67,7 +67,7 @@ public sealed record GetOrCreateAlbumDraftCommand(
                 albumDraft.Title,
                 albumDraft.Description,
                 albumDraft.AlbumReleaseDate,
-                albumDraft.CoverImageBucketName,
+                albumDraft.CoverImageS3Folder,
                 albumDraft.CoverImageOriginalName,
                 user.Profile.DisplayName,
                 user.Profile.ProfileType.ToString(),

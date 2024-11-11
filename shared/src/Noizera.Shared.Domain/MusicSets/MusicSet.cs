@@ -11,13 +11,14 @@ public class MusicSet : EntityExtended, IDeletable
 {
     public string Title { get; protected set; } = string.Empty;
     public string? Description { get; private set; }
-    public string? CoverImageBucketName { get; private set; }
+    public string? CoverImageS3Folder { get; private set; }
     public long? CoverImageContentLength { get; private set; }
     public string? CoverImageOriginalName { get; private set; }
     public Guid OwnerId { get; private set; }
-    public User Owner { get; } = null!;
     public bool AllowedAsPreview { get; private set; }
     public bool IsDeleted { get; set; }
+
+    public User Owner { get; } = null!;
     public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
     public ICollection<SavedMusicSet> UserLibraries { get; } = [];
 
@@ -48,7 +49,7 @@ public class MusicSet : EntityExtended, IDeletable
     private void SetCoverImageInformation(long? contentLength, string bucketName, [NotNull] ValidFileName fileName)
     {
         CoverImageContentLength = contentLength;
-        CoverImageBucketName = bucketName;
+        CoverImageS3Folder = bucketName;
         CoverImageOriginalName = fileName.Value;
     }
 

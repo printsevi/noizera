@@ -6,7 +6,7 @@ public sealed record GetOrCreateAlbumDraftResponse(
     string Title,
     string? Description,
     DateOnly? ReleaseDate,
-    string? CoverImageBucketName,
+    string? CoverImageS3Folder,
     string? CoverImageOriginalName,
     string ProfileName,
     string ProfileType,

@@ -9,9 +9,11 @@ public class PublicProfile : EntityExtended, IDeletable
 {
     public string Name { get; private set; } = string.Empty;
     public ProfileType ProfileType { get; private set; }
-    public string? Bio { get; private set; } = null!;
+    public string? Bio { get; private set; }
+    public string? ImageS3Folder { get; private set; }
     public bool IsDeleted { get; set; }
     public Guid? UserId { get; private set; }
+
     public User? User { get; }
     public ICollection<SongCredit> SongCredits { get; } = [];
     public ICollection<ProfileRelation> Followers { get; } = [];

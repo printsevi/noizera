@@ -118,7 +118,7 @@ const NewAlbumContent = () => {
         contentType: x.contentType,
         isOpen: false
       })) ?? []);
-      if (data.data?.coverImageBucketName) {
+      if (data.data?.coverImageS3Folder) {
         setCoverImageSrc(`${getURL()}api/music-collections/${data?.data?.albumPublicId!}/cover-image`);
       }
       const firstSong = data.data?.songs[0];

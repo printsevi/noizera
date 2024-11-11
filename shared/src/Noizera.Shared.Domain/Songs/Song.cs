@@ -17,10 +17,10 @@ public sealed class Song : EntityExtended
     public string? OriginalFileExtension { get; private set; }
     public string? OriginalContentType { get; private set; }
     public long? OriginalContentLength { get; private set; }
-    public string? OriginalBucketName { get; private set; }
-    public string? Mp3BucketName { get; private set; }
-    public long? Mp3ContentLength { get; private set; }
-    public string? FlacBucketName { get; private set; }
+    public string? OriginalS3Folder { get; private set; }
+    public string? MpegS3Folder { get; private set; }
+    public long? MpegContentLength { get; private set; }
+    public string? FlacS3Folder { get; private set; }
     public long? FlacContentLength { get; private set; }
     public double? DurationInSeconds { get; private set; }
     public float? Danceability { get; private set; }
@@ -41,7 +41,7 @@ public sealed class Song : EntityExtended
 
     public override string PublicIdPrefix => "t_";
 
-    public bool HasAudioAttached => FlacContentLength > 0 && Mp3ContentLength > 0;
+    public bool HasAudioAttached => FlacContentLength > 0 && MpegContentLength > 0;
 
     private Song(User user, Album album, string publicId)
         : base(publicId)
@@ -71,7 +71,7 @@ public sealed class Song : EntityExtended
         OriginalFileExtension = extension;
         OriginalContentLength = contentLength;
         OriginalContentType = contentType;
-        OriginalBucketName = bucket;
+        OriginalS3Folder = bucket;
     }
 
     public void DeleteOriginalAudioFile()
@@ -80,19 +80,19 @@ public sealed class Song : EntityExtended
         OriginalFileExtension = null;
         OriginalContentLength = null;
         OriginalContentType = null;
-        OriginalBucketName = null;
+        OriginalS3Folder = null;
     }
 
     public void SaveAudioFileToMp3Bucket(string bucketName, long contentLength, double duration)
     {
-        Mp3BucketName = bucketName;
-        Mp3ContentLength = contentLength;
+        MpegS3Folder = bucketName;
+        MpegContentLength = contentLength;
         DurationInSeconds = duration;
     }
 
     public void SaveAudioFileToFlacBucket(string bucketName, long contentLength)
     {
-        FlacBucketName = bucketName;
+        FlacS3Folder = bucketName;
         FlacContentLength = contentLength;
     }
 
