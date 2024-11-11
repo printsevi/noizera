@@ -18,12 +18,13 @@ public sealed class LoggingPipelineBehavior<TRequest, TResponse>()
     {
         TResponse response;
         string requestName = typeof(TRequest).Name;
+        var userId = request is IAuthorizeableRequest<TResponse> authRequest ? authRequest.UserId.ToString() : string.Empty;
 
         using var listener = new ActivityListenerConfiguration()
             .Instrument.AspNetCoreRequests()
             .TraceTo(Log.Logger);
 
-        using var activity = Log.Logger.StartActivity("{requestName} completed", requestName);
+        using var activity = Log.Logger.StartActivity("{requestName} completed. UserId = {userId}", requestName);
         try
         {
             if (request is not ISensitiveRequest)

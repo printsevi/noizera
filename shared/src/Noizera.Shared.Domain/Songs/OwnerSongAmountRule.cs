@@ -5,7 +5,7 @@ namespace Noizera.Shared.Domain.Songs;
 
 public sealed record OwnerSongAmountRule(User Owner) : ISyncDomainRule
 {
-    public string ErrorMessage => $"Amount of songs achieved the limit of {Owner.Profile?.SongLimitToUpload}.";
+    public string ErrorMessage => $"Amount of songs achieved the limit of {Owner.SongLimitToUpload}.";
 
-    public bool Verify() => Owner.Profile is not null && Owner.Profile.SongLimitToUpload > Owner.Songs.Count;
+    public bool Verify() => Owner.SongLimitToUpload > Owner.Songs.Count;
 }

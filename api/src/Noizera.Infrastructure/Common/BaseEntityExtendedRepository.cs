@@ -13,7 +13,7 @@ public abstract class BaseEntityExtendedRepository<TEntityExtended>(
     {
         var hash = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
 
-        entity.SetPublicId(hash);
+        //entity.SetPublicId(hash);
 
         _ = await Db.AddAsync(entity, ct).ConfigureAwait(false);
     }

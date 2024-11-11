@@ -30,6 +30,8 @@ public sealed class Song : EntityExtended
     public float? BPM { get; private set; }
     public bool IsPublic { get; private set; }
     public Guid OwnerId { get; private set; }
+    public string AlbumPublicId { get; private set; }
+
     public User Owner { get; } = null!;
     public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
     public ICollection<SongCredit> Credits { get; } = [];
@@ -41,16 +43,21 @@ public sealed class Song : EntityExtended
 
     public bool HasAudioAttached => FlacContentLength > 0 && Mp3ContentLength > 0;
 
-    private Song(User user, Album album)
-        : base() => OwnerId = user.Id;
+    private Song(User user, Album album, string publicId)
+        : base(publicId)
+    {
+        OwnerId = user.Id;
+        AlbumPublicId = album.PublicId;
+    }
 
-    public static Song Create([NotNull] User user, [NotNull] Album album)
+    public static async Task<Song> NewAsync([NotNull] User user, [NotNull] Album album, IHashGenerator hashGenerator, CancellationToken ct)
     {
         EnsureRule(new AlbumOwnerSongRule(user, album));
         EnsureRule(new DraftAlbumRule(album));
         EnsureRule(new OwnerSongAmountRule(user));
 
-        Song result = new(user, album);
+        var publicId = await hashGenerator.GenerateAsync(ct);
+        Song result = new(user, album, publicId);
         short maxSequence = album.MusicSetSongs.Count > 0 ? album.MusicSetSongs.Max(x => x.Sequence) : (short)0;
         MusicSetSong MusicSetSong = MusicSetSong.Create(result, album, ++maxSequence);
         result.MusicSetSongs.Add(MusicSetSong);

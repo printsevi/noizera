@@ -49,6 +49,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<TermsOfUse> Terms { get; set; }
 
+    public virtual async Task InsertAsync<TEntity>(TEntity entity, CancellationToken ct) 
+        where TEntity : BaseEntity
+    {
+        _ = await AddAsync(entity, ct).ConfigureAwait(false);
+        _ = await SaveChangesAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task UpdateAsync<TEntity>(TEntity entity, CancellationToken ct)
+        where TEntity : BaseEntity
+    {
+        if (entity is Entity entityWithDates)
+        {
+            //entityWithDates.SetLastModifiedOnAsNow();
+        }
+
+        _ = Update(entity);
+        _ = await SaveChangesAsync(ct).ConfigureAwait(false);
+    }
+
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         List<DomainEvent> domainEvents = ChangeTracker.Entries<Entity>()

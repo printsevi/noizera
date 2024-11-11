@@ -13,23 +13,15 @@ public sealed class Playlist : MusicSet
 
     public bool IsPublic { get; private set; }
 
-    private Playlist(User user, string title, string? playlistTag = null, string? publicId = null) : base(user, title)
+    private Playlist(User user, string title, string publicId, string? playlistTag = null) : base(user, publicId, title)
     {
         PlaylistTag = playlistTag;
-        SetPublicId(publicId);
-    }
-
-    public static Playlist New(User user, string title)
-    {
-        Playlist playlist = new(user, title);
-
-        return playlist;
     }
 
     public static async Task<Playlist> NewFavouritesAsync(User user, IHashGenerator hashGenerator, CancellationToken ct)
     {
         var publicId = await hashGenerator.GenerateAsync(ct);
-        Playlist playlist = new(user, PlaylistConstants.FavouritesPlaylistTitle, PlaylistConstants.FavouritesPlaylistTag, publicId);
+        Playlist playlist = new(user, PlaylistConstants.FavouritesPlaylistTitle, publicId, PlaylistConstants.FavouritesPlaylistTag);
 
         return playlist;
     }

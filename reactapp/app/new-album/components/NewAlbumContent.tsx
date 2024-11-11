@@ -21,7 +21,7 @@ import { InputField } from '@/components/InputField';
 import { ComboboxField, ComboboxItemProps } from '@/components/ComboboxField';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import useAuth from '@/hooks/useAuth';
-import getOrCreateAlbumDraft from '@/api/musicCollections/getOrCreateAlbumDraft';
+import getOrCreateAlbumDraft, { GetOrCreateAlbumDraftCreditResponse } from '@/api/musicCollections/getOrCreateAlbumDraft';
 import useSWR from 'swr';
 import Box from '@/components/Box';
 import updateMusicCollectionTitle from '@/api/musicCollections/updateMusicCollectionTitle';
@@ -50,7 +50,7 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import useUser from '@/hooks/useUser';
-import { CalendarIcon, Plus } from 'lucide-react';
+import { CalendarIcon, ExternalLink, Plus, X } from 'lucide-react';
 import deleteAudioFile from '@/api/songs/deleteAudioFile';
 import deleteAlbumCoverImage from '@/api/musicCollections/deleteAlbumCoverImage';
 import AuthRequired from '@/components/AuthRequired';
@@ -60,6 +60,8 @@ import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from "date-fns";
 import updateAlbumReleaseDate from '@/api/musicCollections/updateAlbumReleaseDate';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface SongItem {
   key: string;
@@ -85,6 +87,7 @@ const NewAlbumContent = () => {
   const [albumTitle, setAlbumTitle] = useState(data?.data?.title ?? "");
   const [coverImageSrc, setCoverImageSrc] = useState("");
   const [albumTitleDb, setAlbumTitleDb] = useState(data?.data?.title ?? "");
+  const [featuredArtists, setFeaturedArtists] = useState<GetOrCreateAlbumDraftCreditResponse[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
   const [date, setDate] = useState(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined)
@@ -118,7 +121,10 @@ const NewAlbumContent = () => {
       if (data.data?.coverImageBucketName) {
         setCoverImageSrc(`${getURL()}api/music-collections/${data?.data?.albumPublicId!}/cover-image`);
       }
-
+      const firstSong = data.data?.songs[0];
+      if (firstSong) {
+        setFeaturedArtists(firstSong.credits);
+      }
     }
   }, [data]);
 
@@ -396,15 +402,87 @@ const NewAlbumContent = () => {
               </div>
               <Label>Cover image</Label>
               <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
-              {/* <ComboboxField 
-              id="album-artists-combobox" 
-              label={data?.data?.profileType === ProfileType.Artist ? 'Featured artists' : 'Artists'}
-              initialSelectedItems={data?.data?.credits ?? []} 
-              apiUrl='profiles/artists'
-              getItems={fetchArtists}
-              onItemAdd={onAddAlbumCredit}
-              onItemDelete={onDeleteAlbumCredit}
-            /> */}
+              <Label>{user.profileType === ProfileType.Artist ? "Featured Artists" : "Main Artists"}</Label>
+              <div className="space-y-2">
+                <div className="relative">
+                  <Input
+                    placeholder="Search or add new artist"
+                    value={artistInput}
+                    onChange={handleArtistInputChange}
+                  />
+                  {(searchResults.length > 0 || artistInput.trim()) && (
+                    <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md">
+                      {artistInput.trim() && !album.featuredArtists.some(artist =>
+                        artist.name.toLowerCase() === artistInput.trim().toLowerCase()
+                      ) && (
+                          <div
+                            className="p-2 hover:bg-accent cursor-pointer flex items-center justify-between"
+                            onClick={addNewArtist}
+                          >
+                            <span>Add "{artistInput}" as new artist</span>
+                            <Plus className="h-4 w-4" />
+                          </div>
+                        )}
+                      {searchResults.map(artist => (
+                        <div
+                          key={artist.id}
+                          className="p-2 hover:bg-accent cursor-pointer flex items-center"
+                          onClick={() => addArtist(artist)}
+                        >
+                          <Image
+                            src={artist.image}
+                            alt={artist.name}
+                            width={24}
+                            height={24}
+                            className="rounded-full mr-2"
+                          />
+                          {artist.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-2 sm:grid-cols-3 md:grid-cols-4">
+                  {featuredArtists.map(artist => (
+                    <div
+                      key={artist.id}
+                      className="px-3 py-2 rounded-full text-sm flex items-center justify-between w-full"
+                    >
+                      <div className="flex items-center overflow-hidden">
+                        {artist.profileId && (
+                          <Image
+                            src={artist.image}
+                            alt={artist.name}
+                            width={24}
+                            height={24}
+                            className="rounded-full mr-2 flex-shrink-0"
+                          />
+                        )}
+                        <span className="truncate">{artist.name}</span>
+                      </div>
+                      <div className="flex items-center ml-2 flex-shrink-0">
+                        {!artist.isNew && (
+                          <Link
+                            href={artist.profileUrl}
+                            className="text-current hover:text-primary-foreground/80 transition-colors mr-2"
+                            title={`View ${artist.name}'s profile`}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Link>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 hover:bg-primary-foreground/20"
+                          onClick={() => removeArtist(artist.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -459,13 +537,13 @@ const NewAlbumContent = () => {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         {/* {submitted && <Button disabled={submitted} variant="outline">Edit</Button>} */}
-        <PurpleButton className='px-6 py-2' disabled={submitted}>Submit album</PurpleButton>
+        <PurpleButton className='px-6 py-2' disabled={submitted}>{submitted ? "Submitted & Processing" : "Submit"}</PurpleButton>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you ready to release your album?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. The album will be released after processing. You won't be able to change your profile type later.
+            This action cannot be undone. The album will be released after processing. You won't be able to change your profile type afterwards.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

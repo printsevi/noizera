@@ -35,7 +35,7 @@ public static class DI
 
     private static IServiceCollection AddS3(this IServiceCollection services, [NotNull] IConfiguration configuration)
     {
-        _ = services.Configure<S3BucketSettings>(configuration.GetSection("S3Buckets"));
+        _ = services.Configure<S3BucketSettings>(configuration.GetSection("S3Bucket"));
         var s3Settings = configuration.GetSection("S3").Get<S3Settings>()!;
 
         services.AddSingleton<IAmazonS3>(sp =>

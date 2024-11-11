@@ -10,7 +10,6 @@ public class PublicProfile : EntityExtended, IDeletable
     public string Name { get; private set; } = string.Empty;
     public ProfileType ProfileType { get; private set; }
     public string? Bio { get; private set; } = null!;
-    public short SongLimitToUpload { get; private set; }
     public bool IsDeleted { get; set; }
     public Guid? UserId { get; private set; }
     public User? User { get; }
@@ -29,7 +28,6 @@ public class PublicProfile : EntityExtended, IDeletable
         ProfileType = ProfileType.Fan;
         Name = name;
         UserId = userId;
-        SongLimitToUpload = 0;
     }
 
     public string DisplayName => !string.IsNullOrWhiteSpace(Name) ? Name : PublicId;
@@ -63,11 +61,7 @@ public class PublicProfile : EntityExtended, IDeletable
 
     public void SetProfileType(ProfileType profileType)
     {
-        //Check if it's eligable to update (Fan -> Artist)
-
         ProfileType = profileType;
-
-        SetSongLimit(profileType);
     }
 
     public static async Task VerifyUsernameAsync(string username, IProfileUniquenessChecker checker, CancellationToken ct = default)
@@ -75,18 +69,6 @@ public class PublicProfile : EntityExtended, IDeletable
         username = username.ToLowerInvariant();
         EnsureRule(new ProfileUsernameRule(username));
         await EnsureRuleAsync(new ProfileUsernameUniquenessRule(username, checker), ct).ConfigureAwait(false);
-    }
-
-    private void SetSongLimit(ProfileType profileType)
-    {
-        SongLimitToUpload = profileType switch
-        {
-            ProfileType.Artist => 30,
-            ProfileType.Label => 300,
-            ProfileType.Fan => 0,
-            ProfileType.Editor => 0,
-            _ => 0
-        };
     }
 
     private PublicProfile() { }

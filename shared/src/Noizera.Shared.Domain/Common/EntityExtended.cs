@@ -6,15 +6,10 @@ public abstract class EntityExtended : Entity
 
     public abstract string PublicIdPrefix { get; }
 
-    public void SetPublicId(string? value)
+    protected EntityExtended(string publicId) : base()
     {
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            PublicId = $"{PublicIdPrefix}{value}";
-        }
+        PublicId = $"{PublicIdPrefix}{publicId}";
     }
-
-    protected EntityExtended(string publicId = "") : base() => PublicId = publicId;
 
     protected EntityExtended() { }
 }

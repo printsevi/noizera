@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Contracts\Noizera.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Persistence\Noizera.Shared.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using Noizera.Shared.Contracts.Errors;
 using Noizera.Shared.Contracts.Repositories;
 using Noizera.Shared.Contracts.Security;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Songs;
 using System.Diagnostics.CodeAnalysis;
 
@@ -13,6 +14,7 @@ public sealed record AddAlbumSongCommand(
     : IAuthorizeableRequest<AddAlbumSongResponse>
 {
     public sealed class Handler(
+        IHashGenerator hashGenerator,
         IAlbumRepository albumRepository,
         IUserRepository userRepository,
         ISongRepository songRepository)
@@ -26,7 +28,7 @@ public sealed record AddAlbumSongCommand(
             var user = await userRepository.GetWithSongsAsync(request.UserId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException("User not found", ErrorType.NotFound);
 
-            Song song = Song.Create(user, album);
+            var song = await Song.NewAsync(user, album, hashGenerator, cancellationToken);
             await songRepository.InsertAsync(song, cancellationToken).ConfigureAwait(false);
 
             return new(song.Id, song.PublicId);

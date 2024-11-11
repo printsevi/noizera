@@ -48,7 +48,7 @@ public abstract class BaseTest(CustomWebApplicationFactory factory) : IClassFixt
                 passwordHelper,
                 hashGenerator,
                 default);
-            TestArtist.Profile!.SetProfileType(ProfileType.Artist);
+            TestArtist.UpdateProfileType(ProfileType.Artist);
             await _db.Users.AddAsync(TestArtist);
             await _db.SaveChangesAsync();
         }
@@ -72,7 +72,7 @@ public abstract class BaseTest(CustomWebApplicationFactory factory) : IClassFixt
                 passwordHelper,
                 hashGenerator,
                 default);
-            LoggedArtist.Profile!.SetProfileType(ProfileType.Artist);
+            LoggedArtist.UpdateProfileType(ProfileType.Artist);
             await _db.Users.AddAsync(LoggedArtist);
             await _db.SaveChangesAsync();
         }

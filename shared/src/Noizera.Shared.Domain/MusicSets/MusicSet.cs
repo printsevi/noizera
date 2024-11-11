@@ -23,7 +23,7 @@ public class MusicSet : EntityExtended, IDeletable
 
     public override string PublicIdPrefix => "m_";
 
-    protected MusicSet([NotNull] User user, string title = "") : base()
+    protected MusicSet([NotNull] User user, string publicId, string title = "") : base(publicId)
     {
         OwnerId = user.Id;
         Title = title;

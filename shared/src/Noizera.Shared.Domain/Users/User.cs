@@ -21,7 +21,9 @@ public sealed class User : Entity
     public string PasswordHash { get; private set; } = null!;
     public byte[] PasswordSalt { get; private set; } = [];
     public string Roles { get; private set; } = null!;
-    public PublicProfile Profile { get; private set; }
+    public short SongLimitToUpload { get; private set; }
+
+    public PublicProfile Profile { get; private set; } = null!;
     public ICollection<Song> Songs { get; } = [];
     public ICollection<MusicSet> MusicSets { get; } = [];
     public ICollection<SavedMusicSet> SavedMusicSets { get; } = [];
@@ -63,6 +65,7 @@ public sealed class User : Entity
 
         var profile = await PublicProfile.CreateAsync(profileUserName.ToLowerInvariant(), ProfileType.Fan, profileChecker, user.Id, ct).ConfigureAwait(false);
         user.Profile = profile;
+        user.SongLimitToUpload = 0;
 
         var favouritesPlaylist = await Playlist.NewFavouritesAsync(user, hashGenerator, ct);
 
@@ -151,6 +154,14 @@ public sealed class User : Entity
         Profile!.UpdateBio(bio);
     }
 
+    public void UpdateProfileType(ProfileType profileType)
+    {
+        EnsureRule(new UpdateProfileTypeRule(this));
+        
+        Profile.SetProfileType(profileType);
+        SetSongLimit(profileType);
+    }
+
     public void SetCustomerStripeId(string value) => CustomerStripeId = value;
 
     public void RevokeRefreshTokens()
@@ -162,6 +173,18 @@ public sealed class User : Entity
     }
 
     public IReadOnlyCollection<string> SplitRoles => new ReadOnlyCollection<string>(Roles.Split(','));
+
+    private void SetSongLimit(ProfileType profileType)
+    {
+        SongLimitToUpload = profileType switch
+        {
+            ProfileType.Artist => 30,
+            ProfileType.Label => 300,
+            ProfileType.Fan => 0,
+            ProfileType.Editor => 0,
+            _ => 0
+        };
+    }
 
     private User() { }
 }

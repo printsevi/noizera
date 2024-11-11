@@ -1,4 +1,5 @@
-﻿using Noizera.Shared.Domain.Events;
+﻿using Noizera.Shared.Domain.Common;
+using Noizera.Shared.Domain.Events;
 using Noizera.Shared.Domain.Users;
 
 namespace Noizera.Shared.Domain.MusicSets;
@@ -16,14 +17,16 @@ public sealed class Album : MusicSet
 
     public bool IsEditable => AlbumStatus is AlbumStatus.Draft or AlbumStatus.Submitted;
 
-    private Album(User user) : base(user)
+    private Album(User user, string publicId) : base(user, publicId)
     {
     }
 
-    public static Album Create(User user)
+    public static async Task<Album> NewAsync(User user, IHashGenerator hashGenerator, CancellationToken ct)
     {
         EnsureRule(new AlbumCreationRule(user));
-        Album album = new(user);
+
+        var publicId = await hashGenerator.GenerateAsync(ct);
+        Album album = new(user, publicId);
 
         return album;
     }
