@@ -12,10 +12,10 @@ public sealed class GetArtistsEndpointTests(CustomWebApplicationFactory factory)
     public async Task Post_ReturnsOkFilledResponse_WhenValidText(string text)
     {
         var response = await _httpClient.GetAsync($"{url}?text={text}&userId={LoggedArtist.Id}");
-        var result = await TestHelper.To<GetArtistsResponse>(response);
+        var result = await TestHelper.To<GetArtistsResponse[]>(response);
 
         response.IsSuccessStatusCode.Should().BeTrue();
         result.Should().NotBeNull();
-        result!.Artists.Should().Contain(x => x.Name == TestArtist!.Profile!.PublicId);
+        result.Should().Contain(x => x.Name == TestArtist!.Profile!.PublicId);
     }
 }

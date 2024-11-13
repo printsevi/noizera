@@ -1,4 +1,5 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Shared.Domain.AlbumCredits;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.Events;
 using Noizera.Shared.Domain.Users;
 
@@ -10,6 +11,7 @@ public sealed class Album : MusicSet
 
     public DateOnly? AlbumReleaseDate { get; private set; }
 
+    public ICollection<AlbumCredit> AlbumCredits { get; } = [];
 
     public override string PublicIdPrefix => "a_";
 

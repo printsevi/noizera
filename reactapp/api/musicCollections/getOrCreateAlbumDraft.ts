@@ -31,7 +31,7 @@ export interface GetOrCreateAlbumDraftCreditResponse {
   id?: string;
   profileId?: string;
   profilePublicId?: string;
-  profileName?: string;
+  profileName: string;
 }
 
 const getOrCreateAlbumDraft = async (axiosPrivate: AxiosInstance, userId: string): Promise<ApiResponse<GetOrCreateAlbumDraftResponse>> => {

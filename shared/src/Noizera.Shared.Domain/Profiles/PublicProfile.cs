@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Shared.Domain.AlbumCredits;
+using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.ProfileRelations;
-using Noizera.Shared.Domain.SongCredits;
 using Noizera.Shared.Domain.Users;
 
 namespace Noizera.Shared.Domain.Profiles;
@@ -15,7 +15,7 @@ public class PublicProfile : EntityExtended, IDeletable
     public Guid? UserId { get; private set; }
 
     public User? User { get; }
-    public ICollection<SongCredit> SongCredits { get; } = [];
+    public ICollection<AlbumCredit> AlbumCredits { get; } = [];
     public ICollection<ProfileRelation> Followers { get; } = [];
     public ICollection<ProfileRelation> Followings { get; } = [];
 

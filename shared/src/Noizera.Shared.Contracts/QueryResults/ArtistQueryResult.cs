@@ -2,4 +2,5 @@
 
 public record ArtistQueryResult(
     Guid ArtistId,
-    string Name);
+    string Name,
+    string PublicId);

@@ -13,9 +13,9 @@ public sealed record AlbumSubmissionRule(Album Album) : ISyncDomainRule
         && Album.AlbumReleaseDate is not null
         && Album.CoverImageContentLength > 0
         && Album.MusicSetSongs.Count > 0
+        && (Album.Owner.Profile.ProfileType == ProfileType.Artist 
+            || Album.AlbumCredits.Any(x => x.ProfileType == ProfileType.Artist)
         && Album.MusicSetSongs.All(x =>
             !string.IsNullOrWhiteSpace(x.Song.OriginalFileName)
-            && !string.IsNullOrWhiteSpace(x.Song.Title)
-            && (x.Song.Owner.Profile.ProfileType == ProfileType.Artist
-                || x.Song.Credits.Any(s => s.ProfileType == ProfileType.Artist)));
+            && !string.IsNullOrWhiteSpace(x.Song.Title)));
 }

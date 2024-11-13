@@ -31,8 +31,8 @@ public sealed record GetOrCreateAlbumDraftCommand(
             var albumDraft = await db.Albums
                 .Include(x => x.MusicSetSongs.OrderBy(x => x.Sequence))
                     .ThenInclude(i => i.Song)
-                        .ThenInclude(s => s.Credits)
-                            .ThenInclude(c => c.Profile)
+                .Include(s => s.AlbumCredits)
+                    .ThenInclude(c => c.Profile)
                 .FirstOrDefaultAsync(x => x.OwnerId == request.UserId && x.AlbumStatus == AlbumStatus.Draft, cancellationToken)
                 .ConfigureAwait(false);
 
@@ -53,13 +53,13 @@ public sealed record GetOrCreateAlbumDraftCommand(
                     x.Song.OriginalFileName, 
                     x.Song.OriginalContentLength, 
                     x.Song.OriginalContentType,
-                    x.Sequence,
-                    x.Song.Credits.Select(x => new GetOrCreateAlbumDraftCreditResponse(
-                        x.Id, 
+                    x.Sequence));
+
+            var credits = albumDraft.AlbumCredits.Select(x => new GetOrCreateAlbumDraftCreditResponse(
+                        x.Id,
                         x.Profile?.PublicId ?? null,
                         x.Profile?.Id ?? null,
-                        x.ProfileName
-                    ))));
+                        x.ProfileName ?? x.Profile?.Name ?? x.Profile?.PublicId!));
 
             return new(
                 albumDraft.Id,
@@ -71,7 +71,8 @@ public sealed record GetOrCreateAlbumDraftCommand(
                 albumDraft.CoverImageOriginalName,
                 user.Profile.DisplayName,
                 user.Profile.ProfileType.ToString(),
-                songs);
+                songs,
+                credits);
         }
     }
 }

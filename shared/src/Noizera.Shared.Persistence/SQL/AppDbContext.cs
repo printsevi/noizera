@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Noizera.Shared.Domain.AlbumCredits;
 using Noizera.Shared.Domain.Common;
 using Noizera.Shared.Domain.ListeningHistories;
 using Noizera.Shared.Domain.MusicSets;
@@ -9,7 +10,6 @@ using Noizera.Shared.Domain.Profiles;
 using Noizera.Shared.Domain.Royalties;
 using Noizera.Shared.Domain.SavedMusicSets;
 using Noizera.Shared.Domain.SecretTokens;
-using Noizera.Shared.Domain.SongCredits;
 using Noizera.Shared.Domain.SongPreferences;
 using Noizera.Shared.Domain.Songs;
 using Noizera.Shared.Domain.SongSimilarities;
@@ -40,7 +40,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<SavedMusicSet> SavedMusicSets { get; set; }
     public DbSet<Album> Albums { get; set; }
     public DbSet<Playlist> Playlists { get; set; }
-    public DbSet<SongCredit> SongCredits { get; set; }
+    public DbSet<AlbumCredit> AlbumCredits { get; set; }
     public DbSet<MusicSetSong> MusicSetSongs { get; set; }
     public DbSet<SongSimilarity> SongSimilarities { get; set; }
     public DbSet<SongPreference> SongPreferences { get; set; }

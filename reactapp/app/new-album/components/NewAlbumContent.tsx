@@ -25,7 +25,7 @@ import getOrCreateAlbumDraft, { GetOrCreateAlbumDraftCreditResponse } from '@/ap
 import useSWR from 'swr';
 import Box from '@/components/Box';
 import updateMusicCollectionTitle from '@/api/musicCollections/updateMusicCollectionTitle';
-import getArtists from '@/api/profiles/getArtists';
+import getArtists, { GetArtistResponse } from '@/api/profiles/getArtists';
 import addAlbumCredit from '@/api/musicCollections/addAlbumCredit';
 import deleteAlbumCredit from '@/api/musicCollections/deleteAlbumCredit';
 import { ProfileType } from '@/api/common';
@@ -89,6 +89,8 @@ const NewAlbumContent = () => {
   const [albumTitleDb, setAlbumTitleDb] = useState(data?.data?.title ?? "");
   const [featuredArtists, setFeaturedArtists] = useState<GetOrCreateAlbumDraftCreditResponse[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [artistInput, setArtistInput] = useState('');
+  const [searchResults, setSearchResults] = useState<GetArtistResponse[]>([])
 
   const [date, setDate] = useState(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined)
   const [isUploading, setIsUploading] = useState(false)
@@ -214,19 +216,14 @@ const NewAlbumContent = () => {
   };
 
   const fetchArtists = async (text: string) => {
-    const result: ComboboxItemProps[] = [];
     if (!text) {
-      return result;
+      return setSearchResults([]);
     }
 
     const data = await getArtists(axiosPrivate, text, auth.userId!,);
     if (data.ok) {
-      data.data?.artists.forEach((x) => {
-        result.push({ key: x.artistId, value: x.name });
-      })
+      setSearchResults(data.data!)
     }
-
-    return result;
   };
 
   const onAddNewSong = async () => {
@@ -412,7 +409,7 @@ const NewAlbumContent = () => {
                   />
                   {(searchResults.length > 0 || artistInput.trim()) && (
                     <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md">
-                      {artistInput.trim() && !album.featuredArtists.some(artist =>
+                      {artistInput.trim() && !featuredArtists.some(artist =>
                         artist.name.toLowerCase() === artistInput.trim().toLowerCase()
                       ) && (
                           <div
@@ -430,7 +427,7 @@ const NewAlbumContent = () => {
                           onClick={() => addArtist(artist)}
                         >
                           <Image
-                            src={artist.image}
+                            src={`${getURL()}api/profiles/${artist.publicId!}/image`}
                             alt={artist.name}
                             width={24}
                             height={24}
@@ -451,21 +448,21 @@ const NewAlbumContent = () => {
                       <div className="flex items-center overflow-hidden">
                         {artist.profileId && (
                           <Image
-                            src={artist.image}
+                            src={`${getURL()}api/profiles/${artist.publicId!}/image`}
                             alt={artist.name}
                             width={24}
                             height={24}
                             className="rounded-full mr-2 flex-shrink-0"
                           />
                         )}
-                        <span className="truncate">{artist.name}</span>
+                        <span className="truncate">{artist.profileName}</span>
                       </div>
                       <div className="flex items-center ml-2 flex-shrink-0">
-                        {!artist.isNew && (
+                        {artist.profileId && (
                           <Link
-                            href={artist.profileUrl}
+                            href={`/profiles/${artist.profilePublicId}`}
                             className="text-current hover:text-primary-foreground/80 transition-colors mr-2"
-                            title={`View ${artist.name}'s profile`}
+                            title={`View ${artist.profileName}'s profile`}
                           >
                             <ExternalLink className="h-4 w-4" />
                           </Link>

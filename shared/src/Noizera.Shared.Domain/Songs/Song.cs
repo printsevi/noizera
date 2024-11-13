@@ -3,7 +3,6 @@ using Noizera.Shared.Domain.ListeningHistories;
 using Noizera.Shared.Domain.MusicSets;
 using Noizera.Shared.Domain.MusicSetSongs;
 using Noizera.Shared.Domain.Royalties;
-using Noizera.Shared.Domain.SongCredits;
 using Noizera.Shared.Domain.Streams;
 using Noizera.Shared.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
@@ -30,11 +29,11 @@ public sealed class Song : EntityExtended
     public float? BPM { get; private set; }
     public bool IsPublic { get; private set; }
     public Guid OwnerId { get; private set; }
-    public string AlbumPublicId { get; private set; }
+    public Guid AlbumId { get; private set; }
 
+    public Album Album { get; } = null!;
     public User Owner { get; } = null!;
     public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
-    public ICollection<SongCredit> Credits { get; } = [];
     public ICollection<Royalty> AssignedRoyalties { get; } = [];
     public ICollection<ListeningHistory> ListeningHistories { get; } = [];
     public ICollection<StreamInfo> Streams { get; } = [];
@@ -47,7 +46,7 @@ public sealed class Song : EntityExtended
         : base(publicId)
     {
         OwnerId = user.Id;
-        AlbumPublicId = album.PublicId;
+        AlbumId = album.Id;
     }
 
     public static async Task<Song> NewAsync([NotNull] User user, [NotNull] Album album, IHashGenerator hashGenerator, CancellationToken ct)

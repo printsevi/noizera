@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MailKit.Search;
+using Microsoft.EntityFrameworkCore;
 using Noizera.Infrastructure.Common;
 using Noizera.Shared.Contracts.QueryResults;
 using Noizera.Shared.Contracts.Repositories;
@@ -17,11 +18,15 @@ public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenera
         FormattableString sql = $"""
             SELECT
                 p."Id" as ArtistId,
-                p."Name" as Name
+                p."Name" as Name,
+                p."PublicId" as PublicId
+                SIMILARITY(p."Name", {text}) AS Score
             FROM public."Profiles" p
             WHERE
                 p."ProfileType" = 'Artist'
-                AND SIMILARITY(p."Name", {text}) > 0.4;
+                AND SIMILARITY(p."Name", {text}) > 0.2
+            ORDER BY Name, Score DESC
+            LIMIT 10;
             """;
 
         var result = await Db.Database.SqlQuery<ArtistQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);

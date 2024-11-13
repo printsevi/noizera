@@ -10,7 +10,8 @@ public sealed record GetOrCreateAlbumDraftResponse(
     string? CoverImageOriginalName,
     string ProfileName,
     string ProfileType,
-    IEnumerable<GetOrCreateAlbumDraftSongResponse> Songs);
+    IEnumerable<GetOrCreateAlbumDraftSongResponse> Songs,
+    IEnumerable<GetOrCreateAlbumDraftCreditResponse> Credits);
 
 public sealed record GetOrCreateAlbumDraftSongResponse(
     Guid Key,
@@ -19,11 +20,10 @@ public sealed record GetOrCreateAlbumDraftSongResponse(
     string? OriginalFileName,
     long? ContentLength,
     string? ContentType,
-    short Sequence,
-    IEnumerable<GetOrCreateAlbumDraftCreditResponse> Credits);
+    short Sequence);
 
 public sealed record GetOrCreateAlbumDraftCreditResponse(
-    Guid? Id,
+    Guid Id,
     string? ProfilePublicId,
     Guid? ProfileId,
-    string? ProfileName);
+    string ProfileName);
