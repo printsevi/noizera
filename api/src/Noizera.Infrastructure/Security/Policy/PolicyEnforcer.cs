@@ -1,6 +1,6 @@
 using Noizera.Infrastructure.Security.UserProviders;
-using Noizera.Shared.Contracts.Errors;
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Errors;
+using Noizera.Common.Contracts.Security;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Infrastructure.Security.Policy;

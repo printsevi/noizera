@@ -6,7 +6,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Infrastructure;
+using Noizera.Common.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

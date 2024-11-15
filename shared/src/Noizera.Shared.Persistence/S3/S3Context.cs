@@ -2,110 +2,98 @@
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
-namespace Noizera.Shared.Persistence.S3;
+namespace Noizera.Common.Persistence.S3;
 
 public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
 {
     private readonly S3BucketSettings settings = s3Settings.Value;
 
-    private const string OriginalAudioFolder = "original-audio";
-    private const string EmailTemplatesFolder = "email-templates";
-    private const string CoverImagesFolder = "cover-images";
-    private const string FlacAudioFolder = "flac-audio";
-    private const string Mp3AudioFolder = "mp3-audio";
+    private const string originalAudioFolder = "original-audio";
+    private const string emailTemplatesFolder = "email-templates";
+    private const string coverImagesFolder = "cover-images";
+    private const string flacAudioFolder = "flac-audio";
+    private const string mp3AudioFolder = "mp3-audio";
 
-    public async Task<(long ContentLength, string ContentType, string BucketName)> UploadOriginalAudioAsync(string key, IFormFile file, CancellationToken ct)
+    public async Task<(long ContentLength, string ContentType, string BucketName)> UploadOriginalAudioAsync(string key, [NotNull] IFormFile file, CancellationToken ct)
     {
-        await UploadFileAsync(OriginalAudioFolder, key, file, ct).ConfigureAwait(false);
+        await UploadFileAsync(originalAudioFolder, key, file, ct).ConfigureAwait(false);
 
-        var result = await GetFileInfoAsync(OriginalAudioFolder, key, ct).ConfigureAwait(false);
+        var (ContentLength, ContentType) = await GetFileInfoAsync(originalAudioFolder, key, ct).ConfigureAwait(false);
 
-        return (result.ContentLength, result.ContentType, OriginalAudioFolder);
+        return (ContentLength, ContentType, originalAudioFolder);
     }
 
-    public async Task<(long ContentLength, string BucketName)> UploadCoverImageAsync(string key, IFormFile file, CancellationToken ct)
+    public async Task<(long ContentLength, string BucketName)> UploadCoverImageAsync(string key, [NotNull] IFormFile file, CancellationToken ct)
     {
-        await UploadFileAsync(CoverImagesFolder, key, file, ct).ConfigureAwait(false);
+        await UploadFileAsync(coverImagesFolder, key, file, ct).ConfigureAwait(false);
 
-        var result = await GetFileInfoAsync(CoverImagesFolder, key, ct).ConfigureAwait(false);
+        var (ContentLength, _) = await GetFileInfoAsync(coverImagesFolder, key, ct).ConfigureAwait(false);
 
-        return (result.ContentLength, CoverImagesFolder);
+        return (ContentLength, coverImagesFolder);
     }
 
     public async Task<(long ContentLength, string BucketName)> UploadFlacAudioAsync(string key, string contentType, FileStream fileStream, CancellationToken ct)
     {
-        await UploadStreamAsync(FlacAudioFolder, key, contentType, fileStream, ct).ConfigureAwait(false);
+        await UploadStreamAsync(flacAudioFolder, key, contentType, fileStream, ct).ConfigureAwait(false);
 
-        var result = await GetFileInfoAsync(FlacAudioFolder, key, ct).ConfigureAwait(false);
+        var (ContentLength, _) = await GetFileInfoAsync(flacAudioFolder, key, ct).ConfigureAwait(false);
 
-        return (result.ContentLength, FlacAudioFolder);
+        return (ContentLength, flacAudioFolder);
     }
 
     public async Task<(long ContentLength, string BucketName)> UploadMp3AudioAsync(string key, string contentType, FileStream fileStream, CancellationToken ct)
     {
-        await UploadStreamAsync(Mp3AudioFolder, key, contentType, fileStream, ct).ConfigureAwait(false);
+        await UploadStreamAsync(mp3AudioFolder, key, contentType, fileStream, ct).ConfigureAwait(false);
 
-        var result = await GetFileInfoAsync(Mp3AudioFolder, key, ct).ConfigureAwait(false);
-
-        return (result.ContentLength, Mp3AudioFolder);
+        var (ContentLength, _) = await GetFileInfoAsync(mp3AudioFolder, key, ct).ConfigureAwait(false);
+        return (ContentLength, mp3AudioFolder);
     }
 
-    public async Task UploadEmailTemplateAsync(string templateName, IFormFile file, CancellationToken ct)
-    {
-        await UploadFileAsync(EmailTemplatesFolder, templateName, file, ct).ConfigureAwait(false);
-    }
+    public async Task UploadEmailTemplateAsync(string templateName, [NotNull] IFormFile file, CancellationToken ct)
+        => await UploadFileAsync(emailTemplatesFolder, templateName, file, ct).ConfigureAwait(false);
 
     public async Task DeleteOriginalAudioAsync(string key, CancellationToken ct)
-    {
-        await DeleteFileAsync(OriginalAudioFolder, key, ct).ConfigureAwait(false);
-    }
+        => await DeleteFileAsync(originalAudioFolder, key, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetCoverImageAsync(string key, CancellationToken ct)
-    {
-        return await GetFileAsync(CoverImagesFolder, key, ct).ConfigureAwait(false);
-    }
+        => await GetFileAsync(coverImagesFolder, key, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetOriginalAudioAsync(string key, long start, long end, CancellationToken ct)
-    {
-        return await GetFilePartAsync(OriginalAudioFolder, key, start, end, ct).ConfigureAwait(false);
-    }
+        => await GetFilePartAsync(originalAudioFolder, key, start, end, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetFlacAudioAsync(string key, long start, long end, CancellationToken ct)
-    {
-        return await GetFilePartAsync(FlacAudioFolder, key, start, end, ct).ConfigureAwait(false);
-    }
+        => await GetFilePartAsync(flacAudioFolder, key, start, end, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetMp3AudioAsync(string key, long start, long end, CancellationToken ct)
-    {
-        return await GetFilePartAsync(Mp3AudioFolder, key, start, end, ct).ConfigureAwait(false);
-    }
+        => await GetFilePartAsync(mp3AudioFolder, key, start, end, ct).ConfigureAwait(false);
 
     public async Task<GetObjectResponse> GetOriginalAudioFileAsync(string key, CancellationToken ct)
     {
-        var request = new GetObjectRequest
+        GetObjectRequest request = new()
         {
             BucketName = settings.BucketName,
-            Key = $"{OriginalAudioFolder}/{key}"
+            Key = $"{originalAudioFolder}/{key}"
         };
 
-        return await s3.GetObjectAsync(request, ct);
+        return await s3.GetObjectAsync(request, ct).ConfigureAwait(false);
     }
 
     public async Task<string> GetEmailTemplateContentAsync(string key, CancellationToken ct)
     {
-        var request = new GetObjectRequest
+        GetObjectRequest request = new()
         {
             BucketName = settings.BucketName,
-            Key = $"{EmailTemplatesFolder}/{key}.html"
+            Key = $"{emailTemplatesFolder}/{key}.html"
         };
 
         string result;
-        using (GetObjectResponse response = await s3.GetObjectAsync(request))
-        using (StreamReader reader = new StreamReader(response.ResponseStream))
+        using (var response = await s3.GetObjectAsync(request, ct).ConfigureAwait(false))
+        using (StreamReader reader = new(response.ResponseStream))
         {
-            result = await reader.ReadToEndAsync();
+            result = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
         }
 
         return result;
@@ -113,20 +101,20 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
 
     private async Task<(long ContentLength, string ContentType)> GetFileInfoAsync(string folderName, string key, CancellationToken ct)
     {
-        var metadataRequest = new GetObjectMetadataRequest
+        GetObjectMetadataRequest metadataRequest = new()
         {
             BucketName = settings.BucketName,
             Key = $"{folderName}/{key}",
         };
 
-        var metadataResponse = await s3.GetObjectMetadataAsync(metadataRequest);
+        var metadataResponse = await s3.GetObjectMetadataAsync(metadataRequest, ct).ConfigureAwait(false);
 
         return (metadataResponse.ContentLength, metadataResponse.Headers.ContentType);
     }
 
     private async Task UploadStreamAsync(string folderName, string key, string contentType, FileStream fileStream, CancellationToken ct)
     {
-        var request = new PutObjectRequest
+        PutObjectRequest request = new()
         {
             BucketName = settings.BucketName,
             Key = $"{folderName}/{key}",
@@ -138,13 +126,13 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
 
         if (result.HttpStatusCode is not HttpStatusCode.OK)
         {
-            throw new Exception($"File with Id {key} has not been uploaded to bucket {folderName}.");
+            throw new AmazonS3Exception($"File with Id {key} has not been uploaded to bucket {folderName}.");
         }
     }
 
     private async Task UploadFileAsync(string folderName, string key, IFormFile file, CancellationToken ct)
     {
-        var request = new PutObjectRequest
+        PutObjectRequest request = new()
         {
             BucketName = settings.BucketName,
             Key = $"{folderName}/{key}",
@@ -156,39 +144,43 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
 
         if (result.HttpStatusCode is not HttpStatusCode.OK)
         {
-            throw new Exception($"File with Id {key} has not been uploaded to folder {folderName}.");
+            throw new AmazonS3Exception($"File with Id {key} has not been uploaded to folder {folderName}.");
         }
     }
 
     private async Task DeleteFileAsync(string folderName, string key, CancellationToken ct)
     {
-        var deleteObjectRequest = new DeleteObjectRequest
+        DeleteObjectRequest deleteObjectRequest = new()
         {
             BucketName = settings.BucketName,
             Key = $"{folderName}/{key}",
         };
 
-        var response = await s3.DeleteObjectAsync(deleteObjectRequest);
+        var response = await s3.DeleteObjectAsync(deleteObjectRequest, ct).ConfigureAwait(false);
+
+        if (response.HttpStatusCode is not HttpStatusCode.OK)
+        {
+            throw new AmazonS3Exception($"File with Id {key} has not been deleted from folder {folderName}.");
+        }
     }
 
     private async Task<(Stream Stream, string ContentType)> GetFileAsync(string folderName, string key, CancellationToken ct)
     {
-        var request = new GetObjectRequest
+        GetObjectRequest request = new()
         {
             BucketName = settings.BucketName,
             Key = $"{folderName}/{key}",
         };
 
         var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false)
-            ?? throw new Exception($"File with Id {key} has not been found in folder {folderName}.");
-
+            ?? throw new AmazonS3Exception($"File with Id {key} has not been found in folder {folderName}.");
 
         return (result.ResponseStream, result.Headers["Content-Type"]);
     }
 
     private async Task<(Stream Stream, string ContentType)> GetFilePartAsync(string folderName, string key, long start, long end, CancellationToken ct)
     {
-        var request = new GetObjectRequest
+        GetObjectRequest request = new()
         {
             BucketName = settings.BucketName,
             Key = $"{folderName}/{key}",
@@ -196,7 +188,7 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         };
 
         var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false)
-            ?? throw new Exception($"File with Id {key} has not been found in folder {folderName}.");
+            ?? throw new AmazonS3Exception($"File with Id {key} has not been found in folder {folderName}.");
 
 
         return (result.ResponseStream, result.Headers["Content-Type"]);

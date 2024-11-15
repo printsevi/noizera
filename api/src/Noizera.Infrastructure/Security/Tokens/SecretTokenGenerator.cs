@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.SecretTokens;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.SecretTokens;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,10 +25,10 @@ public class SecretTokenGenerator(IOptions<SecretTokensSettings> options) : ISec
         byte[] randomNumber = new byte[32];
         using RandomNumberGenerator rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
-        var sb = new StringBuilder(randomNumber.Length * 2);
+        StringBuilder sb = new(randomNumber.Length * 2);
         foreach (byte b in randomNumber)
         {
-            sb.AppendFormat("{0:x2}", b); // Convert each byte to a hex string
+            _ = sb.AppendFormat(CultureInfo.InvariantCulture, "{0:x2}", b); // Convert each byte to a hex string
         }
 
         return (sb.ToString(), SystemClock.UtcNow.AddMinutes(settings.ResetTokenExpirationInMinutes));

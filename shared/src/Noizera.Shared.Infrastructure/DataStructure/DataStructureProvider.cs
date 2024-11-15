@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Noizera.Shared.Infrastructure.DataStructure;
+namespace Noizera.Common.Infrastructure.DataStructure;
 
 public class DataStructureProvider(IConfiguration configuration, IOptions<DataDirectoryStructure> dataDirectoryStructure)
 {

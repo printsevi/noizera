@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public sealed record AlbumReleaseRule(Album Album) : ISyncDomainRule
 {

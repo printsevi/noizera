@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Users;
 
-namespace Noizera.Shared.Domain.SavedMusicSets;
+namespace Noizera.Common.Domain.SavedMusicSets;
 
 public sealed record SavedMusicSetRule(User User, MusicSet Collection) : ISyncDomainRule
 {

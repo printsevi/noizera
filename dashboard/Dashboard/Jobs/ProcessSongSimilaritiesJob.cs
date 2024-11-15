@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.SongSimilarities;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Domain.SongSimilarities;
+using Noizera.Common.Persistence.SQL;
 
 namespace Dashboard.Jobs;
 

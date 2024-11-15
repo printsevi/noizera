@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Persistence.SQL.Configurations.Common;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Persistence.SQL.Configurations.Common;
 
-namespace Noizera.Shared.Persistence.SQL.Configurations;
+namespace Noizera.Common.Persistence.SQL.Configurations;
 
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {

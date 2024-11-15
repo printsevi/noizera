@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.SongSimilarities;
+namespace Noizera.Common.Domain.SongSimilarities;
 
 public sealed class SongSimilarity : BaseEntity
 {

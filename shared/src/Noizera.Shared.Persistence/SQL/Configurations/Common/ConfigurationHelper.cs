@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Noizera.Shared.Domain.Common;
+using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Persistence.SQL.Configurations.Common;
+namespace Noizera.Common.Persistence.SQL.Configurations.Common;
 
 internal static class ConfigurationHelper
 {

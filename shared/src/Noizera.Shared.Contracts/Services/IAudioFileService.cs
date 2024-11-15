@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Noizera.Shared.Contracts.QueryResults;
+using Noizera.Common.Contracts.QueryResults;
 
-namespace Noizera.Shared.Contracts.Services;
+namespace Noizera.Common.Contracts.Services;
 
 public interface IAudioFileService
 {

@@ -1,20 +1,18 @@
 ﻿using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
-using Noizera.Shared.Infrastructure.DataStructure;
-using Noizera.Shared.Persistence.S3;
+using Noizera.Common.Infrastructure.DataStructure;
+using Noizera.Common.Persistence.S3;
 
-namespace Noizera.Shared.Infrastructure.Audio;
+namespace Noizera.Common.Infrastructure.Audio;
 
 public class AudioService(
     S3Context s3Context,
     IOptions<AudioSettings> audioSettings,
-    IOptions<S3BucketSettings> s3BucketSettings,
     DataStructureProvider dataStructureProvider,
     FfmpegDockerService ffmpegDockerService)
 {
     private readonly AudioSettings settings = audioSettings.Value;
-    private readonly S3BucketSettings s3Settings = s3BucketSettings.Value;
     private readonly S3Context s3 = s3Context;
 
     public async Task<(long FlacLength, string FlacBucket)> ConvertAndSaveFlacAudioFileToS3Async(string fileId, string inputExtension, CancellationToken ct)
@@ -38,7 +36,7 @@ public class AudioService(
             dataStructureProvider.AudioPath,
             dataStructureProvider.DockerAudioPath,
             flacCommand,
-            ct);
+            ct).ConfigureAwait(false);
 
         long flacLength;
         string flacBucket;
@@ -69,7 +67,7 @@ public class AudioService(
             dataStructureProvider.AudioPath,
             dataStructureProvider.DockerAudioPath,
             mp3Command,
-            ct);
+            ct).ConfigureAwait(false);
 
         long mp3Length;
         string mp3Bucket;
@@ -84,20 +82,17 @@ public class AudioService(
     public async Task DownloadOriginalFileAsync(string fileId, string originalExtension, CancellationToken ct)
     {
         string inputFilePath = $"{dataStructureProvider.AudioPath}/{fileId}{originalExtension}";
-        using (GetObjectResponse response = await s3.GetOriginalAudioFileAsync(fileId, ct))
-        {
-            await using (Stream responseStream = response.ResponseStream)
-            await using (var fileStream = File.Create(inputFilePath))
-            {
-                await responseStream.CopyToAsync(fileStream);
-            }
-        }
+
+        using var response = await s3.GetOriginalAudioFileAsync(fileId, ct).ConfigureAwait(false);
+        using var responseStream = response.ResponseStream;
+        using var fileStream = File.Create(inputFilePath);
+        await responseStream.CopyToAsync(fileStream, ct).ConfigureAwait(false);
     }
 
     public double GetMp3DurationInSecondsAsync(string fileId)
     {
         string outputMp3File = $"output-mp3-{fileId}.mp3";
-        Mp3FileReader reader = new Mp3FileReader($"{dataStructureProvider.AudioPath}/{outputMp3File}");
+        Mp3FileReader reader = new($"{dataStructureProvider.AudioPath}/{outputMp3File}");
 
         return reader.TotalTime.TotalSeconds;
     }

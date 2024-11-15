@@ -1,5 +1,5 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.Events;
+namespace Noizera.Common.Domain.Events;
 
 public sealed record PasswordUpdatedEvent(Guid userId) : DomainEvent;

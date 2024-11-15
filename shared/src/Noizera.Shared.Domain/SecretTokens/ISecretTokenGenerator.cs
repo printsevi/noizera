@@ -1,4 +1,4 @@
-namespace Noizera.Shared.Domain.SecretTokens;
+namespace Noizera.Common.Domain.SecretTokens;
 
 public interface ISecretTokenGenerator
 {

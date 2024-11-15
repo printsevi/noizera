@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IRepository<TEntity> where TEntity : BaseEntity
 {

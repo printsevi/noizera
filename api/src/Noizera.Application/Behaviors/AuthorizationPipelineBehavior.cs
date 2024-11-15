@@ -1,6 +1,6 @@
 using MediatR;
-using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Contracts.Services;
+using Noizera.Common.Contracts.Security;
+using Noizera.Common.Contracts.Services;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 

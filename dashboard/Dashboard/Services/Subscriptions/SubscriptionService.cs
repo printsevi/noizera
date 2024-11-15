@@ -1,7 +1,7 @@
 ﻿using Dashboard.Models;
 using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Domain.Subscriptions;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Subscriptions;
+using Noizera.Common.Persistence.SQL;
 
 namespace Dashboard.Services.Subscriptions;
 

@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Domain.MusicSets;
+﻿using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Domain.MusicSets;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IMusicSetRepository : IRepository<MusicSet>
 {

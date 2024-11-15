@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Infrastructure.DataStructure;
+﻿namespace Noizera.Common.Infrastructure.DataStructure;
 
 public class DataDirectoryStructure
 {

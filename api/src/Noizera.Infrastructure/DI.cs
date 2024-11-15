@@ -2,6 +2,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Noizera.Common.Contracts.Repositories;
+using Noizera.Common.Contracts.Services;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Domain.SecretTokens;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Domain.VerificationCodes;
+using Noizera.Common.Infrastructure;
 using Noizera.Infrastructure.Audio;
 using Noizera.Infrastructure.Common;
 using Noizera.Infrastructure.CoverImages;
@@ -16,15 +25,6 @@ using Noizera.Infrastructure.Security.VerificationCodes;
 using Noizera.Infrastructure.Songs;
 using Noizera.Infrastructure.Subscriptions;
 using Noizera.Infrastructure.Users;
-using Noizera.Shared.Contracts.Repositories;
-using Noizera.Shared.Contracts.Services;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Domain.SecretTokens;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.VerificationCodes;
-using Noizera.Shared.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Infrastructure;
@@ -38,15 +38,15 @@ public static class DI
         _ = services
             .AddHttpContextAccessor()
             .AddSharedInfrastructure(builder)
-            .AddServices(configuration)
+            .AddServices()
             .AddAuthentication(configuration)
             .AddAuthorization()
-            .AddRepositories(configuration);
+            .AddRepositories();
 
         return services;
     }
 
-    private static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddServices(this IServiceCollection services)
     {
         _ = services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
         _ = services.AddScoped<IProfileUniquenessChecker, ProfileUniquenessChecker>();
@@ -65,7 +65,7 @@ public static class DI
         return services;
     }
 
-    private static IServiceCollection AddRepositories(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         _ = services.AddScoped<IUserRepository, UserRepository>();
         _ = services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -93,7 +93,7 @@ public static class DI
         return services;
     }
 
-    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddAuthentication(this IServiceCollection services, ConfigurationManager configuration)
     {
         _ = services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.Section));
         _ = services.Configure<SecretTokensSettings>(configuration.GetSection(SecretTokensSettings.Section));

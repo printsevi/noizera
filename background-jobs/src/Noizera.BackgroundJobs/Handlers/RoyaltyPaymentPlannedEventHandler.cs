@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Domain.Royalties;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Domain.Royalties;
+using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-public class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
+internal class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
     : INotificationHandler<DomainEventNotification<RoyaltyPaymentPlannedEvent>>
 {
     public async Task Handle(DomainEventNotification<RoyaltyPaymentPlannedEvent> notification, CancellationToken cancellationToken)
@@ -17,26 +17,22 @@ public class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
             .Where(x => x.UserId == notification.DomainEvent.UserId
                 && DateOnly.FromDateTime(x.CreatedAt.Date) <= DateOnly.FromDateTime(notification.DomainEvent.EndDate.Date)
                 && DateOnly.FromDateTime(x.CreatedAt.Date) > DateOnly.FromDateTime(notification.DomainEvent.EffectiveDate.Date))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        var dict = new Dictionary<Guid, int>();
+        Dictionary<Guid, int> dict = [];
         int fullTime = 0;
         foreach (var stream in streams)
         {
-            var time = stream.TimeInSeconds;
+            int time = stream.TimeInSeconds;
             fullTime += time;
-            if (dict.ContainsKey(stream.Song.OwnerId))
+            if (!dict.TryAdd(stream.Song.OwnerId, time))
             {
                 dict[stream.Song.OwnerId] += time;
             }
-            else
-            {
-                dict.Add(stream.Song.OwnerId, time);
-            }
         }
 
-        var amountToPay = (float)notification.DomainEvent.SubscriptionPrice * notification.DomainEvent.RoyaltyShare;
-        var amountLeft = amountToPay;
+        float amountToPay = (float)notification.DomainEvent.SubscriptionPrice * notification.DomainEvent.RoyaltyShare;
+        float amountLeft = amountToPay;
         foreach (var pair in dict)
         {
             if (amountLeft <= 0)
@@ -44,7 +40,7 @@ public class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
                 return;
             }
 
-            var amount = amountToPay * (pair.Value / fullTime);
+            float amount = amountToPay * (pair.Value / fullTime);
 
             if (amountLeft <= amount)
             {
@@ -53,9 +49,9 @@ public class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
 
             amountLeft -= amount;
 
-            var royalty = Royalty.New(notification.DomainEvent.UserId, pair.Key, amount);
-            await db.Royalties.AddAsync(royalty, cancellationToken).ConfigureAwait(false);
-            await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            Royalty royalty = Royalty.New(notification.DomainEvent.UserId, pair.Key, amount);
+            _ = await db.Royalties.AddAsync(royalty, cancellationToken).ConfigureAwait(false);
+            _ = await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

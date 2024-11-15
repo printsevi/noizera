@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSetSongs;
-using Noizera.Shared.Domain.SavedMusicSets;
-using Noizera.Shared.Domain.Users;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSetSongs;
+using Noizera.Common.Domain.SavedMusicSets;
+using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public class MusicSet : EntityExtended, IDeletable
 {
@@ -30,13 +30,13 @@ public class MusicSet : EntityExtended, IDeletable
         Title = title;
     }
 
-    public async Task UploadCoverAsync(Guid userId, ICoverImageUploader uploader, IFormFile file, CancellationToken ct)
+    public async Task UploadCoverAsync(Guid userId, [NotNull] ICoverImageUploader uploader, IFormFile file, CancellationToken ct)
     {
         ValidateOwner(userId);
 
-        (var contentLength, var bucket) = await uploader.UploadAsync(file, PublicId, ct).ConfigureAwait(false);
+        (long contentLength, string? s3Folder) = await uploader.UploadAsync(file, PublicId, ct).ConfigureAwait(false);
 
-        SetCoverImageInformation(contentLength, bucket, ValidFileName.New(file.FileName));
+        SetCoverImageInformation(contentLength, s3Folder, ValidFileName.New(file.FileName));
     }
 
     public void DeleteCover(Guid userId)
@@ -46,10 +46,10 @@ public class MusicSet : EntityExtended, IDeletable
         SetCoverImageInformation(null, string.Empty, ValidFileName.New(string.Empty));
     }
 
-    private void SetCoverImageInformation(long? contentLength, string bucketName, [NotNull] ValidFileName fileName)
+    private void SetCoverImageInformation(long? contentLength, string s3Folder, [NotNull] ValidFileName fileName)
     {
         CoverImageContentLength = contentLength;
-        CoverImageS3Folder = bucketName;
+        CoverImageS3Folder = s3Folder;
         CoverImageOriginalName = fileName.Value;
     }
 

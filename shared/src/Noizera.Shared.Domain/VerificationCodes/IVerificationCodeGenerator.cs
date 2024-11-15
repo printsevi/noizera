@@ -1,4 +1,4 @@
-namespace Noizera.Shared.Domain.VerificationCodes;
+namespace Noizera.Common.Domain.VerificationCodes;
 
 public interface IVerificationCodeGenerator
 {

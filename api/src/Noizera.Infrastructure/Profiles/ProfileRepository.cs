@@ -1,12 +1,12 @@
 ﻿using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
 using Noizera.Infrastructure.Common;
-using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Contracts.Repositories;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.ProfileRelations;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Contracts.Repositories;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.ProfileRelations;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Profiles;
 

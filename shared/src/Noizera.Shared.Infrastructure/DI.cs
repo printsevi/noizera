@@ -1,18 +1,19 @@
 ﻿using Docker.DotNet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Noizera.Shared.Infrastructure.Audio;
-using Noizera.Shared.Infrastructure.DataStructure;
-using Noizera.Shared.Infrastructure.Emails;
-using Noizera.Shared.Infrastructure.Subscriptions;
-using Noizera.Shared.Persistence;
+using Noizera.Common.Infrastructure.Audio;
+using Noizera.Common.Infrastructure.DataStructure;
+using Noizera.Common.Infrastructure.Emails;
+using Noizera.Common.Infrastructure.Subscriptions;
+using Noizera.Common.Persistence;
 using Serilog;
 using SerilogTracing;
 using Stripe;
 using Stripe.Checkout;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
-namespace Noizera.Shared.Infrastructure;
+namespace Noizera.Common.Infrastructure;
 
 public static class DI
 {
@@ -45,13 +46,13 @@ public static class DI
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
-            .WriteTo.Console()
+            .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.Seq(configuration["SeqUrl"]!)
             .Enrich.FromLogContext()
             .Enrich.WithSpanTiming()
             .CreateLogger();
 
-        builder.Host.UseSerilog();
+        _ = builder.Host.UseSerilog();
 
         return services;
     }

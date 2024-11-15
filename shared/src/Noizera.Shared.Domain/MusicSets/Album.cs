@@ -1,9 +1,10 @@
-﻿using Noizera.Shared.Domain.AlbumCredits;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.AlbumCredits;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Domain.Users;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public sealed class Album : MusicSet
 {
@@ -23,11 +24,11 @@ public sealed class Album : MusicSet
     {
     }
 
-    public static async Task<Album> NewAsync(User user, IHashGenerator hashGenerator, CancellationToken ct)
+    public static async Task<Album> NewAsync(User user, [NotNull]IHashGenerator hashGenerator, CancellationToken ct)
     {
         EnsureRule(new AlbumCreationRule(user));
 
-        var publicId = await hashGenerator.GenerateAsync(ct);
+        string publicId = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
         Album album = new(user, publicId);
 
         return album;

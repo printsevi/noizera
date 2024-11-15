@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Contracts.Services;
+using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Contracts.Services;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Songs.GetAudioStream;

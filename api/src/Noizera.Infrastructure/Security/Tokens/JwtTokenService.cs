@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Contracts.Services;
-using Noizera.Shared.Domain.Users;
+using Noizera.Common.Contracts.Security;
+using Noizera.Common.Contracts.Services;
+using Noizera.Common.Domain.Users;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,7 +14,7 @@ public class JwtTokenService(IOptions<JwtSettings> jwtOptions) : IJwtTokenServic
 {
     private readonly JwtSettings jwtSettings = jwtOptions.Value;
 
-    public string GenerateAccessToken(User user)
+    public string GenerateAccessToken([NotNull] User user)
     {
         SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(jwtSettings.Secret));
         SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
@@ -45,6 +46,7 @@ public class JwtTokenService(IOptions<JwtSettings> jwtOptions) : IJwtTokenServic
         return Guid.TryParse(principal?.Claims.FirstOrDefault(c => c.Type == ClaimType.UserId)?.Value, out var result) ? result : null;
     }
 
+    [SuppressMessage("Security", "CA5404:Do not disable token validation checks", Justification = "To get a new access token")]
     private ClaimsPrincipal? GetTokenPrincipal(string accessToken)
     {
         TokenValidationParameters validationParameters = new()

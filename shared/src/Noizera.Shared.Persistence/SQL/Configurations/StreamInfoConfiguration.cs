@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Noizera.Shared.Domain.Streams;
-using Noizera.Shared.Persistence.SQL.Configurations.Common;
+using Noizera.Common.Domain.Streams;
+using Noizera.Common.Persistence.SQL.Configurations.Common;
 
-namespace Noizera.Shared.Persistence.SQL.Configurations;
+namespace Noizera.Common.Persistence.SQL.Configurations;
 
 internal sealed class StreamInfoConfiguration : IEntityTypeConfiguration<StreamInfo>
 {

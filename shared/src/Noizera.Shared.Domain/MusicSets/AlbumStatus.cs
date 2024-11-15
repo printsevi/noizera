@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Domain.MusicSets;
+﻿namespace Noizera.Common.Domain.MusicSets;
 
 public enum AlbumStatus
 {

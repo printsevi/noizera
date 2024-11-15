@@ -1,9 +1,9 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.SecretTokens;
+namespace Noizera.Common.Domain.SecretTokens;
 
 public class SecretToken : Entity
 {
@@ -14,7 +14,7 @@ public class SecretToken : Entity
     public User User { get; } = null!;
     public DateTimeOffset ExpireAt { get; }
 
-    SecretToken(
+    private SecretToken(
         string token,
         User user,
         SecretTokenType tokenType,
@@ -28,27 +28,24 @@ public class SecretToken : Entity
 
     public bool IsValid => !IsRevoked && SystemClock.UtcNow < ExpireAt;
 
-    public static SecretToken NewRefreshToken([NotNull] ISecretTokenGenerator tokenGenerator, User user)
+    public static SecretToken NewRefreshToken([NotNull] ISecretTokenGenerator tokenGenerator, [NotNull] User user)
     {
         var token = tokenGenerator.GenerateRefreshToken();
 
         return new(token.Token, user, SecretTokenType.Refresh, token.ExpireAt);
     }
 
-    public static SecretToken NewResetToken([NotNull] ISecretTokenGenerator tokenGenerator, User user)
+    public static SecretToken NewResetToken([NotNull] ISecretTokenGenerator tokenGenerator, [NotNull] User user)
     {
         var token = tokenGenerator.GenerateResetToken();
-        var result = new SecretToken(token.Token, user, SecretTokenType.Reset, token.ExpireAt);
+        SecretToken result = new(token.Token, user, SecretTokenType.Reset, token.ExpireAt);
 
         result.AddDomainEvent(new ResetTokenCreatedEvent(user.Email, user.Id, token.Token));
 
         return result;
     }
 
-    public void RevokeToken()
-    {
-        IsRevoked = true;
-    }
+    public void RevokeToken() => IsRevoked = true;
 
     private SecretToken() { }
 }

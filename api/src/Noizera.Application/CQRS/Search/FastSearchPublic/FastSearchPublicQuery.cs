@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Contracts.Repositories;
+using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Contracts.Repositories;
 
 namespace Noizera.Application.CQRS.Search.FastSearchPublic;
 

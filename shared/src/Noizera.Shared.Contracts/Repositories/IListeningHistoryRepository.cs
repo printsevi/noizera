@@ -1,6 +1,6 @@
-using Noizera.Shared.Domain.ListeningHistories;
+using Noizera.Common.Domain.ListeningHistories;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IListeningHistoryRepository : IRepository<ListeningHistory>
 {

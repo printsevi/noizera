@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.Terms;
+namespace Noizera.Common.Domain.Terms;
 
 public class TermsOfUse : Entity
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Users;
 

@@ -1,7 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Events;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Events;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.VerificationCodes;
+namespace Noizera.Common.Domain.VerificationCodes;
 
 public class VerificationCode : Entity
 {
@@ -11,7 +12,7 @@ public class VerificationCode : Entity
     public bool Verified { get; private set; }
     public DateTimeOffset ExpireAt { get; private set; }
 
-    VerificationCode(
+    private VerificationCode(
         string key,
         string code,
         DateTimeOffset expireAt) : base()
@@ -21,11 +22,11 @@ public class VerificationCode : Entity
         ExpireAt = expireAt;
     }
 
-    public static VerificationCode New(string key, IVerificationCodeGenerator codeGenerator)
+    public static VerificationCode New(string key, [NotNull] IVerificationCodeGenerator codeGenerator)
     {
         var code = codeGenerator.Generate();
 
-        var result = new VerificationCode(key, code.Code, code.ExpireAt);
+        VerificationCode result = new(key, code.Code, code.ExpireAt);
 
         result.AddDomainEvent(new VerificationCodeCreatedEvent(key, code.Code));
 
@@ -35,7 +36,7 @@ public class VerificationCode : Entity
     public bool VerifyAndInvalidateCode(string code)
     {
         Invalid = true;
-        Verified = Code.ToLower() == code.ToLower();
+        Verified = Code.Equals(code, StringComparison.OrdinalIgnoreCase);
 
         return Verified;
     }

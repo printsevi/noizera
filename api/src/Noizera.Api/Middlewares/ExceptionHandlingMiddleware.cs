@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Noizera.Shared.Contracts.Errors;
+using Noizera.Common.Contracts.Errors;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Api.Middlewares;

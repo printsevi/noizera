@@ -1,4 +1,4 @@
-namespace Noizera.Shared.Domain.Users;
+namespace Noizera.Common.Domain.Users;
 
 public interface IPasswordHelper
 {

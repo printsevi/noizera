@@ -1,4 +1,4 @@
-namespace Noizera.Shared.Domain.Common;
+namespace Noizera.Common.Domain.Common;
 
 public abstract class Entity : BaseEntity
 {
@@ -9,7 +9,7 @@ public abstract class Entity : BaseEntity
 
     protected Entity() : base()
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         CreatedAt = SystemClock.UtcNow;
     }
 

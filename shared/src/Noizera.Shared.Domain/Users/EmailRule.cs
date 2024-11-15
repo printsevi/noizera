@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Noizera.Shared.Domain.Users;
+namespace Noizera.Common.Domain.Users;
 
 public sealed record EmailRule(string Email) : ISyncDomainRule
 {

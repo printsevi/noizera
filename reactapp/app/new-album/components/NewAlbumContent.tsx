@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -215,16 +215,56 @@ const NewAlbumContent = () => {
     }
   };
 
-  const fetchArtists = async (text: string) => {
-    if (!text) {
+  const handleArtistInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setArtistInput(e.target.value)
+  }
+
+  const addArtist = (artist: Artist) => {
+    setAlbum({ ...album, featuredArtists: [...album.featuredArtists, artist] })
+    setArtistInput('')
+    setSearchResults([])
+  }
+
+  const addNewArtist = () => {
+    if (artistInput.trim() && !featuredArtists.some(artist => artist.profileName.toLowerCase() === artistInput.trim().toLowerCase())) {
+      const newArtist: Artist = {
+        id: Date.now().toString(),
+        name: artistInput.trim(),
+        image: '/placeholder.svg?height=40&width=40',
+        profileUrl: `/artist/${encodeURIComponent(artistInput.trim().toLowerCase().replace(/\s+/g, '-'))}`,
+        isNew: true
+      }
+      addArtist(newArtist)
+    }
+  }
+
+  const removeArtist = (artistId: string) => {
+    setAlbum({
+      ...album,
+      featuredArtists: featuredArtists.filter(artist => artist.id !== artistId)
+    })
+  }
+
+  const onFetchArtists = useCallback(async (query: string) => {
+    if (!query) {
       return setSearchResults([]);
     }
 
-    const data = await getArtists(axiosPrivate, text, auth.userId!,);
+    const data = await getArtists(axiosPrivate, query, auth.userId!);
     if (data.ok) {
-      setSearchResults(data.data!)
+      setSearchResults(data.data!.filter(artist => !featuredArtists.some(featuredArtist => featuredArtist.profileId === artist.artistId)));
     }
-  };
+  }, [])
+
+  useEffect(() => {
+    if (!artistInput.length) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      onFetchArtists(artistInput);
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [artistInput, onFetchArtists])
 
   const onAddNewSong = async () => {
     const response = await addAlbumSong(axiosPrivate, auth.userId!, data?.data?.albumId!);
@@ -410,7 +450,7 @@ const NewAlbumContent = () => {
                   {(searchResults.length > 0 || artistInput.trim()) && (
                     <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md">
                       {artistInput.trim() && !featuredArtists.some(artist =>
-                        artist.name.toLowerCase() === artistInput.trim().toLowerCase()
+                        artist.profileName.toLowerCase() === artistInput.trim().toLowerCase()
                       ) && (
                           <div
                             className="p-2 hover:bg-accent cursor-pointer flex items-center justify-between"
@@ -422,7 +462,7 @@ const NewAlbumContent = () => {
                         )}
                       {searchResults.map(artist => (
                         <div
-                          key={artist.id}
+                          key={artist.artistId}
                           className="p-2 hover:bg-accent cursor-pointer flex items-center"
                           onClick={() => addArtist(artist)}
                         >
@@ -448,8 +488,8 @@ const NewAlbumContent = () => {
                       <div className="flex items-center overflow-hidden">
                         {artist.profileId && (
                           <Image
-                            src={`${getURL()}api/profiles/${artist.publicId!}/image`}
-                            alt={artist.name}
+                            src={`${getURL()}api/profiles/${artist.profilePublicId!}/image`}
+                            alt={artist.profileName}
                             width={24}
                             height={24}
                             className="rounded-full mr-2 flex-shrink-0"

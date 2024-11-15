@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.ProfileRelations;
+﻿using Noizera.Common.Domain.ProfileRelations;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IProfileRelationRepository : IRepository<ProfileRelation>
 {

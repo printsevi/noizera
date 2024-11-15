@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Services;
+using Noizera.Common.Contracts.Services;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.MusicSets.GetCoverImage;

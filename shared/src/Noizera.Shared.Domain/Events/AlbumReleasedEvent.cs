@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.Events;
+namespace Noizera.Common.Domain.Events;
 
 public sealed record AlbumReleasedEvent(Guid AlbumId) : DomainEvent
 {
-    public override bool RealTime { get; protected init; } = false;
+    public override bool RealTime { get; protected init; }
 }

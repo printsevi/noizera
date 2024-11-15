@@ -1,16 +1,15 @@
 ﻿using MediatR;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Infrastructure.Emails;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Infrastructure.Emails;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-public class VerificationCodeCreatedEventHandler(EmailService emailService)
+internal class VerificationCodeCreatedEventHandler(EmailService emailService)
     : INotificationHandler<DomainEventNotification<VerificationCodeCreatedEvent>>
 {
     public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)
-    {
-        await emailService.SendEmailAsync(
+        => await emailService.SendEmailAsync(
             EmailTemplateNames.AccountConfirmation,
             "ildarprintsev@gmail.com",//notification.DomainEvent.Email,
             "ildarprintsev@gmail.com",//notification.DomainEvent.Email,
@@ -19,6 +18,5 @@ public class VerificationCodeCreatedEventHandler(EmailService emailService)
             "Confirm email",
             cancellationToken,
             new Dictionary<string, string>() { { "//p[@id='verification-code']", notification.DomainEvent.Code } }
-        );
-    }
+        ).ConfigureAwait(false);
 }

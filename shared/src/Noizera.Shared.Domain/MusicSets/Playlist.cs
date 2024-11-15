@@ -1,9 +1,10 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSetSongs;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSetSongs;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Domain.Users;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public sealed class Playlist : MusicSet
 {
@@ -11,16 +12,17 @@ public sealed class Playlist : MusicSet
 
     public string? PlaylistTag { get; private set; }
 
-    public bool IsPublic { get; private set; }
+    public bool IsPublicPlaylist { get; private set; }
 
-    private Playlist(User user, string title, string publicId, string? playlistTag = null) : base(user, publicId, title)
+    private Playlist(User user, string title, string publicId, string? playlistTag = null, bool isPublic = false) : base(user, publicId, title)
     {
         PlaylistTag = playlistTag;
+        IsPublicPlaylist = isPublic;
     }
 
-    public static async Task<Playlist> NewFavouritesAsync(User user, IHashGenerator hashGenerator, CancellationToken ct)
+    public static async Task<Playlist> NewFavouritesAsync(User user, [NotNull] IHashGenerator hashGenerator, CancellationToken ct)
     {
-        var publicId = await hashGenerator.GenerateAsync(ct);
+        string publicId = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
         Playlist playlist = new(user, PlaylistConstants.FavouritesPlaylistTitle, publicId, PlaylistConstants.FavouritesPlaylistTag);
 
         return playlist;
@@ -31,7 +33,7 @@ public sealed class Playlist : MusicSet
         EnsureRule(new SongToPlaylistRule(this, song));
 
         short maxSequence = MusicSetSongs.Count > 0 ? MusicSetSongs.Max(x => x.Sequence) : (short)0;
-        var musicSetSong = MusicSetSong.Create(song, this, ++maxSequence);
+        MusicSetSong musicSetSong = MusicSetSong.Create(song, this, ++maxSequence);
         MusicSetSongs.Add(musicSetSong);
     }
 

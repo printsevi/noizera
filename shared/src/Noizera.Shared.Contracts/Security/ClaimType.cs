@@ -1,4 +1,4 @@
-namespace Noizera.Shared.Contracts.Security;
+namespace Noizera.Common.Contracts.Security;
 
 public static class ClaimType
 {

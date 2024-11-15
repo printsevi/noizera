@@ -1,8 +1,9 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Users;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.SavedMusicSets;
+namespace Noizera.Common.Domain.SavedMusicSets;
 
 public sealed class SavedMusicSet : BaseEntity
 {
@@ -17,10 +18,8 @@ public sealed class SavedMusicSet : BaseEntity
         MusicSetId = MusicSet.Id;
     }
 
-    public static SavedMusicSet New(User user, MusicSet MusicSet)
-    {
-        return new(user, MusicSet);
-    }
+    public static SavedMusicSet New([NotNull] User user, [NotNull] MusicSet MusicSet) 
+        => new(user, MusicSet);
 
     private SavedMusicSet() { }
 }

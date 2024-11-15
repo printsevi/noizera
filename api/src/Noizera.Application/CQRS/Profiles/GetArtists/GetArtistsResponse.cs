@@ -1,4 +1,4 @@
-﻿using Noizera.Shared.Contracts.QueryResults;
+﻿using Noizera.Common.Contracts.QueryResults;
 
 namespace Noizera.Application.CQRS.Profiles.GetArtists;
 

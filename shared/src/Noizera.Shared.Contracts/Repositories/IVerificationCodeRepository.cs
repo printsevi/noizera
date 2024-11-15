@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.VerificationCodes;
+﻿using Noizera.Common.Domain.VerificationCodes;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IVerificationCodeRepository : IRepository<VerificationCode>
 {

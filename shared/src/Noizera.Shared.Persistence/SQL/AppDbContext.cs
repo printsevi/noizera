@@ -1,27 +1,27 @@
 using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Domain.AlbumCredits;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.ListeningHistories;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.MusicSetSongs;
-using Noizera.Shared.Domain.Outbox;
-using Noizera.Shared.Domain.ProfileRelations;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Domain.Royalties;
-using Noizera.Shared.Domain.SavedMusicSets;
-using Noizera.Shared.Domain.SecretTokens;
-using Noizera.Shared.Domain.SongPreferences;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.SongSimilarities;
-using Noizera.Shared.Domain.Streams;
-using Noizera.Shared.Domain.Subscriptions;
-using Noizera.Shared.Domain.Terms;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.UserSubscriptions;
-using Noizera.Shared.Domain.VerificationCodes;
+using Noizera.Common.Domain.AlbumCredits;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.ListeningHistories;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.MusicSetSongs;
+using Noizera.Common.Domain.Outbox;
+using Noizera.Common.Domain.ProfileRelations;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Domain.Royalties;
+using Noizera.Common.Domain.SavedMusicSets;
+using Noizera.Common.Domain.SecretTokens;
+using Noizera.Common.Domain.SongPreferences;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Domain.SongSimilarities;
+using Noizera.Common.Domain.Streams;
+using Noizera.Common.Domain.Subscriptions;
+using Noizera.Common.Domain.Terms;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Domain.UserSubscriptions;
+using Noizera.Common.Domain.VerificationCodes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Persistence.SQL;
+namespace Noizera.Common.Persistence.SQL;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

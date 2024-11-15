@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Noizera.Infrastructure.Common;
-using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Contracts.Repositories;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.SecretTokens;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Contracts.Repositories;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.SecretTokens;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Users;
 

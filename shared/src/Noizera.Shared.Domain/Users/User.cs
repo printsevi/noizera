@@ -1,18 +1,18 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Domain.ListeningHistories;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Domain.Royalties;
-using Noizera.Shared.Domain.SavedMusicSets;
-using Noizera.Shared.Domain.SecretTokens;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.Streams;
-using Noizera.Shared.Domain.UserSubscriptions;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Domain.ListeningHistories;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Domain.Royalties;
+using Noizera.Common.Domain.SavedMusicSets;
+using Noizera.Common.Domain.SecretTokens;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Domain.Streams;
+using Noizera.Common.Domain.UserSubscriptions;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.Users;
+namespace Noizera.Common.Domain.Users;
 
 public sealed class User : Entity
 {
@@ -63,11 +63,11 @@ public sealed class User : Entity
         string passwordHash = passwordHelper.HashPassword(password, out byte[]? passwordSalt);
         User user = new(email, passwordHash, passwordSalt, roles);
 
-        var profile = await PublicProfile.CreateAsync(profileUserName.ToLowerInvariant(), ProfileType.Fan, profileChecker, user.Id, ct).ConfigureAwait(false);
+        var profile = await PublicProfile.CreateAsync(profileUserName, ProfileType.Fan, profileChecker, user.Id, ct).ConfigureAwait(false);
         user.Profile = profile;
         user.SongLimitToUpload = 0;
 
-        var favouritesPlaylist = await Playlist.NewFavouritesAsync(user, hashGenerator, ct);
+        var favouritesPlaylist = await Playlist.NewFavouritesAsync(user, hashGenerator, ct).ConfigureAwait(false);
 
         user.MusicSets.Add(favouritesPlaylist);
 
@@ -83,39 +83,34 @@ public sealed class User : Entity
     }
 
     public bool HasActiveSubscriptionOfType(string subscriptionType)
-    {
-        return Subscriptions.Any(x =>
-            x.Subscription.SubscriptionType.ToLowerInvariant() == subscriptionType.ToLowerInvariant()
+        => Subscriptions.Any(x =>
+            x.Subscription.SubscriptionType.Equals(subscriptionType, StringComparison.OrdinalIgnoreCase)
             && x.IsActive);
-    }
 
-    public SecretToken? GetTokenOfValue(string secretToken)
-    {
-        return SecretTokens.FirstOrDefault(x => x.Token == secretToken);
-    }
+    public SecretToken? GetTokenOfValue(string secretToken) => SecretTokens.FirstOrDefault(x => x.Token == secretToken);
 
     public IEnumerable<string> ActiveSubscriptionTypes
         => Subscriptions.Where(x => x.IsActive).Select(x => x.Subscription.SubscriptionType);
 
     public UserSubscription? GetIncompleteSubscriptionOfType(string subscriptionType)
-    {
-        return Subscriptions.FirstOrDefault(x =>
-            x.Subscription.SubscriptionType.ToLowerInvariant() == subscriptionType.ToLowerInvariant()
+        => Subscriptions.FirstOrDefault(x =>
+            x.Subscription.SubscriptionType.Equals(subscriptionType, StringComparison.OrdinalIgnoreCase)
             && !x.CheckoutSessionIsProcessed
             && !string.IsNullOrWhiteSpace(x.CheckoutSessionId));
-    }
 
     public short? GetTrialDaysIfEntitled(string subscriptionType)
     {
         var previousSubscription = Subscriptions.FirstOrDefault(x =>
-            x.Subscription.SubscriptionType.ToLowerInvariant() == subscriptionType.ToLowerInvariant()
+            x.Subscription.SubscriptionType.Equals(subscriptionType, StringComparison.OrdinalIgnoreCase)
             && x.CheckoutSessionIsProcessed);
-        return previousSubscription is not null ? previousSubscription.Subscription.FreeTrialInDays : null;
+        return previousSubscription?.Subscription.FreeTrialInDays;
     }
 
     public bool VerifyPassword(string passwordToVerify, [NotNull] IPasswordHelper passwordHelper)
     {
-        return passwordHelper.VerifyPassword(passwordToVerify, PasswordHash, PasswordSalt);
+        bool result = passwordHelper.VerifyPassword(passwordToVerify, PasswordHash, PasswordSalt);
+
+        return result;
     }
 
     public void SaveMusicSet(MusicSet collection)
@@ -140,24 +135,18 @@ public sealed class User : Entity
     }
 
     public async Task UpdateUsernameAsync(string username, IProfileUniquenessChecker profileUniquenessChecker, CancellationToken ct)
-    {
-        await Profile!.UpdateUsernameAsync(username, profileUniquenessChecker, ct);
-    }
+        => await Profile!.UpdateUsernameAsync(username, profileUniquenessChecker, ct).ConfigureAwait(false);
 
     public void UpdateName(string name)
-    {
-        Profile!.UpdateName(name);
-    }
+        => Profile!.UpdateName(name);
 
     public void UpdateBio(string bio)
-    {
-        Profile!.UpdateBio(bio);
-    }
+        => Profile!.UpdateBio(bio);
 
     public void UpdateProfileType(ProfileType profileType)
     {
         EnsureRule(new UpdateProfileTypeRule(this));
-        
+
         Profile.SetProfileType(profileType);
         SetSongLimit(profileType);
     }
@@ -175,8 +164,7 @@ public sealed class User : Entity
     public IReadOnlyCollection<string> SplitRoles => new ReadOnlyCollection<string>(Roles.Split(','));
 
     private void SetSongLimit(ProfileType profileType)
-    {
-        SongLimitToUpload = profileType switch
+        => SongLimitToUpload = profileType switch
         {
             ProfileType.Artist => 30,
             ProfileType.Label => 300,
@@ -184,7 +172,6 @@ public sealed class User : Entity
             ProfileType.Editor => 0,
             _ => 0
         };
-    }
 
     private User() { }
 }

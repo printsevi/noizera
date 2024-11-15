@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Contracts.Errors;
+using Noizera.Common.Contracts.Errors;
 using static Noizera.Api.Endpoints.Auth.SignUpPublicEndpoint;
 
 namespace Noizera.Tests.Auth;

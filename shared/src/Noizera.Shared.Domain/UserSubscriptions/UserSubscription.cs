@@ -1,10 +1,10 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Domain.Subscriptions;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Domain.Subscriptions;
+using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.UserSubscriptions;
+namespace Noizera.Common.Domain.UserSubscriptions;
 
 public sealed class UserSubscription : Entity
 {

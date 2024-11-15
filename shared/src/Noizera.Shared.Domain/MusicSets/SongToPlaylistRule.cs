@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Songs;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Songs;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public sealed record SongToPlaylistRule(Playlist playlist, Song newSong) : ISyncDomainRule
 {

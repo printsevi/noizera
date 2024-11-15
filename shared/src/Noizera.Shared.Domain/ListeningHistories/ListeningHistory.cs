@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Domain.Users;
 
-namespace Noizera.Shared.Domain.ListeningHistories;
+namespace Noizera.Common.Domain.ListeningHistories;
 
 public class ListeningHistory : BaseEntity
 {

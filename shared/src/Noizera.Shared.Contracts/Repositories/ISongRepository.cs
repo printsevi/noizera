@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Songs;
+﻿using Noizera.Common.Domain.Songs;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface ISongRepository : IRepository<Song>
 {

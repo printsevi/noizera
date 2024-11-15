@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Infrastructure.Audio;
+﻿namespace Noizera.Common.Infrastructure.Audio;
 
 public class AudioSettings
 {

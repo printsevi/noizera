@@ -3,7 +3,7 @@ using Noizera.Api;
 using Noizera.Api.Middlewares;
 using Noizera.Application;
 using Noizera.Infrastructure;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Persistence.SQL;
 using System.Reflection;
 
 var builder = WebApplication.CreateSlimBuilder(args);

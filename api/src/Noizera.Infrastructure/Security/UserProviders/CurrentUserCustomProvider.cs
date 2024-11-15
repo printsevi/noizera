@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Security;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

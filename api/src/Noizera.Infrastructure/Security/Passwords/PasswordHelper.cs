@@ -1,4 +1,4 @@
-﻿using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Users;
 using System.Security.Cryptography;
 using System.Text;
 

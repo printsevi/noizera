@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.Profiles;
+namespace Noizera.Common.Domain.Profiles;
 
 public sealed record ProfileUsernameUniquenessRule(string Username, IProfileUniquenessChecker Checker) : IAsyncDomainRule
 {

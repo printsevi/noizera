@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.UserSubscriptions;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.UserSubscriptions;
 using System.Collections.ObjectModel;
 
-namespace Noizera.Shared.Domain.Subscriptions;
+namespace Noizera.Common.Domain.Subscriptions;
 
 public class Subscription : Entity
 {

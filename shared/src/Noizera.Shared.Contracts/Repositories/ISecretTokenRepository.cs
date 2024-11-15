@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.SecretTokens;
+﻿using Noizera.Common.Domain.SecretTokens;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface ISecretTokenRepository : IRepository<SecretToken>
 {

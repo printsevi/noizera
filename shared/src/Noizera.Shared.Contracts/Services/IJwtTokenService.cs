@@ -1,6 +1,6 @@
-using Noizera.Shared.Domain.Users;
+using Noizera.Common.Domain.Users;
 
-namespace Noizera.Shared.Contracts.Services;
+namespace Noizera.Common.Contracts.Services;
 
 public interface IJwtTokenService
 {

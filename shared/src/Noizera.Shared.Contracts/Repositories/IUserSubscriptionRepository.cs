@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.UserSubscriptions;
+﻿using Noizera.Common.Domain.UserSubscriptions;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IUserSubscriptionRepository : IRepository<UserSubscription>
 {

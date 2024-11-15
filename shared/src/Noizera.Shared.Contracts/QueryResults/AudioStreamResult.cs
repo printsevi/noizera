@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Contracts.QueryResults;
+﻿namespace Noizera.Common.Contracts.QueryResults;
 
 public sealed record AudioStreamResult(
     Stream Stream,

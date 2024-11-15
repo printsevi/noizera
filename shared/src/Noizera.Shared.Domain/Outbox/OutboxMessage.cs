@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 using System.Linq.Expressions;
 
-namespace Noizera.Shared.Domain.Outbox;
+namespace Noizera.Common.Domain.Outbox;
 
 public class OutboxMessage : Entity
 {

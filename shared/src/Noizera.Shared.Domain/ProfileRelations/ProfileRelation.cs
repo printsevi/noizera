@@ -1,7 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Profiles;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Profiles;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.ProfileRelations;
+namespace Noizera.Common.Domain.ProfileRelations;
 
 public class ProfileRelation : BaseEntity
 {
@@ -18,10 +19,8 @@ public class ProfileRelation : BaseEntity
         FollowingProfileId = followingProfileId;
     }
 
-    public static ProfileRelation New(PublicProfile follower, PublicProfile following)
-    {
-        return new(follower.Id, following.Id);
-    }
+    public static ProfileRelation New([NotNull] PublicProfile follower, [NotNull] PublicProfile following) 
+        => new(follower.Id, following.Id);
 
     private ProfileRelation() { }
 }

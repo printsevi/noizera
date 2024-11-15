@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Noizera.Shared.Contracts.Services;
-using Noizera.Shared.Domain.Subscriptions;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.UserSubscriptions;
-using Noizera.Shared.Infrastructure.Subscriptions;
+using Noizera.Common.Contracts.Services;
+using Noizera.Common.Domain.Subscriptions;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Domain.UserSubscriptions;
+using Noizera.Common.Infrastructure.Subscriptions;
 
 namespace Noizera.Infrastructure.Subscriptions;
 
@@ -12,22 +12,14 @@ public class SubscriptionService(
     : ISubscriptionService
 {
     public async Task<Uri> CreateCheckoutSessionAsync(User user, Subscription subscription, IConfiguration configuration, CancellationToken ct)
-    {
-        return await subscriptionStripeService.CreateCheckoutSessionAsync(user, subscription, configuration, ct);
-    }
+        => await subscriptionStripeService.CreateCheckoutSessionAsync(user, subscription, configuration, ct).ConfigureAwait(false);
 
     public async Task InitializeCustomerAsync(User user, CancellationToken ct)
-    {
-        await subscriptionStripeService.CreateStripeCustomerAsync(user, ct);
-    }
+        => await subscriptionStripeService.CreateStripeCustomerAsync(user, ct).ConfigureAwait(false);
 
     public async Task StartSubscriptionAsync(string checkoutSessionId, UserSubscription userSubscription, CancellationToken ct)
-    {
-        await subscriptionStripeService.ActivateSubscriptionAsync(checkoutSessionId, userSubscription, ct);
-    }
+        => await subscriptionStripeService.ActivateSubscriptionAsync(checkoutSessionId, userSubscription, ct).ConfigureAwait(false);
 
     public async Task<Uri?> GetSubscriptionPortalUrlAsync(User user, IConfiguration configuration, CancellationToken ct)
-    {
-        return await subscriptionStripeService.GetSubscriptionPortalUrlAsync(user, configuration, ct);
-    }
+        => await subscriptionStripeService.GetSubscriptionPortalUrlAsync(user, configuration, ct).ConfigureAwait(false);
 }

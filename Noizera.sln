@@ -9,15 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Application", "api\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Infrastructure", "api\src\Noizera.Infrastructure\Noizera.Infrastructure.csproj", "{C04481B9-E0E2-453D-B569-272E599CC7E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Shared.Domain", "shared\src\Noizera.Shared.Domain\Noizera.Shared.Domain.csproj", "{8594F949-59B5-4235-8EC7-9871334A729E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Common.Domain", "shared\src\Noizera.Shared.Domain\Noizera.Common.Domain.csproj", "{8594F949-59B5-4235-8EC7-9871334A729E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Shared.Persistence", "shared\src\Noizera.Shared.Persistence\Noizera.Shared.Persistence.csproj", "{2386D6FF-A14B-4EC2-BAF9-BCFDB25E627C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Common.Persistence", "shared\src\Noizera.Shared.Persistence\Noizera.Common.Persistence.csproj", "{2386D6FF-A14B-4EC2-BAF9-BCFDB25E627C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Shared.Infrastructure", "shared\src\Noizera.Shared.Infrastructure\Noizera.Shared.Infrastructure.csproj", "{7C3809A8-0852-4FDF-B0DD-CE822D3D6EA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Common.Infrastructure", "shared\src\Noizera.Shared.Infrastructure\Noizera.Common.Infrastructure.csproj", "{7C3809A8-0852-4FDF-B0DD-CE822D3D6EA1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.BackgroundJobs", "background-jobs\src\Noizera.BackgroundJobs\Noizera.BackgroundJobs.csproj", "{73E19629-CFAF-4B2A-9B34-72BB3E7BDBDA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Shared.Contracts", "shared\src\Noizera.Shared.Contracts\Noizera.Shared.Contracts.csproj", "{2EE964AC-3768-45C7-AEC3-7F3BBE304B66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Noizera.Common.Contracts", "shared\src\Noizera.Shared.Contracts\Noizera.Common.Contracts.csproj", "{2EE964AC-3768-45C7-AEC3-7F3BBE304B66}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dashboard", "dashboard\Dashboard\Dashboard.csproj", "{0DA5DAF4-2279-49EC-BB30-0D53E1C7E2A7}"
 EndProject

@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.Users;
+namespace Noizera.Common.Domain.Users;
 
 public sealed record UpdateProfileTypeRule(User User) : ISyncDomainRule
 {

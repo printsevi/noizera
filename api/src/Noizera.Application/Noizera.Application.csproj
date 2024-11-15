@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<!--<AnalysisLevel>none</AnalysisLevel>
-	--><!--<AnalysisLevel>latest-Recommended</AnalysisLevel>--><!--
-	<AnalysisMode>All</AnalysisMode>
+	<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+	<AnalysisLevel>latest</AnalysisLevel>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Contracts\Noizera.Shared.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Persistence\Noizera.Shared.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Contracts\Noizera.Common.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Persistence\Noizera.Common.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

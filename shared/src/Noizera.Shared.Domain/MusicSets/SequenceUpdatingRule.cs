@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSetSongs;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSetSongs;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public sealed record SequenceUpdatingRule(MusicSetSong? ActiveSong, MusicSetSong? OverSong) : ISyncDomainRule
 {

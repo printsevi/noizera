@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Domain.Users;
 
-namespace Noizera.Shared.Domain.Streams;
+namespace Noizera.Common.Domain.Streams;
 
 public class StreamInfo : Entity
 {

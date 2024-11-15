@@ -1,5 +1,5 @@
 using Noizera.BackgroundJobs;
-using Noizera.Shared.Infrastructure;
+using Noizera.Common.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

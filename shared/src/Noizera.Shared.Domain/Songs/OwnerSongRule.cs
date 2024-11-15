@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.Songs;
+namespace Noizera.Common.Domain.Songs;
 
 public sealed record OwnerSongRule(Song Song, Guid UserId) : ISyncDomainRule
 {

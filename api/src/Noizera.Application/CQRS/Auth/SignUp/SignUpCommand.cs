@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Repositories;
-using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.VerificationCodes;
+using Noizera.Common.Contracts.Repositories;
+using Noizera.Common.Contracts.Security;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Domain.VerificationCodes;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Auth.SignUp;

@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Profiles;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Profiles;
 
-namespace Noizera.Shared.Domain.MusicSets;
+namespace Noizera.Common.Domain.MusicSets;
 
 public sealed record AlbumSubmissionRule(Album Album) : ISyncDomainRule
 {

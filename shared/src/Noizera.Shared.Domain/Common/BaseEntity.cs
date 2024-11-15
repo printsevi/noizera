@@ -1,4 +1,4 @@
-namespace Noizera.Shared.Domain.Common;
+namespace Noizera.Common.Domain.Common;
 
 public abstract class BaseEntity : DomainObject
 {

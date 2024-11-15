@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Noizera.Shared.Contracts.Services;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Contracts.Services;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Persistence.SQL;
 using System.Net.Http.Headers;
 
 namespace Noizera.Tests;

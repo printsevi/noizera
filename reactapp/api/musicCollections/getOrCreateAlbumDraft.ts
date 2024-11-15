@@ -28,7 +28,7 @@ export interface GetOrCreateAlbumDraftSongResponse {
 }
 
 export interface GetOrCreateAlbumDraftCreditResponse {
-  id?: string;
+  id: string;
   profileId?: string;
   profilePublicId?: string;
   profileName: string;

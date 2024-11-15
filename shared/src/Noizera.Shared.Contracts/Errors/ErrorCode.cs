@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Contracts.Errors;
+﻿namespace Noizera.Common.Contracts.Errors;
 
 public enum ErrorCode
 {

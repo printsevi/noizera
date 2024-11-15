@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Repositories;
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Repositories;
+using Noizera.Common.Contracts.Security;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Songs.AddSkip;

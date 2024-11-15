@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.MusicSets;
+﻿using Noizera.Common.Domain.MusicSets;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IAlbumRepository : IRepository<Album>
 {

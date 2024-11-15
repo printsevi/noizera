@@ -1,36 +1,38 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Noizera.Shared.Domain.Subscriptions;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.UserSubscriptions;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Domain.UserSubscriptions;
+using Noizera.Common.Persistence.SQL;
+using Stripe;
+using System.Diagnostics.CodeAnalysis;
+using Subscription = Noizera.Common.Domain.Subscriptions.Subscription;
 
-namespace Noizera.Shared.Infrastructure.Subscriptions;
+namespace Noizera.Common.Infrastructure.Subscriptions;
 
 public class SubscriptionStripeService(AppDbContext db, StripeService stripeService)
 {
-    public async Task CreateStripeCustomerAsync(User user, CancellationToken ct)
+    public async Task CreateStripeCustomerAsync([NotNull] User user, CancellationToken ct)
     {
         string? customerId = await stripeService.CreateCustomerAsync(user.Id, user.Email, user.Profile!.Name, ct).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(customerId))
         {
-            throw new Exception($"Failed to create a Stripe customer");
+            throw new StripeException($"Failed to create a Stripe customer for user {user.Id}");
         }
 
         user.SetCustomerStripeId(customerId);
     }
 
-    public async Task<Uri> CreateCheckoutSessionAsync(User user, Subscription subscription, IConfiguration configuration, CancellationToken cancellationToken)
+    public async Task<Uri> CreateCheckoutSessionAsync([NotNull] User user, [NotNull] Subscription subscription, [NotNull] IConfiguration configuration, CancellationToken cancellationToken)
     {
         var incompleteUserSubscription = user.GetIncompleteSubscriptionOfType(subscription.SubscriptionType);
         if (incompleteUserSubscription is not null)
         {
-            bool isExpired = await stripeService.ExpireSessionAsync(incompleteUserSubscription.CheckoutSessionId!, cancellationToken).ConfigureAwait(false);
+            _ = await stripeService.ExpireSessionAsync(incompleteUserSubscription.CheckoutSessionId!, cancellationToken).ConfigureAwait(false);
             incompleteUserSubscription.ExpireCheckoutSession();
         }
 
         string? frontendUrl = configuration["FrontendUrl"];
 
-        var trialPeriodDays = user.GetTrialDaysIfEntitled(subscription.SubscriptionType);
+        short? trialPeriodDays = user.GetTrialDaysIfEntitled(subscription.SubscriptionType);
 
         var checkoutSession = await stripeService.CreateCheckoutSessionAsync(
             subscription.StripePriceId,
@@ -44,26 +46,26 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             || string.IsNullOrWhiteSpace(checkoutSession.Value.SessionId)
             || checkoutSession.Value.Url is null)
         {
-            throw new Exception($"Failed to create a checkout session");
+            throw new StripeException($"Failed to create a checkout session for user {user.Id}");
         }
 
         if (incompleteUserSubscription is null)
         {
             incompleteUserSubscription = UserSubscription.Create(user, subscription, checkoutSession.Value.SessionId);
-            await db.UserSubscriptions.AddAsync(incompleteUserSubscription, cancellationToken);
+            _ = await db.UserSubscriptions.AddAsync(incompleteUserSubscription, cancellationToken).ConfigureAwait(false);
         }
         else
         {
             incompleteUserSubscription.CreateCheckoutSession(checkoutSession.Value.SessionId);
-            db.UserSubscriptions.Update(incompleteUserSubscription);
+            _ = db.UserSubscriptions.Update(incompleteUserSubscription);
         }
 
-        await db.SaveChangesAsync(cancellationToken);
+        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return checkoutSession.Value.Url;
     }
 
-    public async Task ActivateSubscriptionAsync(string checkoutSessionId, UserSubscription userSubscription, CancellationToken ct)
+    public async Task ActivateSubscriptionAsync(string checkoutSessionId, [NotNull] UserSubscription userSubscription, CancellationToken ct)
     {
         var session = await stripeService.GetSessionAsync(checkoutSessionId, ct).ConfigureAwait(false);
         if (session is null
@@ -72,13 +74,13 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             || !session.CurrentPeriodStart.HasValue
             || !session.CurrentPeriodEnd.HasValue)
         {
-            throw new Exception($"The session is not found or the invoice is unpaid");
+            throw new StripeException($"The session {checkoutSessionId} is not found or the invoice is unpaid");
         }
 
         userSubscription.ActivateSubscription(session.SubscriptionId, session.CurrentPeriodStart.Value, session.CurrentPeriodEnd.Value);
     }
 
-    public async Task<Uri?> GetSubscriptionPortalUrlAsync(User user, IConfiguration configuration, CancellationToken ct)
+    public async Task<Uri?> GetSubscriptionPortalUrlAsync([NotNull] User user, [NotNull] IConfiguration configuration, CancellationToken ct)
     {
         var result = await stripeService.GetBillingPortalLinkAsync(user.CustomerStripeId!, new Uri(configuration["FrontendUrl"]!), ct).ConfigureAwait(false);
 
@@ -86,7 +88,5 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
     }
 
     public async Task<string?> GetCheckoutSessionStatus(string sessionId, CancellationToken ct = default)
-    {
-        return await stripeService.GetCheckoutSessionStatusAsync(sessionId, ct).ConfigureAwait(false);
-    }
+        => await stripeService.GetCheckoutSessionStatusAsync(sessionId, ct).ConfigureAwait(false);
 }

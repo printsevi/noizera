@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Domain.Profiles;
+﻿using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Domain.Profiles;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IProfileRepository : IRepository<PublicProfile>
 {

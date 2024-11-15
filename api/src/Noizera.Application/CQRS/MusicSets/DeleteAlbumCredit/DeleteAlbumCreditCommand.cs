@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Security;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.MusicSets.DeleteAlbumCredit;

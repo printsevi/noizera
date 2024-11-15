@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 
-namespace Noizera.Shared.Domain.SongPreferences;
+namespace Noizera.Common.Domain.SongPreferences;
 
 public sealed class SongPreference : BaseEntity
 {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Noizera.Shared.Domain.Subscriptions;
-using Noizera.Shared.Domain.Users;
-using Noizera.Shared.Domain.UserSubscriptions;
+using Noizera.Common.Domain.Subscriptions;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Domain.UserSubscriptions;
 
-namespace Noizera.Shared.Contracts.Services;
+namespace Noizera.Common.Contracts.Services;
 
 public interface ISubscriptionService
 {

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
-using Noizera.Shared.Contracts.Errors;
-using Noizera.Shared.Domain.Common;
+using Noizera.Common.Contracts.Errors;
+using Noizera.Common.Domain.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.Behaviors;

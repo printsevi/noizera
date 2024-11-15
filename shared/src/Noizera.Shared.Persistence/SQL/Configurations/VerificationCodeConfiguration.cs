@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Noizera.Shared.Domain.VerificationCodes;
-using Noizera.Shared.Persistence.SQL.Configurations.Common;
+using Noizera.Common.Domain.VerificationCodes;
+using Noizera.Common.Persistence.SQL.Configurations.Common;
 
-namespace Noizera.Shared.Persistence.SQL.Configurations;
+namespace Noizera.Common.Persistence.SQL.Configurations;
 
 internal sealed class VerificationCodeConfiguration : IEntityTypeConfiguration<VerificationCode>
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Domain.ListeningHistories;
-using Noizera.Shared.Domain.SongPreferences;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.ListeningHistories;
+using Noizera.Common.Domain.SongPreferences;
+using Noizera.Common.Persistence.SQL;
 
 namespace Dashboard.Jobs;
 

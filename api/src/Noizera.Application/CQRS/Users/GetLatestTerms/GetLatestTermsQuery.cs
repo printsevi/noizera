@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Errors;
-using Noizera.Shared.Contracts.Repositories;
+using Noizera.Common.Contracts.Errors;
+using Noizera.Common.Contracts.Repositories;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Users.GetLatestTerms;

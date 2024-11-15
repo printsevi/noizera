@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Persistence.SQL;
 using Npgsql;
 using System.Data;
 using System.Data.Common;

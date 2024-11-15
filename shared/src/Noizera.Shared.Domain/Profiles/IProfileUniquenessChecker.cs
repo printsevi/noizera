@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Domain.Profiles;
+﻿namespace Noizera.Common.Domain.Profiles;
 
 public interface IProfileUniquenessChecker
 {

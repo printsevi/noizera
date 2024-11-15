@@ -2,21 +2,21 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Outbox;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Outbox;
+using Noizera.Common.Persistence.SQL;
 using Serilog;
 
 namespace Noizera.BackgroundJobs.Jobs;
 
-public abstract class OutboxBackgroundJob<T>(
+internal abstract class OutboxBackgroundJob<T>(
     IServiceScopeFactory factory,
     IOptions<EventSettings> eventSettings)
     : BackgroundService where T : BackgroundService
 {
     private readonly EventSettings settings = eventSettings.Value;
-    private readonly TimeSpan _period = TimeSpan.FromSeconds(5);
-    private int executionCount = 0;
-    private int failedCount = 0;
+    private readonly TimeSpan period = TimeSpan.FromSeconds(5);
+    private int executionCount;
+    private int failedCount;
 
     public bool IsEnabled { get; set; } = true;
     public virtual short MaxBunchAmount { get; set; } = 5;
@@ -24,7 +24,7 @@ public abstract class OutboxBackgroundJob<T>(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using PeriodicTimer timer = new PeriodicTimer(_period);
+        using PeriodicTimer timer = new PeriodicTimer(period);
         while (
             !stoppingToken.IsCancellationRequested
             && await timer.WaitForNextTickAsync(stoppingToken)

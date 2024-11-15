@@ -3,7 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Noizera.Shared.Infrastructure.Emails;
+namespace Noizera.Common.Infrastructure.Emails;
 
 public class EmailSender(IOptions<EmailSettings> emailSettings)
 {
@@ -17,23 +17,21 @@ public class EmailSender(IOptions<EmailSettings> emailSettings)
         string subject,
         string content)
     {
-        var message = new MimeMessage();
+        using MimeMessage message = new();
         message.From.Add(new MailboxAddress(nameFrom, emailFrom));
         message.To.Add(new MailboxAddress(nameTo, emailTo));
         message.Subject = subject;
 
-        var bodyBuilder = new BodyBuilder
+        BodyBuilder bodyBuilder = new()
         {
             HtmlBody = content
         };
         message.Body = bodyBuilder.ToMessageBody();
 
-        using (var client = new SmtpClient())
-        {
-            await client.ConnectAsync(settings.Server, settings.Port, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(settings.Username, settings.Password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-        }
+        using SmtpClient client = new();
+        await client.ConnectAsync(settings.Server, settings.Port, SecureSocketOptions.StartTls).ConfigureAwait(false);
+        await client.AuthenticateAsync(settings.Username, settings.Password).ConfigureAwait(false);
+        _ = await client.SendAsync(message).ConfigureAwait(false);
+        await client.DisconnectAsync(true).ConfigureAwait(false);
     }
 }

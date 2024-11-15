@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Domain.Profiles;
+using Noizera.Common.Contracts.Security;
+using Noizera.Common.Domain.Profiles;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Users.CheckUsername;

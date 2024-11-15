@@ -1,16 +1,17 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.AspNetCore.Http;
-using Noizera.Shared.Persistence.S3;
+using Noizera.Common.Persistence.S3;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Infrastructure.Emails;
+namespace Noizera.Common.Infrastructure.Emails;
 
-public class EmailService(EmailSender sender, S3Context s3)
+public class EmailService([NotNull] EmailSender sender, [NotNull] S3Context s3)
 {
-    public async Task UploadEmailTemplate(string emailTemplateType, IFormFile htmlFile, CancellationToken ct)
+    public async Task UploadEmailTemplate(string emailTemplateType, [NotNull] IFormFile htmlFile, [NotNull] CancellationToken ct)
     {
         if (htmlFile == null || htmlFile.Length == 0)
         {
-            throw new Exception($"File {emailTemplateType} is empty");
+            throw new ArgumentNullException($"File {emailTemplateType} is empty");
         }
 
         await s3.UploadEmailTemplateAsync(emailTemplateType, htmlFile, ct).ConfigureAwait(false);
@@ -23,16 +24,16 @@ public class EmailService(EmailSender sender, S3Context s3)
         string emailFrom,
         string nameFrom,
         string subject,
-        CancellationToken ct,
+        [NotNull] CancellationToken ct,
         IDictionary<string, string>? idValuePairs = null)
     {
-        var htmlContent = await s3.GetEmailTemplateContentAsync(templateName, ct);
+        string htmlContent = await s3.GetEmailTemplateContentAsync(templateName, ct).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(htmlContent))
         {
-            throw new Exception($"Template not found: {templateName}");
+            throw new ArgumentNullException($"Template not found: {templateName}");
         }
 
-        var htmlDoc = new HtmlDocument();
+        HtmlDocument htmlDoc = new();
         htmlDoc.LoadHtml(htmlContent);
 
         if (idValuePairs is not null)
@@ -47,6 +48,6 @@ public class EmailService(EmailSender sender, S3Context s3)
             }
         }
 
-        await sender.SendAsync(emailFrom, nameFrom, emailTo, nameTo, subject, htmlDoc.DocumentNode.OuterHtml);
+        await sender.SendAsync(emailFrom, nameFrom, emailTo, nameTo, subject, htmlDoc.DocumentNode.OuterHtml).ConfigureAwait(false);
     }
 }

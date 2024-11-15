@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.Common;
+namespace Noizera.Common.Domain.Common;
 
 public abstract class DomainObject
 {

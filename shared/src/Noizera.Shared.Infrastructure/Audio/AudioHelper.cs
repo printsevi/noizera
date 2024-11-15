@@ -1,8 +1,10 @@
-﻿namespace Noizera.Shared.Infrastructure.Audio;
+﻿using System.Collections.ObjectModel;
+
+namespace Noizera.Common.Infrastructure.Audio;
 
 public static class AudioHelper
 {
-    public static List<string> GenerateConversionToFlacCommand(
+    public static ReadOnlyCollection<string> GenerateConversionToFlacCommand(
         string inputFilePath,
         string outputFilePath,
         int sampleRate,
@@ -26,10 +28,10 @@ public static class AudioHelper
             outputFilePath
         ];
 
-        return result;
+        return new ReadOnlyCollection<string>(result);
     }
 
-    public static List<string> GenerateConversionToMp3Command(
+    public static ReadOnlyCollection<string> GenerateConversionToMp3Command(
         string inputFilePath,
         string outputFilePath,
         int targetLufs,
@@ -51,6 +53,6 @@ public static class AudioHelper
             outputFilePath
         ];
 
-        return result;
+        return new ReadOnlyCollection<string>(result);
     }
 }

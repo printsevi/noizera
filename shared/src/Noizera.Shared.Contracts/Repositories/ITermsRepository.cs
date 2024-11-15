@@ -1,6 +1,6 @@
-﻿using Noizera.Shared.Domain.Terms;
+﻿using Noizera.Common.Domain.Terms;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface ITermsRepository : IRepository<TermsOfUse>
 {

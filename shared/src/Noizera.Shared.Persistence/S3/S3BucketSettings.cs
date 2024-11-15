@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Persistence.S3;
+﻿namespace Noizera.Common.Persistence.S3;
 
 public class S3BucketSettings
 {

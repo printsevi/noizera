@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Contracts.Errors;
-using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Songs;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Contracts.Errors;
+using Noizera.Common.Contracts.Security;
+using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Songs;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.MusicSets.GetOrCreateAlbumDraft;

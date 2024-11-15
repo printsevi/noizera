@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Domain.Profiles;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Domain.Profiles;
+using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.Infrastructure.Profiles;
 

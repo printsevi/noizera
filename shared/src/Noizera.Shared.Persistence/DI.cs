@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Noizera.Shared.Persistence.S3;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Persistence.S3;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Persistence;
+namespace Noizera.Common.Persistence;
 
 public static class DI
 {
@@ -38,16 +38,13 @@ public static class DI
         _ = services.Configure<S3BucketSettings>(configuration.GetSection("S3Bucket"));
         var s3Settings = configuration.GetSection("S3").Get<S3Settings>()!;
 
-        services.AddSingleton<IAmazonS3>(sp =>
+        _ = services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(s3Settings.SpacesKey, s3Settings.SpacesSecret, new AmazonS3Config
         {
-            return new AmazonS3Client(s3Settings.SpacesKey, s3Settings.SpacesSecret, new AmazonS3Config
-            {
-                ServiceURL = s3Settings.ServiceUrl,
-                ForcePathStyle = true
-            });
-        });
+            ServiceURL = s3Settings.ServiceUrl.ToString(),
+            ForcePathStyle = true
+        }));
 
-        services.AddSingleton<S3Context>();
+        _ = services.AddSingleton<S3Context>();
 
         return services;
     }

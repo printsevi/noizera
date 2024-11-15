@@ -2,7 +2,7 @@
 using Stripe.Checkout;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Infrastructure.Subscriptions;
+namespace Noizera.Common.Infrastructure.Subscriptions;
 
 public class StripeService(
     SessionService sessionService,

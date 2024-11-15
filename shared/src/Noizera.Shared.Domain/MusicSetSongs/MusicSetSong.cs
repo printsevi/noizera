@@ -1,9 +1,9 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Songs;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Songs;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.MusicSetSongs;
+namespace Noizera.Common.Domain.MusicSetSongs;
 
 public sealed class MusicSetSong : Entity
 {

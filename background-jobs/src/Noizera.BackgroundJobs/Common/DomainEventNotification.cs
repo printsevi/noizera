@@ -1,9 +1,10 @@
 ﻿using MediatR;
-using Noizera.Shared.Domain.Common;
+using Noizera.Common.Domain.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.BackgroundJobs.Common;
 
-public class DomainEventNotification<TDomainEvent>(TDomainEvent domainEvent)
+internal class DomainEventNotification<TDomainEvent>([NotNull] TDomainEvent domainEvent)
     : INotification where TDomainEvent : DomainEvent
 {
     public TDomainEvent DomainEvent => domainEvent;

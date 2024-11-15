@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Noizera.Shared.Contracts.Security;
+namespace Noizera.Common.Contracts.Security;
 
 public interface IAuthorizeableRequest<T> : IRequest<T>
 {

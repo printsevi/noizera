@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.Users;
 
-namespace Noizera.Shared.Domain.Royalties;
+namespace Noizera.Common.Domain.Royalties;
 
 public class Royalty : Entity
 {

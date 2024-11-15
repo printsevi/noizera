@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Noizera.Shared.Contracts.Security;
-using Noizera.Shared.Persistence.SQL;
+using Noizera.Common.Contracts.Security;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Profiles.GetArtists;

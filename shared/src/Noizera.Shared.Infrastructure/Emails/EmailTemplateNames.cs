@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Infrastructure.Emails;
+﻿namespace Noizera.Common.Infrastructure.Emails;
 
 public static class EmailTemplateNames
 {

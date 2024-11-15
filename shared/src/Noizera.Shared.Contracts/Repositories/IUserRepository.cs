@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Contracts.QueryResults;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Contracts.QueryResults;
+using Noizera.Common.Domain.Users;
 
-namespace Noizera.Shared.Contracts.Repositories;
+namespace Noizera.Common.Contracts.Repositories;
 
 public interface IUserRepository : IRepository<User>
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Contracts.Services;
+namespace Noizera.Common.Contracts.Services;
 
 public interface ICoverImageService
 {

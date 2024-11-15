@@ -1,7 +1,7 @@
-﻿using Noizera.Shared.Domain.Common;
+﻿using Noizera.Common.Domain.Common;
 using System.Text.RegularExpressions;
 
-namespace Noizera.Shared.Domain.Profiles;
+namespace Noizera.Common.Domain.Profiles;
 
 public sealed record ProfileUsernameRule(string Username) : ISyncDomainRule
 {
@@ -9,8 +9,8 @@ public sealed record ProfileUsernameRule(string Username) : ISyncDomainRule
 
     public bool Verify()
     {
-        var regex = new Regex(@"^(?!\.)(?!.*\.$)(?!.*__)(?!.*\.\.)[a-zA-Z0-9._]{2,30}$");
+        Regex regex = new(@"^(?!\.)(?!.*\.$)(?!.*__)(?!.*\.\.)[a-zA-Z0-9._]{2,30}$");
 
-        return Username == Username.ToLowerInvariant() && regex.IsMatch(Username);
+        return Username.Equals(Username, StringComparison.OrdinalIgnoreCase) && regex.IsMatch(Username);
     }
 }

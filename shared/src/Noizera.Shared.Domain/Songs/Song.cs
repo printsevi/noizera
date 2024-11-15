@@ -1,13 +1,13 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.ListeningHistories;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.MusicSetSongs;
-using Noizera.Shared.Domain.Royalties;
-using Noizera.Shared.Domain.Streams;
-using Noizera.Shared.Domain.Users;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.ListeningHistories;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.MusicSetSongs;
+using Noizera.Common.Domain.Royalties;
+using Noizera.Common.Domain.Streams;
+using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Shared.Domain.Songs;
+namespace Noizera.Common.Domain.Songs;
 
 public sealed class Song : EntityExtended
 {
@@ -49,13 +49,13 @@ public sealed class Song : EntityExtended
         AlbumId = album.Id;
     }
 
-    public static async Task<Song> NewAsync([NotNull] User user, [NotNull] Album album, IHashGenerator hashGenerator, CancellationToken ct)
+    public static async Task<Song> NewAsync([NotNull] User user, [NotNull] Album album, [NotNull] IHashGenerator hashGenerator, CancellationToken ct)
     {
         EnsureRule(new AlbumOwnerSongRule(user, album));
         EnsureRule(new DraftAlbumRule(album));
         EnsureRule(new OwnerSongAmountRule(user));
 
-        var publicId = await hashGenerator.GenerateAsync(ct);
+        string publicId = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
         Song result = new(user, album, publicId);
         short maxSequence = album.MusicSetSongs.Count > 0 ? album.MusicSetSongs.Max(x => x.Sequence) : (short)0;
         MusicSetSong MusicSetSong = MusicSetSong.Create(result, album, ++maxSequence);

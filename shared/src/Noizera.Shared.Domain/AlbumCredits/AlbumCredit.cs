@@ -1,8 +1,8 @@
-﻿using Noizera.Shared.Domain.Common;
-using Noizera.Shared.Domain.MusicSets;
-using Noizera.Shared.Domain.Profiles;
+﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
+using Noizera.Common.Domain.Profiles;
 
-namespace Noizera.Shared.Domain.AlbumCredits;
+namespace Noizera.Common.Domain.AlbumCredits;
 
 public sealed class AlbumCredit : Entity
 {

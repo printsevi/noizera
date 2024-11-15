@@ -1,27 +1,27 @@
 ﻿using MediatR;
 using Noizera.BackgroundJobs.Common;
-using Noizera.Shared.Domain.Events;
-using Noizera.Shared.Infrastructure.Subscriptions;
+using Noizera.Common.Domain.Events;
+using Noizera.Common.Infrastructure.Subscriptions;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-public class CheckoutSessionCreatedEventHandler(SubscriptionStripeService subscriptionService)
+internal class CheckoutSessionCreatedEventHandler(SubscriptionStripeService subscriptionService)
     : INotificationHandler<DomainEventNotification<CheckoutSessionCreatedEvent>>
 {
     public async Task Handle(DomainEventNotification<CheckoutSessionCreatedEvent> notification, CancellationToken cancellationToken)
     {
-        var sessionStatus = await subscriptionService.GetCheckoutSessionStatus(notification.DomainEvent.StripeSessionId);
+        string? sessionStatus = await subscriptionService.GetCheckoutSessionStatus(notification.DomainEvent.StripeSessionId, cancellationToken).ConfigureAwait(false);
         if (sessionStatus is null)
         {
 
         }
-        else if (sessionStatus == "open")
-        {
-            await Task.Delay(5000);//5 sec
-        }
-        else if (sessionStatus == "expired")
-        {
+        //else if (sessionStatus == "open")
+        //{
+        //    await Task.Delay(5000);//5 sec
+        //}
+        //else if (sessionStatus == "expired")
+        //{
 
-        }
+        //}
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Infrastructure.Subscriptions;
+﻿namespace Noizera.Common.Infrastructure.Subscriptions;
 
 public record StripeSession(
     bool IsPaid,

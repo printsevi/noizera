@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Noizera.Shared.Domain.Common;
+namespace Noizera.Common.Domain.Common;
 
 public class ValidFileName
 {

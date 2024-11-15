@@ -1,5 +1,5 @@
 using Noizera.Infrastructure.Security.UserProviders;
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Security;
 
 namespace Noizera.Infrastructure.Security.Policy;
 

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Security;
 
 namespace Noizera.Application.CQRS.Feed.GetFeedCategories;
 

@@ -1,6 +1,6 @@
-using Noizera.Shared.Contracts.Security;
+using Noizera.Common.Contracts.Security;
 
-namespace Noizera.Shared.Contracts.Services;
+namespace Noizera.Common.Contracts.Services;
 
 public interface IAuthorizationService
 {

@@ -1,4 +1,4 @@
-﻿namespace Noizera.Shared.Contracts.QueryResults;
+﻿namespace Noizera.Common.Contracts.QueryResults;
 
 public record CountQueryResult(
     int Count);
