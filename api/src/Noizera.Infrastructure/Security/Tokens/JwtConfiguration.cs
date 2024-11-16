@@ -9,7 +9,7 @@ namespace Noizera.Infrastructure.Security.Tokens;
 public sealed class JwtBearerTokenValidationConfiguration(IOptions<JwtSettings> jwtSettings)
     : IConfigureNamedOptions<JwtBearerOptions>
 {
-    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+    private readonly JwtSettings jwtSettings = jwtSettings.Value;
 
     public void Configure(string? name, JwtBearerOptions options) => Configure(options);
 
@@ -19,9 +19,9 @@ public sealed class JwtBearerTokenValidationConfiguration(IOptions<JwtSettings> 
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = _jwtSettings.Issuer,
-        ValidAudience = _jwtSettings.Audience,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
         ClockSkew = TimeSpan.FromMinutes(5),
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
     };
 }

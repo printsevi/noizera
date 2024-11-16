@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\src\Noizera.Common.Infrastructure\Noizera.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Infrastructure\Noizera.Common.Infrastructure.csproj" />
   </ItemGroup>
 

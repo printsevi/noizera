@@ -28,7 +28,7 @@ public sealed record AddAlbumSongCommand(
             var user = await userRepository.GetWithSongsAsync(request.UserId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException("User not found", ErrorType.NotFound);
 
-            var song = await Song.NewAsync(user, album, hashGenerator, cancellationToken);
+            var song = await Song.NewAsync(user, album, hashGenerator, cancellationToken).ConfigureAwait(false);
             await songRepository.InsertAsync(song, cancellationToken).ConfigureAwait(false);
 
             return new(song.Id, song.PublicId);

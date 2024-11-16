@@ -25,6 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Noizera.Common.Domain\Noizera.Common.Domain.csproj" />
+    <ProjectReference Include="..\Noizera.Common.Persistence\Noizera.Common.Persistence.csproj" />
     <ProjectReference Include="..\Noizera.Shared.Domain\Noizera.Common.Domain.csproj" />
     <ProjectReference Include="..\Noizera.Shared.Persistence\Noizera.Common.Persistence.csproj" />
   </ItemGroup>

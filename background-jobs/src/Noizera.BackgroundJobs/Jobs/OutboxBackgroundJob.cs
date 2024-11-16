@@ -22,18 +22,19 @@ internal abstract class OutboxBackgroundJob<T>(
     public virtual short MaxBunchAmount { get; set; } = 5;
     public abstract bool IsRealTime { get; }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using PeriodicTimer timer = new PeriodicTimer(period);
+        using PeriodicTimer timer = new(period);
         while (
             !stoppingToken.IsCancellationRequested
-            && await timer.WaitForNextTickAsync(stoppingToken)
+            && await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false)
             && IsEnabled
             && failedCount < 1000)
         {
             try
             {
-                await using var asyncScope = factory.CreateAsyncScope();
+                using var asyncScope = factory.CreateAsyncScope();
                 var mediator = asyncScope.ServiceProvider.GetRequiredService<IMediator>();
                 var db = asyncScope.ServiceProvider.GetRequiredService<AppDbContext>();
 
@@ -42,12 +43,12 @@ internal abstract class OutboxBackgroundJob<T>(
                     .Where(OutboxMessage.IsProcessableExpression(IsRealTime))
                     .Where(x => settings.HandleAllEvents || settings.EventsToHandle.Contains(x.Type))
                     .Take(MaxBunchAmount)
-                    .ToListAsync();
+                    .ToListAsync(stoppingToken).ConfigureAwait(false);
 
-                if (!messages.Any())
+                if (messages.Count == 0)
                 {
                     Log.Logger.Information("No outbox message is found");
-                    await Task.Delay(5000, stoppingToken);
+                    await Task.Delay(5000, stoppingToken).ConfigureAwait(false);
                     continue;
                 }
 
@@ -59,10 +60,10 @@ internal abstract class OutboxBackgroundJob<T>(
                         var genericDispatcherType = typeof(DomainEventNotification<>).MakeGenericType(domainEvent.GetType());
                         if (Activator.CreateInstance(genericDispatcherType, domainEvent) is not INotification notification)
                         {
-                            throw new Exception($"{genericDispatcherType.FullName} is not INotification");
+                            throw new TypeLoadException($"{genericDispatcherType.FullName} is not INotification");
                         }
 
-                        await mediator.Publish(notification, stoppingToken);
+                        await mediator.Publish(notification, stoppingToken).ConfigureAwait(false);
 
                         message.Process();
                     }
@@ -73,7 +74,7 @@ internal abstract class OutboxBackgroundJob<T>(
                     }
                 }
 
-                await db.SaveChangesAsync(stoppingToken);
+                _ = await db.SaveChangesAsync(stoppingToken).ConfigureAwait(false);
 
                 executionCount++;
 

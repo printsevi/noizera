@@ -6,6 +6,7 @@ namespace Noizera.Api.Middlewares;
 
 internal sealed class ExceptionHandlingMiddleware(RequestDelegate next)
 {
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
     public async Task InvokeAsync([NotNull] HttpContext context)
     {
         try

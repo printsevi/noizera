@@ -7,7 +7,7 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class UserSubscriptionActivatedEventHandler(
+internal sealed class UserSubscriptionActivatedEventHandler(
     AppDbContext db,
     EmailService emailService)
     : INotificationHandler<DomainEventNotification<UserSubscriptionActivatedEvent>>

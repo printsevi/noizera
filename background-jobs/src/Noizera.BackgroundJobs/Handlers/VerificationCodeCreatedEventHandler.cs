@@ -5,7 +5,7 @@ using Noizera.Common.Infrastructure.Emails;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class VerificationCodeCreatedEventHandler(EmailService emailService)
+internal sealed class VerificationCodeCreatedEventHandler(EmailService emailService)
     : INotificationHandler<DomainEventNotification<VerificationCodeCreatedEvent>>
 {
     public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)

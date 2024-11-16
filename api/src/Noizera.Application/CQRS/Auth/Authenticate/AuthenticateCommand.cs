@@ -29,8 +29,8 @@ public sealed record AuthenticateCommand(
             var code = await verificationCodeRepository.GetLatestAsync(user.Email, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException($"A code for {user.Email} not found", ErrorType.NotFound);
 
-            var isCodeValid = code.VerifyAndInvalidateCode(request.Code);
-            await verificationCodeRepository.UpdateAsync(code, cancellationToken);
+            bool isCodeValid = code.VerifyAndInvalidateCode(request.Code);
+            await verificationCodeRepository.UpdateAsync(code, cancellationToken).ConfigureAwait(false);
 
             if (!isCodeValid)
             {
@@ -38,7 +38,7 @@ public sealed record AuthenticateCommand(
             }
 
             string accessToken = jwtTokenGenerator.GenerateAccessToken(user);
-            var refreshToken = SecretToken.NewRefreshToken(tokenGenerator, user);
+            SecretToken refreshToken = SecretToken.NewRefreshToken(tokenGenerator, user);
 
             await secretTokenRepository.InsertAsync(refreshToken, cancellationToken).ConfigureAwait(false);
 

@@ -5,7 +5,7 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class ResetTokenCreatedEventHandler(AppDbContext db)
+internal sealed class ResetTokenCreatedEventHandler(AppDbContext db)
     : INotificationHandler<DomainEventNotification<ResetTokenCreatedEvent>>
 {
 #pragma warning disable IDE0060 // Remove unused parameter

@@ -20,15 +20,10 @@ public sealed record VerifyEmailCommand(
             var code = await verificationCodeRepository.GetLatestAsync(request.Email, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException($"A code for {request.Email} not found", ErrorType.NotFound);
 
-            var isCodeValid = code.VerifyAndInvalidateCode(request.Code);
-            await verificationCodeRepository.UpdateAsync(code, cancellationToken);
+            bool isCodeValid = code.VerifyAndInvalidateCode(request.Code);
+            await verificationCodeRepository.UpdateAsync(code, cancellationToken).ConfigureAwait(false);
 
-            if (!isCodeValid)
-            {
-                throw new AppException($"The code is incorrect", ErrorType.BadRequest);
-            }
-
-            return Unit.Value;
+            return !isCodeValid ? throw new AppException($"The code is incorrect", ErrorType.BadRequest) : Unit.Value;
         }
     }
 }

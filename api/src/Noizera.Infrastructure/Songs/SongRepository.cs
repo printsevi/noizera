@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Infrastructure.Common;
 using Noizera.Common.Contracts.Repositories;
-using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Songs;
 using Noizera.Common.Persistence.SQL;
+using Noizera.Infrastructure.Common;
 
 namespace Noizera.Infrastructure.Songs;
 
-public sealed class SongRepository(AppDbContext db, IHashGenerator hashGenerator)
-    : BaseEntityExtendedRepository<Song>(db, hashGenerator), ISongRepository
+public sealed class SongRepository(AppDbContext db)
+    : BaseEntityExtendedRepository<Song>(db), ISongRepository
 {
     public async Task<Song?> GetAsync(Guid id, CancellationToken ct) => await Db.Songs
             .FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);

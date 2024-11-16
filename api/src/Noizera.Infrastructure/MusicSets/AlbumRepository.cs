@@ -7,13 +7,11 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.Infrastructure.MusicSets;
 
-public sealed class AlbumRepository(AppDbContext db, IHashGenerator hashGenerator)
-    : BaseEntityExtendedRepository<Album>(db, hashGenerator), IAlbumRepository
+public sealed class AlbumRepository(AppDbContext db)
+    : BaseEntityExtendedRepository<Album>(db), IAlbumRepository
 {
     public async Task<Album?> GetAsync(Guid albumId, CancellationToken ct)
-    {
-        return await Db.Albums.FirstOrDefaultAsync(x => x.Id == albumId, ct).ConfigureAwait(false);
-    }
+        => await Db.Albums.FirstOrDefaultAsync(x => x.Id == albumId, ct).ConfigureAwait(false);
 
     public async Task<Album?> GetFullAsync(Guid albumId, CancellationToken ct) => await Db.Albums
             .Include(x => x.MusicSetSongs.OrderBy(x => x.Sequence))

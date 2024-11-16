@@ -33,7 +33,7 @@ public sealed record GetAccessTokenQuery(
 
             refreshToken.RevokeToken();
 
-            await secretTokenRepository.UpdateAsync(refreshToken, cancellationToken);
+            await secretTokenRepository.UpdateAsync(refreshToken, cancellationToken).ConfigureAwait(false);
 
             string accessToken = jwtTokenService.GenerateAccessToken(user);
             var newRefreshToken = SecretToken.NewRefreshToken(tokenGenerator, user);

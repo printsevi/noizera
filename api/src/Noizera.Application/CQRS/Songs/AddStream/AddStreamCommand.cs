@@ -21,7 +21,7 @@ public sealed record AddStreamCommand(
     {
         public async Task<Unit> Handle([NotNull] AddStreamCommand request, CancellationToken cancellationToken)
         {
-            var song = await songRepository.GetAsync(request.SongPublicId, cancellationToken)
+            var song = await songRepository.GetAsync(request.SongPublicId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException("The song is not found", ErrorType.NotFound);
 
             var history = await listeningHistoryRepository.GetAsync(request.UserId, song.Id).ConfigureAwait(false);

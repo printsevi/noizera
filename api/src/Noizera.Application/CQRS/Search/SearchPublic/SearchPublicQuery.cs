@@ -3,7 +3,7 @@ using Noizera.Application.CQRS.Feed.GetFeedPublicCategories;
 
 namespace Noizera.Application.CQRS.Search.SearchPublic;
 
-public sealed record SearchPublicQuery(string searchQuery)
+public sealed record SearchPublicQuery(string SearchQuery)
     : IRequest<GetFeedPublicCategoriesResponse>
 {
     public sealed class Handler()
@@ -11,9 +11,11 @@ public sealed record SearchPublicQuery(string searchQuery)
     {
         public async Task<GetFeedPublicCategoriesResponse> Handle(SearchPublicQuery request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult<GetFeedPublicCategoriesResponse>(
+            var result = await Task.FromResult<GetFeedPublicCategoriesResponse>(
                 new([new("new-releases", "New releases")],
-                []));
+                [])).ConfigureAwait(false);
+
+            return result;
         }
     }
 }

@@ -29,7 +29,7 @@
             await SubscriptionService.CreateAsync(subscription);
             navManager.NavigateTo("/subscriptions/list/1");
         }
-        catch (Exception ex)
+        catch
         {
             loading = false;
             StateHasChanged();

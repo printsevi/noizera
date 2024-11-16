@@ -1,25 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Infrastructure.Common;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Repositories;
-using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.MusicSets;
 using Noizera.Common.Persistence.SQL;
+using Noizera.Infrastructure.Common;
 
 namespace Noizera.Infrastructure.MusicSets;
 
-public sealed class MusicSetRepository(AppDbContext db, IHashGenerator hashGenerator)
-    : BaseEntityExtendedRepository<MusicSet>(db, hashGenerator), IMusicSetRepository
+public sealed class MusicSetRepository(AppDbContext db)
+    : BaseEntityExtendedRepository<MusicSet>(db), IMusicSetRepository
 {
     public async Task<MusicSet?> GetAsync(Guid id, CancellationToken ct)
-    {
-        return await Db.MusicSets.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
-    }
+        => await Db.MusicSets.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
 
     public async Task<MusicSet?> GetAsync(string publicId, CancellationToken ct)
-    {
-        return await Db.MusicSets.FirstOrDefaultAsync(x => x.PublicId == publicId, ct).ConfigureAwait(false);
-    }
+        => await Db.MusicSets.FirstOrDefaultAsync(x => x.PublicId == publicId, ct).ConfigureAwait(false);
 
     public async Task<MusicSet?> GetWithSongsAsync(Guid MusicSetId, CancellationToken ct) => await Db.MusicSets
             .Include(x => x.MusicSetSongs)

@@ -5,7 +5,7 @@ using Noizera.Common.Infrastructure.Subscriptions;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class CheckoutSessionCreatedEventHandler(SubscriptionStripeService subscriptionService)
+internal sealed class CheckoutSessionCreatedEventHandler(SubscriptionStripeService subscriptionService)
     : INotificationHandler<DomainEventNotification<CheckoutSessionCreatedEvent>>
 {
     public async Task Handle(DomainEventNotification<CheckoutSessionCreatedEvent> notification, CancellationToken cancellationToken)

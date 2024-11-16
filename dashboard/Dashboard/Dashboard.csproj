@@ -25,10 +25,13 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <PackageReference Include="SerilogTracing" Version="2.2.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\src\Noizera.Common.Domain\Noizera.Common.Domain.csproj" />
+    <ProjectReference Include="..\..\shared\src\Noizera.Common.Infrastructure\Noizera.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\shared\src\Noizera.Common.Persistence\Noizera.Common.Persistence.csproj" />
     <ProjectReference Include="..\..\shared\src\Noizera.Shared.Domain\Noizera.Common.Domain.csproj" />
     <ProjectReference Include="..\..\shared\src\Noizera.Shared.Infrastructure\Noizera.Common.Infrastructure.csproj" />
   </ItemGroup>

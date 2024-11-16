@@ -31,6 +31,6 @@ internal sealed class GetAudioStreamEndpoint : IEndpoint
         context.Response.Headers["Content-Range"] = $"bytes {result.Start}-{result.End}/{result.ContentLength}";
         context.Response.Headers["Content-Length"] = result.PartLength.ToString();
 
-        await result.Stream.CopyToAsync(context.Response.Body);
+        await result.Stream.CopyToAsync(context.Response.Body, ct).ConfigureAwait(false);
     }
 }

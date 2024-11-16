@@ -7,7 +7,7 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class AlbumSubmittedEventHandler(
+internal sealed class AlbumSubmittedEventHandler(
     AudioService audioService,
     AppDbContext db)
     : INotificationHandler<DomainEventNotification<AlbumSubmittedEvent>>

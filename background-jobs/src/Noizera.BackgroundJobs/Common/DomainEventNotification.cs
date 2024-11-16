@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.BackgroundJobs.Common;
 
-internal class DomainEventNotification<TDomainEvent>([NotNull] TDomainEvent domainEvent)
+internal sealed class DomainEventNotification<TDomainEvent>([NotNull] TDomainEvent domainEvent)
     : INotification where TDomainEvent : DomainEvent
 {
     public TDomainEvent DomainEvent => domainEvent;

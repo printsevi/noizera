@@ -1,17 +1,15 @@
-﻿using MailKit.Search;
-using Microsoft.EntityFrameworkCore;
-using Noizera.Infrastructure.Common;
+﻿using Microsoft.EntityFrameworkCore;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Repositories;
-using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.ProfileRelations;
 using Noizera.Common.Domain.Profiles;
 using Noizera.Common.Persistence.SQL;
+using Noizera.Infrastructure.Common;
 
 namespace Noizera.Infrastructure.Profiles;
 
-public sealed class ProfileRepository(AppDbContext db, IHashGenerator hashGenerator)
-    : BaseEntityExtendedRepository<PublicProfile>(db, hashGenerator), IProfileRepository
+public sealed class ProfileRepository(AppDbContext db)
+    : BaseEntityExtendedRepository<PublicProfile>(db), IProfileRepository
 {
     public async Task<List<ArtistQueryResult>> GetArtistsByTextAsync(string text, CancellationToken ct)
     {

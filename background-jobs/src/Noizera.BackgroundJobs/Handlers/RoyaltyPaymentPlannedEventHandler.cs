@@ -7,7 +7,7 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
+internal sealed class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
     : INotificationHandler<DomainEventNotification<RoyaltyPaymentPlannedEvent>>
 {
     public async Task Handle(DomainEventNotification<RoyaltyPaymentPlannedEvent> notification, CancellationToken cancellationToken)

@@ -15,7 +15,7 @@ public sealed record GetProfileQuery(string ProfilePublicId)
     {
         public async Task<ProfileQueryResult> Handle([NotNull] GetProfileQuery request, CancellationToken cancellationToken)
         {
-            var result = await profileRepository.GetProfileAsync(request.ProfilePublicId, cancellationToken)
+            var result = await profileRepository.GetProfileAsync(request.ProfilePublicId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException($"Profile not found for {request.ProfilePublicId}", ErrorType.NotFound);
 
             return result;

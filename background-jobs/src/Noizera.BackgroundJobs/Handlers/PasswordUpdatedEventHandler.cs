@@ -5,7 +5,7 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class PasswordUpdatedEventHandler(AppDbContext db)
+internal sealed class PasswordUpdatedEventHandler(AppDbContext db)
     : INotificationHandler<DomainEventNotification<PasswordUpdatedEvent>>
 {
 #pragma warning disable IDE0060 // Remove unused parameter

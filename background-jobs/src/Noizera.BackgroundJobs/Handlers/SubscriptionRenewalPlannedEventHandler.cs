@@ -5,7 +5,7 @@ using Noizera.Common.Infrastructure.Subscriptions;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal class SubscriptionRenewalPlannedEventHandler(SubscriptionStripeService subscriptionService)
+internal sealed class SubscriptionRenewalPlannedEventHandler(SubscriptionStripeService subscriptionService)
     : INotificationHandler<DomainEventNotification<SubscriptionRenewalPlannedEvent>>
 {
 #pragma warning disable IDE0060 // Remove unused parameter

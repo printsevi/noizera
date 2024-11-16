@@ -27,6 +27,6 @@ internal sealed class RateLimitingMiddleware(RequestDelegate next, IMemoryCache 
             cache.Set(ipAddress, requestCount + 1);
         }
 
-        await next(context);
+        await next(context).ConfigureAwait(false);
     }
 }

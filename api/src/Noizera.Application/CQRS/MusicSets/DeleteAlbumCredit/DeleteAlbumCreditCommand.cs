@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Noizera.Common.Contracts.Security;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.MusicSets.DeleteAlbumCredit;
@@ -7,12 +9,14 @@ namespace Noizera.Application.CQRS.MusicSets.DeleteAlbumCredit;
 public sealed record DeleteAlbumCreditCommand(Guid CreditId, Guid UserId) : IAuthorizeableRequest<Unit>
 {
     public sealed class Handler(
-        /*IMusicSetCreditRepository MusicSetCreditRepository*/)
+        AppDbContext db)
         : IRequestHandler<DeleteAlbumCreditCommand, Unit>
     {
-        public Unit Handle([NotNull] DeleteAlbumCreditCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle([NotNull] DeleteAlbumCreditCommand request, CancellationToken cancellationToken)
         {
-            //await MusicSetCreditRepository.DeleteCreditAsync(request.CreditId, cancellationToken).ConfigureAwait(false);
+            _ = await db.AlbumCredits
+                .Where(x => x.Id == request.CreditId)
+                .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
 
             return Unit.Value;
         }

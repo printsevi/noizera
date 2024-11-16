@@ -3,7 +3,7 @@ using Noizera.BackgroundJobs.Common;
 
 namespace Noizera.BackgroundJobs.Jobs;
 
-internal class DelayedOutboxBackgroundJob(
+internal sealed class DelayedOutboxBackgroundJob(
     IServiceScopeFactory factory,
     IOptions<EventSettings> eventSettings)
     : OutboxBackgroundJob<RealTimeOutboxBackgroundJob>(factory, eventSettings)

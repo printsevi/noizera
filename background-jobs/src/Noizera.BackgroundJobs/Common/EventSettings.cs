@@ -1,6 +1,6 @@
 ﻿namespace Noizera.BackgroundJobs.Common;
 
-internal class EventSettings
+internal sealed class EventSettings
 {
     public required bool HandleAllEvents { get; set; }
     public required List<string> EventsToHandle { get; set; }

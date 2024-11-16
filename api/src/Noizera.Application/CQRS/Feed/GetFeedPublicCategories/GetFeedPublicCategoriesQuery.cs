@@ -10,11 +10,13 @@ public sealed record GetFeedPublicCategoriesQuery()
     {
         public async Task<GetFeedPublicCategoriesResponse> Handle(GetFeedPublicCategoriesQuery request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult<GetFeedPublicCategoriesResponse>(
+            var result = await Task.FromResult<GetFeedPublicCategoriesResponse>(
                 new([
                     new("popular", "Popular"),
                     new("new-releases", "New releases")],
-                []));
+                [])).ConfigureAwait(false);
+
+            return result;
         }
     }
 }

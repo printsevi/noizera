@@ -18,7 +18,7 @@ public sealed record AddPlayCommand(
     {
         public async Task<Unit> Handle([NotNull] AddPlayCommand request, CancellationToken cancellationToken)
         {
-            var song = await songRepository.GetAsync(request.SongPublicId, cancellationToken)
+            var song = await songRepository.GetAsync(request.SongPublicId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException("The song is not found", ErrorType.NotFound);
             var history = await listeningHistoryRepository.GetAsync(request.UserId, song.Id).ConfigureAwait(false);
             if (history is not null)
