@@ -19,8 +19,6 @@ internal sealed class VerificationCodeConfiguration : IEntityTypeConfiguration<V
 
         _ = builder.Property(e => e.Verified);
 
-        _ = builder.Property(e => e.CreatedAt);
-
         _ = builder.Property(e => e.ExpireAt);
     }
 }

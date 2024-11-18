@@ -14,7 +14,7 @@ public class SubscriptionService(AppDbContext db)
         if (name != null)
         {
             return await db.Subscriptions
-                .Where(x => EF.Functions.Like(x.SubscriptionType, name))
+                .Where(x => EF.Functions.ILike(x.SubscriptionType, name))
                 .OrderBy(p => p.Id)
                 .GetPagedAsync(page, pageSize);
         }

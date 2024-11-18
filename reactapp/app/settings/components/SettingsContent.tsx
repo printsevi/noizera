@@ -39,7 +39,7 @@ export default function SettingsContent() {
   const { axiosPrivate, isReady } = useAxiosPrivate();
   const { isAuthenticated, auth } = useAuth();
   const { user, setUser } = useUser();
-  const [username, setUsername] = useState(user?.username ?? "");
+  const [username, setUsername] = useState(user?.username.toLowerCase() ?? "");
   const [name, setName] = useState(user?.name ?? "");
   const [settings, setSettings] = useState<SettingsResponse>();
   const [bio, setBio] = useState(settings?.bio ?? "");
@@ -66,7 +66,7 @@ export default function SettingsContent() {
   }, [isReady, isAuthenticated, fetchSettings]);
 
   useEffect(() => {
-    setUsername(user?.username ?? "");
+    setUsername(user?.username.toLowerCase() ?? "");
   }, [user?.username]);
 
   useEffect(() => {
@@ -95,9 +95,9 @@ export default function SettingsContent() {
     const usernameToUpdate = username.toLowerCase();
     const updateResult = await updateUsername(axiosPrivate, auth.userId!, usernameToUpdate);
     if (updateResult.ok) {
-      setUser(prev => ({ ...prev!, username: usernameToUpdate }));
+      setUser(prev => ({ ...prev!, username: usernameToUpdate.toLowerCase() }));
     } else {
-      setUsername(user?.username ?? "");
+      setUsername(user?.username.toLowerCase() ?? "");
     }
     setIsCheckingUsername(false)
   }, [axiosPrivate, auth.userId, username, user?.username, setUser]);
@@ -170,7 +170,7 @@ export default function SettingsContent() {
                       onChange={(e) => {
                         const newValue = e.target.value
                           .slice(0, MAX_USERNAME_LENGTH)
-                          .replace(/[^a-zA-Z0-9._]/g, "");
+                          .replace(/[^a-zA-Z0-9.]/g, "");
                         setUsername(newValue);
                       }}
                       className="w-full !ml-0 px-8"
@@ -190,7 +190,7 @@ export default function SettingsContent() {
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Usernames can only use letters, numbers, underscores and periods.Username must be 2-30 characters, contain only letters, numbers, dots, and underscores, and cannot start or end with a dot or contain sequences of '..' or '__'.
+                    Username must be 2-30 characters, contain only letters, numbers, dots, and cannot start or end with a dot or contain sequences of '..'.
                   </div>
                 </div>
               </div>
@@ -201,10 +201,10 @@ export default function SettingsContent() {
                     <Input
                       value={name}
                       disabled={isUpdating}
-                      onChange={(e) => setName(e.target.value.slice(0, MAX_USERNAME_LENGTH))}
+                      onChange={(e) => setName(e.target.value.slice(0, 50))}
                       onBlur={updateNameHandler}
                       className="w-full"
-                      maxLength={MAX_USERNAME_LENGTH}
+                      maxLength={50}
                     />
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export default function SettingsContent() {
                 <span className="text-foreground">Bio</span>
                 <Textarea
                   disabled={isUpdating}
-                  value={settings?.bio}
+                  value={settings?.bio ?? ""}
                   onChange={(e) => setBio(e.target.value.slice(0, MAX_BIO_LENGTH))}
                   placeholder="Type your bio here"
                   onBlur={updateBioHandler}

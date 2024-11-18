@@ -30,7 +30,7 @@ public sealed record SignInCommand(
                 throw new AppException("Password is incorrect", ErrorType.BadRequest);
             }
 
-            var code = VerificationCode.New(user.Email, verificationCodeGenerator);
+            VerificationCode code = VerificationCode.New(user.Email, verificationCodeGenerator);
 
             await verificationCodeRepository.InsertAsync(code, cancellationToken).ConfigureAwait(false);
 

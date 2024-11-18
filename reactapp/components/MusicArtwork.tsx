@@ -189,7 +189,7 @@ export function MusicArtwork({
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="mt-2 text-sm font-medium"><Link href={`/collections/${publicId}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
-        <p className="text-sm text-muted-foreground">{songCount} songs • <Link href={`/profiles/${ownerPublicId}`} key={`/profiles/${ownerPublicId}`} className="hover:underline">{ownerName}</Link></p>
+        <p className="text-sm text-muted-foreground">{songCount} songs • <Link href={`/profiles/${ownerPublicId.toLowerCase()}`} key={`/profiles/${ownerPublicId.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
       </div>
     </div>
   )

@@ -27,29 +27,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     private const string numberIdSequence = "NumberIdSequence";
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<PublicProfile> Profiles { get; set; }
-    public DbSet<ProfileRelation> ProfileRelations { get; set; }
-    public DbSet<Subscription> Subscriptions { get; set; }
-    public DbSet<ListeningHistory> ListeningHistories { get; set; }
-    public DbSet<StreamInfo> Streams { get; set; }
-    public DbSet<UserSubscription> UserSubscriptions { get; set; }
-    public DbSet<Royalty> Royalties { get; set; }
-    public DbSet<Song> Songs { get; set; }
-    public DbSet<MusicSet> MusicSets { get; set; }
-    public DbSet<SavedMusicSet> SavedMusicSets { get; set; }
-    public DbSet<Album> Albums { get; set; }
-    public DbSet<Playlist> Playlists { get; set; }
-    public DbSet<AlbumCredit> AlbumCredits { get; set; }
-    public DbSet<MusicSetSong> MusicSetSongs { get; set; }
-    public DbSet<SongSimilarity> SongSimilarities { get; set; }
-    public DbSet<SongPreference> SongPreferences { get; set; }
-    public DbSet<VerificationCode> VerificationCodes { get; set; }
-    public DbSet<SecretToken> SecretTokens { get; set; }
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }
-    public DbSet<TermsOfUse> Terms { get; set; }
+    public required DbSet<User> Users { get; set; }
+    public required DbSet<PublicProfile> Profiles { get; set; }
+    public required DbSet<ProfileRelation> ProfileRelations { get; set; }
+    public required DbSet<Subscription> Subscriptions { get; set; }
+    public required DbSet<ListeningHistory> ListeningHistories { get; set; }
+    public required DbSet<StreamInfo> Streams { get; set; }
+    public required DbSet<UserSubscription> UserSubscriptions { get; set; }
+    public required DbSet<Royalty> Royalties { get; set; }
+    public required DbSet<Song> Songs { get; set; }
+    public required DbSet<MusicSet> MusicSets { get; set; }
+    public required DbSet<SavedMusicSet> SavedMusicSets { get; set; }
+    public required DbSet<Album> Albums { get; set; }
+    public required DbSet<Playlist> Playlists { get; set; }
+    public required DbSet<AlbumCredit> AlbumCredits { get; set; }
+    public required DbSet<MusicSetSong> MusicSetSongs { get; set; }
+    public required DbSet<SongSimilarity> SongSimilarities { get; set; }
+    public required DbSet<SongPreference> SongPreferences { get; set; }
+    public required DbSet<VerificationCode> VerificationCodes { get; set; }
+    public required DbSet<SecretToken> SecretTokens { get; set; }
+    public required DbSet<OutboxMessage> OutboxMessages { get; set; }
+    public required DbSet<TermsOfUse> Terms { get; set; }
 
-    public virtual async Task InsertAsync<TEntity>(TEntity entity, CancellationToken ct) 
+    public virtual async Task InsertAsync<TEntity>(TEntity entity, CancellationToken ct)
         where TEntity : BaseEntity
     {
         _ = await AddAsync(entity, ct).ConfigureAwait(false);
@@ -59,10 +59,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public async Task UpdateAsync<TEntity>(TEntity entity, CancellationToken ct)
         where TEntity : BaseEntity
     {
-        if (entity is Entity entityWithDates)
-        {
-            //entityWithDates.SetLastModifiedOnAsNow();
-        }
+        //if (entity is Entity entityWithDates)
+        //{
+        //    //entityWithDates.SetLastModifiedOnAsNow();
+        //}
 
         _ = Update(entity);
         _ = await SaveChangesAsync(ct).ConfigureAwait(false);
@@ -104,4 +104,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         var outboxMessages = domainEvents.Select(OutboxConverter.ConvertToOutboxMessage);
         await OutboxMessages.AddRangeAsync(outboxMessages, ct).ConfigureAwait(false);
     }
+}
+
+public static class AppDbExtensions
+{
+    public static async Task<TEntityExtended?> FirstOrDefaultByPublicIdAsync<TEntityExtended>(this DbSet<TEntityExtended> dbSet, string publicId, CancellationToken ct)
+        where TEntityExtended : EntityExtended
+        => await dbSet.FirstOrDefaultAsync(x => EF.Functions.ILike(x.PublicId, publicId), ct).ConfigureAwait(false);
 }

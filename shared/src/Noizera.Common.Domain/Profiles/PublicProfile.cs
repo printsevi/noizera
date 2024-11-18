@@ -52,7 +52,7 @@ public class PublicProfile : EntityExtended, IDeletable
         UpdatePublicId(username);
     }
 
-    public void UpdateName(string name) => Name = name;
+    public void UpdateName(string name) => Name = string.IsNullOrWhiteSpace(name) ? PublicId : name;
 
     public void UpdateBio(string bio) => Bio = bio;
 

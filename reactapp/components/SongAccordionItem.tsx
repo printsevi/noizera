@@ -84,17 +84,19 @@ export const SongAccordionItem = (props: Props) => {
                 onClick={props.toggleAccordion}
             >
                 <span className='flex flex-row h-auto items-center w-full gap-x-4 justify-between'>
-                    <span className='flex'>
+                    <span className='flex w-full max-w-xs flex-1'>
                         <span className={`transform ${props.isOpen ?
                             'rotate-180' : 'rotate-0'}  
                                         transition-transform duration-300`}>
                             <ChevronDown size={20} />
                         </span>
-                        <span className='truncate'>{user?.name ?? user?.username} - {songTitle ? songTitle : `Track ID`}</span>
+                        <span className='truncate flex'>
+                            <span className='truncate max-w-7'>{user?.name ?? user?.username}</span><span className='truncate'> - {songTitle ? songTitle : `Track ID`}</span>
+                        </span>
                     </span>
 
 
-                    <span className='flex items-center'>
+                    <span className='flex items-center flex-1'>
                         <Grip size={20} />
                         <Button variant='ghost' className="rounded-full" size="icon"
                             onClick={(e) => {
@@ -114,8 +116,9 @@ export const SongAccordionItem = (props: Props) => {
                     <Input
                         value={songTitle}
                         onBlur={(value) => updateTitle(value.target.value)}
-                        onChange={(value) => setSongTitle(value.target.value)}
+                        onChange={(value) => setSongTitle(value.target.value.slice(0, 100))}
                         placeholder='type your song title'
+                        maxLength={100}
                     />
                     <Label>Audio</Label>
                     <AudioUploader

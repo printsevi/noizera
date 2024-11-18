@@ -8,7 +8,7 @@ namespace Noizera.Api.Endpoints.MusicSets;
 internal sealed class DeleteAlbumCreditEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapDelete("/api/music-collections/credits/{creditId}", Handle)
+        => app.MapDelete("/api/music-collections/albums/credits/{creditId}", Handle)
               .RequireAuthorization();
 
     internal static async Task<IResult> Handle(

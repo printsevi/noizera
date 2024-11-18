@@ -22,9 +22,11 @@ import { Slider } from './ui/slider';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
+import useUser from '@/hooks/useUser';
 
 export default function AudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
+  const user = useUser();
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -99,6 +101,25 @@ export default function AudioPlayer() {
       clearTimeout(timeout);
     };
   }, [currentSong?.id]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        play(false);
+      }
+    };
+
+    if (user.user?.activeSubscriptions && user.user.activeSubscriptions.length > 0) {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      return;
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user.user?.activeSubscriptions]);
 
   const handleBufferProgress: React.ReactEventHandler<HTMLAudioElement> = (e) => {
     const audio = e.currentTarget;
@@ -217,7 +238,7 @@ export default function AudioPlayer() {
             max={1}
             step={0.01}
             value={[volume]}
-            onValueChange={(e) => handleVolumeChange(e[0])}
+            onValueChange={(e: any) => handleVolumeChange(e[0])}
             className='max-w-28 hidden sm:inline-flex'
           />}
         </div>

@@ -6,6 +6,6 @@ public sealed class UpdateNameValidator : AbstractValidator<UpdateNameCommand>
 {
     public UpdateNameValidator()
     {
-        _ = RuleFor(x => x.NewName).MaximumLength(30);
+        _ = RuleFor(x => x.NewName).MinimumLength(0).MaximumLength(50);
     }
 }

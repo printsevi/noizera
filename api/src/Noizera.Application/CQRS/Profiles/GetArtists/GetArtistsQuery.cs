@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Profiles.GetArtists;
 
-public sealed record GetArtistsQuery(string Text, Guid UserId) 
+public sealed record GetArtistsQuery(string Text, Guid UserId)
     : IAuthorizeableRequest<List<GetArtistsResponse>>
 {
     public sealed class Handler(
@@ -24,12 +24,13 @@ public sealed record GetArtistsQuery(string Text, Guid UserId)
                 SELECT
                     p."Id" as ArtistId,
                     p."Name" as Name,
-                    p."PublicId" as PublicId
+                    p."PublicId" as PublicId,
                     SIMILARITY(p."Name", {request.Text}) AS Score
                 FROM public."Profiles" p
                 WHERE
                     p."ProfileType" = 'Artist'
-                    AND SIMILARITY(p."Name", {request.Text}) > 0.2
+                    AND p."UserId" != {request.UserId}
+                    AND SIMILARITY(p."Name", {request.Text}) > 0.1
                 ORDER BY Name, Score DESC
                 LIMIT 10;
                 """;

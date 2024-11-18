@@ -13,7 +13,7 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
 {
     public async Task<User?> GetByEmailOrUsernameAsync(string emailOrUsername, CancellationToken ct) => await Db.Users
         .Include(u => u.Profile)
-        .FirstOrDefaultAsync(u => u.Email == emailOrUsername || u.Profile!.PublicId == emailOrUsername, ct).ConfigureAwait(false);
+        .FirstOrDefaultAsync(u => EF.Functions.ILike(u.Email, emailOrUsername) || EF.Functions.ILike(u.Profile!.PublicId, emailOrUsername), ct).ConfigureAwait(false);
 
     public async Task<User?> GetAsync(Guid userId, CancellationToken ct) => await Db.Users
         .Include(u => u.Profile)
@@ -44,7 +44,7 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
 
     public async Task<MyUserQueryResult?> GetMyUserAsync(Guid userId, CancellationToken ct) => await Db.Users
         .Where(u => u.Id == userId)
-        .Select(u => new MyUserQueryResult(u.Profile!.ProfileType.ToString(), u.Profile!.PublicId, u.Profile!.Name, u.ActiveSubscriptionTypes, u.Songs.Count))
+        .Select(u => new MyUserQueryResult(u.Profile!.ProfileType.ToString(), u.Profile!.PublicId, u.Profile!.Name, u.ActiveSubscriptionTypes, u.Songs.Count, true))
         .FirstOrDefaultAsync(ct)
         .ConfigureAwait(false);
 }

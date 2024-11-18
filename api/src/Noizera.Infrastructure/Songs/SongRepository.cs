@@ -13,7 +13,7 @@ public sealed class SongRepository(AppDbContext db)
             .FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
 
     public async Task<Song?> GetAsync(string publicId, CancellationToken ct) => await Db.Songs
-            .FirstOrDefaultAsync(x => x.PublicId == publicId, ct).ConfigureAwait(false);
+            .FirstOrDefaultByPublicIdAsync(publicId, ct).ConfigureAwait(false);
 
     public async Task DeleteAsync(Guid songId, CancellationToken ct)
     {

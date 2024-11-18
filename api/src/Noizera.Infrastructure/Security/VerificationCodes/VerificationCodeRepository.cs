@@ -11,6 +11,6 @@ public sealed class VerificationCodeRepository(AppDbContext db) : BaseEntityRepo
     public async Task<VerificationCode?> GetLatestAsync(string key, CancellationToken ct)
         => await Db.VerificationCodes
         .Where(x => EF.Functions.ILike(x.Key, key))
-        .OrderByDescending(r => r.CreatedAt)
+        .OrderByDescending(r => r.Id)
         .FirstOrDefaultAsync(ct).ConfigureAwait(false);
 }

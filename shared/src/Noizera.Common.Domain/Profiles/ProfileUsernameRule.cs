@@ -9,7 +9,7 @@ public sealed record ProfileUsernameRule(string Username) : ISyncDomainRule
 
     public bool Verify()
     {
-        Regex regex = new(@"^(?!\.)(?!.*\.$)(?!.*__)(?!.*\.\.)[a-zA-Z0-9._]{2,30}$");
+        Regex regex = new(@"^(?!\.)(?!.*\.$)(?!.*\.\.)[a-zA-Z0-9.]{2,30}$");
 
         return Username.Equals(Username, StringComparison.OrdinalIgnoreCase) && regex.IsMatch(Username);
     }

@@ -1,5 +1,6 @@
 import { DecodedToken, Price, UserDetails } from '@/types';
 import { jwtDecode } from "jwt-decode";
+import { sendGAEvent } from '@next/third-parties/google';
 
 export const getURL = () => {
   let url =
@@ -12,7 +13,7 @@ export const getURL = () => {
   return url;
 };
 
-export const USERNAME_REGEX = /^(?!\.)(?!.*\.$)(?!.*__)(?!.*\.\.)[a-zA-Z0-9._]{2,30}$/;
+export const USERNAME_REGEX = /^(?!\.)(?!.*\.$)(?!.*\.\.)[a-zA-Z0-9.]{2,30}$/;
 export const MAX_USERNAME_LENGTH = 30
 
 export function formatDurationDisplay(duration: number) {
@@ -107,7 +108,5 @@ export default function getCroppedImg(
     image.onerror = (error) => reject(error);
   });
 }
-
-
 
 

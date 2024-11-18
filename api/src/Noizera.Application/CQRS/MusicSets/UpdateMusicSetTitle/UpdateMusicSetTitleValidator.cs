@@ -6,7 +6,7 @@ public sealed class UpdateMusicSetTitleValidator : AbstractValidator<UpdateMusic
 {
     public UpdateMusicSetTitleValidator()
     {
-        _ = RuleFor(x => x.NewTitle).MaximumLength(500);
+        _ = RuleFor(x => x.NewTitle).MinimumLength(0).MaximumLength(500);
         _ = RuleFor(x => x.MusicSetId).NotEmpty();
     }
 }

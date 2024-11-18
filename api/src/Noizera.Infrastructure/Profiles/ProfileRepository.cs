@@ -17,12 +17,12 @@ public sealed class ProfileRepository(AppDbContext db)
             SELECT
                 p."Id" as ArtistId,
                 p."Name" as Name,
-                p."PublicId" as PublicId
+                p."PublicId" as PublicId,
                 SIMILARITY(p."Name", {text}) AS Score
             FROM public."Profiles" p
             WHERE
                 p."ProfileType" = 'Artist'
-                AND SIMILARITY(p."Name", {text}) > 0.2
+                AND SIMILARITY(p."Name", {text}) > 0.1
             ORDER BY Name, Score DESC
             LIMIT 10;
             """;
@@ -132,7 +132,7 @@ public sealed class ProfileRepository(AppDbContext db)
             FROM 
                 public."Profiles" p
             WHERE 
-                p."PublicId" = {profilePublicId} 
+                p."PublicId" = UPPER({profilePublicId})
                 AND p."IsDeleted" = false
             LIMIT 1;
             """;
@@ -181,7 +181,7 @@ public sealed class ProfileRepository(AppDbContext db)
                 public."Profiles" p2 
                     ON p2."Id" = pr."FollowingProfileId"
             WHERE
-                p2."PublicId" = {profilePublicId}
+                p2."PublicId" = UPPER({profilePublicId})
                 AND p2."IsDeleted" = false;
             """;
 

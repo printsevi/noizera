@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
     <PackageReference Include="SerilogTracing.Expressions" Version="2.2.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     <PackageReference Include="Testcontainers" Version="4.0.0" />
@@ -30,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\shared\src\Noizera.Common.Contracts\Noizera.Common.Contracts.csproj" />
     <ProjectReference Include="..\..\src\Noizera.Api\Noizera.Api.csproj" />
     <ProjectReference Include="..\..\src\Noizera.Infrastructure\Noizera.Infrastructure.csproj" />
   </ItemGroup>

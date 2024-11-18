@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { MAX_USERNAME_LENGTH, USERNAME_REGEX } from '@/libs/helpers';
+import { sendGAEvent } from '@next/third-parties/google';
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -76,6 +77,12 @@ const RegistrationModal = () => {
       setIsLoading(false);
       return;
     }
+
+    sendGAEvent('button_click', {
+      event_category: 'User Actions',
+      event_label: 'Create Account Button Clicked',
+      user_id: 'anonymous',
+    });
 
     setIsLoading(false);
     onClose();

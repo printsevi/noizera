@@ -11,9 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
     <PackageReference Include="SerilogTracing" Version="2.2.0" />
     <PackageReference Include="SerilogTracing.Expressions" Version="2.2.0" />
     <PackageReference Include="SerilogTracing.Instrumentation.AspNetCore" Version="2.2.0" />
@@ -22,8 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\src\Noizera.Common.Contracts\Noizera.Common.Contracts.csproj" />
     <ProjectReference Include="..\..\..\shared\src\Noizera.Common.Persistence\Noizera.Common.Persistence.csproj" />
-    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Contracts\Noizera.Common.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\shared\src\Noizera.Shared.Persistence\Noizera.Common.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

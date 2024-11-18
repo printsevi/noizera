@@ -14,6 +14,7 @@ export interface GetOrCreateAlbumDraftResponse {
   profileName: string;
   profileType: ProfileType;
   songs: GetOrCreateAlbumDraftSongResponse[];
+  credits: GetOrCreateAlbumDraftCreditResponse[];
 }
 
 export interface GetOrCreateAlbumDraftSongResponse {
@@ -24,7 +25,6 @@ export interface GetOrCreateAlbumDraftSongResponse {
   contentLength?: number;
   contentType?: string;
   sequence: number;
-  credits: GetOrCreateAlbumDraftCreditResponse[];
 }
 
 export interface GetOrCreateAlbumDraftCreditResponse {

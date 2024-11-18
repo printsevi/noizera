@@ -43,7 +43,7 @@ export default function ProfileContent(props: Props) {
           <AvatarFallback>{data.data!.name!.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="text-center md:text-left flex-grow">
-          <h1 className="text-3xl font-bold mb-2">{data.data?.name}</h1>
+          <h1 className="text-2xl font-bold mb-2 truncate max-w-xs">{data.data?.name}</h1>
           <p className="text-xl text-muted-foreground mb-4">@{props.profilePublicId}</p>
           {data.data?.bio && <p className="mb-4 max-w-md">{data.data?.bio}</p>}
           {/* <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">

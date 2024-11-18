@@ -21,8 +21,8 @@ internal sealed class AddAlbumCreditEndpoint : IEndpoint
     {
         AddAlbumCreditCommand command = new(albumId, request.CreditProfileId, request.UserId);
 
-        _ = await sender.Send(command, ct).ConfigureAwait(false);
+        var result = await sender.Send(command, ct).ConfigureAwait(false);
 
-        return Results.Ok();
+        return Results.Ok(result);
     }
 }

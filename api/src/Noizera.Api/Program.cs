@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Noizera.Api;
 using Noizera.Api.Middlewares;
 using Noizera.Application;
-using Noizera.Infrastructure;
 using Noizera.Common.Persistence.SQL;
+using Noizera.Infrastructure;
 using System.Reflection;
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -11,14 +11,14 @@ var builder = WebApplication.CreateSlimBuilder(args);
 builder.Services
     .AddAuthorization()
     .AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN")
-    .AddEndpoints(Assembly.GetExecutingAssembly())
+    .AddEndpoints(Assembly.Load("Noizera.Api"))
     .AddApplication(builder.Configuration)
     .AddInfrastructure(builder)
     .AddMemoryCache();
 
 string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-var frontendUrls = builder.Configuration.GetSection("FrontendUrls").Get<string[]>();
+string[]? frontendUrls = builder.Configuration.GetSection("FrontendUrls").Get<string[]>();
 builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigins, policy => policy.WithOrigins(frontendUrls!)
         .AllowAnyHeader()
         .AllowAnyMethod()

@@ -14,7 +14,7 @@ public sealed class MusicSetRepository(AppDbContext db)
         => await Db.MusicSets.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
 
     public async Task<MusicSet?> GetAsync(string publicId, CancellationToken ct)
-        => await Db.MusicSets.FirstOrDefaultAsync(x => x.PublicId == publicId, ct).ConfigureAwait(false);
+        => await Db.MusicSets.FirstOrDefaultByPublicIdAsync(publicId, ct).ConfigureAwait(false);
 
     public async Task<MusicSet?> GetWithSongsAsync(Guid MusicSetId, CancellationToken ct) => await Db.MusicSets
             .Include(x => x.MusicSetSongs)
@@ -31,7 +31,7 @@ public sealed class MusicSetRepository(AppDbContext db)
             FROM 
                 public."MusicSets" mc
             WHERE 
-                mc."PublicId" = {collectionPublicId}
+                mc."PublicId" = UPPER({collectionPublicId})
                     AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                         OR mc."CollectionType" = 'collection_playlist')
                     AND mc."IsDeleted" = false
@@ -88,7 +88,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                     SELECT mc."Id"
                     FROM public."MusicSets" mc
                     WHERE 
-                        mc."PublicId" = {collectionPublicId}
+                        mc."PublicId" = UPPER({collectionPublicId})
                             AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                                 OR mc."CollectionType" = 'collection_playlist')
                             AND mc."IsDeleted" = false
@@ -121,7 +121,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                     SELECT mc."Id"
                     FROM public."MusicSets" mc
                     WHERE 
-                        mc."PublicId" = {collectionPublicId}
+                        mc."PublicId" = UPPER({collectionPublicId})
                         AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                             OR mc."CollectionType" = 'collection_playlist')
                         AND mc."IsDeleted" = false
@@ -155,7 +155,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                     SELECT mc."Id"
                     FROM public."MusicSets" mc
                     WHERE 
-                        mc."PublicId" = {collectionPublicId}
+                        mc."PublicId" = UPPER({collectionPublicId})
                         AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                             OR mc."CollectionType" = 'collection_playlist')
                         AND mc."IsDeleted" = false
@@ -269,7 +269,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                  WHERE 
                     (mc1."CollectionType" = 'collection_album' AND mc1."AlbumStatus" = 'Released')
                     AND mc1."IsDeleted" = false
-                 ORDER BY mc1."CreatedAt" DESC
+                 ORDER BY mc1."Id" DESC
                  LIMIT 50) mc
             LEFT JOIN 
                 public."SavedMusicSets" smc
@@ -311,7 +311,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                  WHERE 
                     (mc1."CollectionType" = 'collection_album' AND mc1."AlbumStatus" = 'Released')
                     AND mc1."IsDeleted" = false
-                 ORDER BY mc1."CreatedAt" DESC
+                 ORDER BY mc1."Id" DESC
                  LIMIT 50) mc
             LEFT JOIN 
                 public."Users" u

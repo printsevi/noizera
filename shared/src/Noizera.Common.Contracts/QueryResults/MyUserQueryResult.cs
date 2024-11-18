@@ -5,4 +5,5 @@ public record MyUserQueryResult(
     string Username,
     string Name,
     IEnumerable<string> ActiveSubscriptions,
-    int SongCount);
+    int SongCount,
+    bool AllowedToListen);

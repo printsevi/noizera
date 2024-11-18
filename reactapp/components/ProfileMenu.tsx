@@ -66,6 +66,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import useUser from "@/hooks/useUser";
 import { ProfileType } from "@/api/common";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { getURL } from "@/libs/helpers";
 
 export function ProfileMenu() {
   const router = useRouter();
@@ -91,14 +92,14 @@ export function ProfileMenu() {
       <DropdownMenuTrigger asChild>
         <Button size="icon" variant="ghost" className="relativen rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={user?.username ?? ""} alt={user?.username} />
+            <AvatarImage src={`${getURL()}api/profiles/${user?.username}/image`} alt={user?.username} />
             <AvatarFallback>{user?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 hover:cursor-pointer">
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push(`/profiles/${user?.username}`)}>
+          <DropdownMenuItem onClick={() => router.push(`/profiles/${user?.username.toLowerCase()}`)}>
             <User className="mr-2 h-4 w-4" />
             <span>Your profile</span>
           </DropdownMenuItem>

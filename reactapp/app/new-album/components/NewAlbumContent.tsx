@@ -62,6 +62,7 @@ import { format } from "date-fns";
 import updateAlbumReleaseDate from '@/api/musicCollections/updateAlbumReleaseDate';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface SongItem {
   key: string;
@@ -125,7 +126,7 @@ const NewAlbumContent = () => {
       }
       const firstSong = data.data?.songs[0];
       if (firstSong) {
-        setFeaturedArtists(firstSong.credits);
+        setFeaturedArtists(data.data!.credits);
       }
     }
   }, [data]);
@@ -219,30 +220,30 @@ const NewAlbumContent = () => {
     setArtistInput(e.target.value)
   }
 
-  const addArtist = (artist: Artist) => {
-    setAlbum({ ...album, featuredArtists: [...album.featuredArtists, artist] })
+  const addArtist = (artist: GetArtistResponse) => {
+    //setAlbum({ ...album, featuredArtists: [...album.featuredArtists, artist] })
     setArtistInput('')
     setSearchResults([])
   }
 
   const addNewArtist = () => {
-    if (artistInput.trim() && !featuredArtists.some(artist => artist.profileName.toLowerCase() === artistInput.trim().toLowerCase())) {
-      const newArtist: Artist = {
-        id: Date.now().toString(),
-        name: artistInput.trim(),
-        image: '/placeholder.svg?height=40&width=40',
-        profileUrl: `/artist/${encodeURIComponent(artistInput.trim().toLowerCase().replace(/\s+/g, '-'))}`,
-        isNew: true
-      }
-      addArtist(newArtist)
-    }
+    // if (artistInput.trim() && !featuredArtists.some(artist => artist.profileName.toLowerCase() === artistInput.trim().toLowerCase())) {
+    //   const newArtist: Artist = {
+    //     id: Date.now().toString(),
+    //     name: artistInput.trim(),
+    //     image: '/placeholder.svg?height=40&width=40',
+    //     profileUrl: `/artist/${encodeURIComponent(artistInput.trim().toLowerCase().replace(/\s+/g, '-'))}`,
+    //     isNew: true
+    //   }
+    //   addArtist(newArtist)
+    // }
   }
 
   const removeArtist = (artistId: string) => {
-    setAlbum({
-      ...album,
-      featuredArtists: featuredArtists.filter(artist => artist.id !== artistId)
-    })
+    // setAlbum({
+    //   ...album,
+    //   featuredArtists: featuredArtists.filter(artist => artist.id !== artistId)
+    // })
   }
 
   const onFetchArtists = useCallback(async (query: string) => {
@@ -314,6 +315,7 @@ const NewAlbumContent = () => {
       const response = await updateMusicCollectionTitle(axiosPrivate, auth.userId!, data?.data?.albumId!, value);
       if (response.ok) {
         setAlbumTitleDb(value);
+        toast({ title: 'Title saved' });
       } else {
         setAlbumTitle(albumTitleDb);
       }
@@ -367,7 +369,7 @@ const NewAlbumContent = () => {
     }
   }
 
-  if (!isReady) {
+  if (!isReady || !user) {
     return <></>;
   }
 
@@ -439,7 +441,7 @@ const NewAlbumContent = () => {
               </div>
               <Label>Cover image</Label>
               <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
-              <Label>{user.profileType === ProfileType.Artist ? "Featured Artists" : "Main Artists"}</Label>
+              <Label>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
               <div className="space-y-2">
                 <div className="relative">
                   <Input
@@ -466,13 +468,10 @@ const NewAlbumContent = () => {
                           className="p-2 hover:bg-accent cursor-pointer flex items-center"
                           onClick={() => addArtist(artist)}
                         >
-                          <Image
-                            src={`${getURL()}api/profiles/${artist.publicId!}/image`}
-                            alt={artist.name}
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-2"
-                          />
+                          <Avatar className="h-7 w-7 mr-2">
+                            <AvatarImage src={`${getURL()}api/profiles/${artist.publicId}/image`} alt={artist.name} />
+                            <AvatarFallback>{artist.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
                           {artist.name}
                         </div>
                       ))}

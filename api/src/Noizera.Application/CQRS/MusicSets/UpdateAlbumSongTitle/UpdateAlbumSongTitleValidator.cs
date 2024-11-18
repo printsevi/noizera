@@ -6,7 +6,7 @@ public sealed class UpdateAlbumSongTitleValidator : AbstractValidator<UpdateAlbu
 {
     public UpdateAlbumSongTitleValidator()
     {
-        _ = RuleFor(x => x.NewTitle).NotEmpty();
+        _ = RuleFor(x => x.NewTitle).MinimumLength(0).MaximumLength(500);
         _ = RuleFor(x => x.AlbumId).NotEmpty();
         _ = RuleFor(x => x.SongId).NotEmpty();
     }

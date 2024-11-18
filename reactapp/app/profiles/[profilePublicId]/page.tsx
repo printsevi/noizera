@@ -1,10 +1,11 @@
 import ProfileContent from './components/ProfileContent';
 
 const Profile = async ({ params }: { params: { profilePublicId: string } }) => {
+  const { profilePublicId } = await params;
   return (
     <div className='my-0 mx-auto max-w-full h-full'>
-                  <ProfileContent profilePublicId={params.profilePublicId} />
-                </div>
+      <ProfileContent profilePublicId={profilePublicId} />
+    </div>
   );
 };
 
