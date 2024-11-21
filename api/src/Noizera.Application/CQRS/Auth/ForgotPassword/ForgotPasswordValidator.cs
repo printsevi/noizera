@@ -6,6 +6,9 @@ public sealed class ForgotPasswordValidator : AbstractValidator<ForgotPasswordCo
 {
     public ForgotPasswordValidator()
     {
-        _ = RuleFor(x => x.EmailOrUsername).NotEmpty();
+        _ = RuleFor(x => x.EmailOrUsername)
+            .NotEmpty()
+            .Matches(@"^[a-zA-Z0-9\s\p{P}\p{S}]*$")
+            .WithMessage("The input must contain only Latin letters, numbers, and valid symbols.");
     }
 }

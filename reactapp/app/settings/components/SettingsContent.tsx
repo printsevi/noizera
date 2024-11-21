@@ -31,7 +31,11 @@ import { Label } from "@/components/ui/label"
 import updateName from "@/api/users/updateName"
 import updateBio from "@/api/users/updateBio"
 import { useSearchParams } from "next/navigation"
-import { MAX_USERNAME_LENGTH, USERNAME_REGEX } from "@/libs/helpers"
+import { getURL, MAX_USERNAME_LENGTH, USERNAME_REGEX } from "@/libs/helpers"
+import ImageUploader from "@/components/ImageUploader"
+import getAntiforgeryToken from "@/api/auth/getAntiforgeryToken"
+import uploadProfileImage from "@/api/users/uploadProfileImage"
+import deleteProfileImage from "@/api/users/deleteProfileImage"
 
 const MAX_BIO_LENGTH = 150
 
@@ -49,6 +53,7 @@ export default function SettingsContent() {
   const [isUpdating, setIsUpdating] = useState(false)
   const [autoplay, setAutoplay] = useState(true)
   const [profileType, setProfileType] = useState(user?.profileType ?? "")
+  const [coverImageSrc, setCoverImageSrc] = useState("");
 
   const fetchSettings = useCallback(async () => {
     if (isReady && isAuthenticated && auth.userId) {
@@ -58,6 +63,12 @@ export default function SettingsContent() {
       }
     }
   }, [isReady, isAuthenticated, axiosPrivate, auth.userId]);
+
+  useEffect(() => {
+    if (settings?.imageOriginalName && user?.profilePublicId) {
+      setCoverImageSrc(`${getURL()}api/profiles/${user?.profilePublicId}/image?${Date.now()}`);
+    }
+  }, [user?.profilePublicId, settings?.imageOriginalName]);
 
   useEffect(() => {
     if (isReady && isAuthenticated) {
@@ -145,10 +156,32 @@ export default function SettingsContent() {
     return () => clearTimeout(timer)
   }, [username, user?.username, checkUsernameAvailability])
 
+  const onUploadProfileImage = async (file: File, fileName: string) => {
+    const tokenResponse = await getAntiforgeryToken(axiosPrivate);
+    if (!tokenResponse.ok) {
+      return false;
+    }
+
+    const response = await uploadProfileImage(axiosPrivate, auth.userId!, file, fileName, tokenResponse.data!);
+    if (!response.ok) {
+      return false;
+    }
+
+    setCoverImageSrc(`${getURL()}api/profiles/${user?.profilePublicId}/image?${Date.now()}`);
+
+    return true;
+  };
+
+  const onDeleteProfileImage = async () => {
+    const response = await deleteProfileImage(axiosPrivate, auth.userId!);
+    if (response.ok) {
+      setCoverImageSrc("");
+    }
+  };
+
   if (!isAuthenticated || !isReady || !user) {
     return (<></>);
   }
-
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-8">
@@ -195,6 +228,10 @@ export default function SettingsContent() {
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
+                <Label>Profile image</Label>
+                <ImageUploader onUpload={onUploadProfileImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteProfileImage} cropShape="round" />
+              </div>
+              <div className="flex flex-col space-y-2">
                 <Label>Name</Label>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 relative">
@@ -213,7 +250,7 @@ export default function SettingsContent() {
                 <Label>Profile Type</Label>
                 <Select
                   value={user?.profileType ?? ""}
-                  onValueChange={v => updateProfileTypeHandler(v)}
+                  onValueChange={(v: string) => updateProfileTypeHandler(v)}
                   disabled={isUpdating || user.songCount > 0}
                 >
                   <SelectTrigger className="w-full">

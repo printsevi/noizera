@@ -50,7 +50,7 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import useUser from '@/hooks/useUser';
-import { CalendarIcon, ExternalLink, Plus, X } from 'lucide-react';
+import { CalendarIcon, ExternalLink, Plus, UserPlus, X } from 'lucide-react';
 import deleteAudioFile from '@/api/songs/deleteAudioFile';
 import deleteAlbumCoverImage from '@/api/musicCollections/deleteAlbumCoverImage';
 import AuthRequired from '@/components/AuthRequired';
@@ -63,6 +63,7 @@ import updateAlbumReleaseDate from '@/api/musicCollections/updateAlbumReleaseDat
 import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import addNewAlbumCredit from '@/api/musicCollections/addNewAlbumCredit';
 
 interface SongItem {
   key: string;
@@ -216,34 +217,38 @@ const NewAlbumContent = () => {
     }
   };
 
-  const handleArtistInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setArtistInput(e.target.value)
-  }
-
-  const addArtist = (artist: GetArtistResponse) => {
-    //setAlbum({ ...album, featuredArtists: [...album.featuredArtists, artist] })
+  const addArtist = async (artist: GetArtistResponse) => {
+    const response = await addAlbumCredit(axiosPrivate, auth.userId!, data?.data?.albumId!, artist.artistId!);
+    if (response.ok) {
+      setFeaturedArtists(prevItems => [...prevItems, {
+        id: response.data?.value!,
+        profileName: artist.name,
+        profileId: artist.artistId,
+        profilePublicId: artist.publicId,
+        profileUsername: artist.username
+      }]);
+    }
     setArtistInput('')
     setSearchResults([])
   }
 
-  const addNewArtist = () => {
-    // if (artistInput.trim() && !featuredArtists.some(artist => artist.profileName.toLowerCase() === artistInput.trim().toLowerCase())) {
-    //   const newArtist: Artist = {
-    //     id: Date.now().toString(),
-    //     name: artistInput.trim(),
-    //     image: '/placeholder.svg?height=40&width=40',
-    //     profileUrl: `/artist/${encodeURIComponent(artistInput.trim().toLowerCase().replace(/\s+/g, '-'))}`,
-    //     isNew: true
-    //   }
-    //   addArtist(newArtist)
-    // }
+  const addNewArtist = async () => {
+    const response = await addNewAlbumCredit(axiosPrivate, auth.userId!, data?.data?.albumId!, artistInput);
+    if (response.ok) {
+      setFeaturedArtists(prevItems => [...prevItems, {
+        id: response.data?.value!,
+        profileName: artistInput
+      }]);
+    }
+    setArtistInput('')
+    setSearchResults([])
   }
 
-  const removeArtist = (artistId: string) => {
-    // setAlbum({
-    //   ...album,
-    //   featuredArtists: featuredArtists.filter(artist => artist.id !== artistId)
-    // })
+  const removeArtist = async (id: string) => {
+    const response = await deleteAlbumCredit(axiosPrivate, id, auth.userId!);
+    if (response.ok) {
+      setFeaturedArtists(prevItems => prevItems.filter(x => x.id !== id));
+    }
   }
 
   const onFetchArtists = useCallback(async (query: string) => {
@@ -255,7 +260,7 @@ const NewAlbumContent = () => {
     if (data.ok) {
       setSearchResults(data.data!.filter(artist => !featuredArtists.some(featuredArtist => featuredArtist.profileId === artist.artistId)));
     }
-  }, [])
+  }, [featuredArtists])
 
   useEffect(() => {
     if (!artistInput.length) {
@@ -320,19 +325,6 @@ const NewAlbumContent = () => {
         setAlbumTitle(albumTitleDb);
       }
     }
-  };
-
-  const onAddAlbumCredit = async (item: ComboboxItemProps) => {
-    const response = await addAlbumCredit(axiosPrivate, auth.userId!, data?.data?.albumId!, item.key!);
-    return response.data?.value;
-  };
-
-  const onDeleteAlbumCredit = async (creditId?: string) => {
-    if (!creditId) {
-      return false;
-    }
-    const response = await deleteAlbumCredit(axiosPrivate, creditId, auth.userId!);
-    return response.ok;
   };
 
   const sensors = useSensors(
@@ -411,7 +403,9 @@ const NewAlbumContent = () => {
               <Input
                 value={albumTitle}
                 onBlur={(e) => updateAlbumTitle(e.target.value)}
-                onChange={(e) => setAlbumTitle(e.target.value)}
+                onChange={(e) => setAlbumTitle(e.target.value.slice(0, 100))}
+                placeholder='Type your album title'
+                maxLength={100}
               />
               <Label>Release date</Label>
               <div className="flex flex-col items-start space-y-4">
@@ -443,11 +437,51 @@ const NewAlbumContent = () => {
               <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
               <Label>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
               <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {featuredArtists.map(artist => (
+                    <div
+                      key={artist.id}
+                      className="border px-1 py-1 rounded-full text-sm flex items-center justify-between w-full"
+                    >
+                      {artist.profileId && (
+                        <Avatar className="h-7 w-7 mr-2">
+                          <AvatarImage src={`${getURL()}api/profiles/${artist.profilePublicId}/image`} alt={artist.profileName} />
+                          <AvatarFallback>{artist.profileName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                      )}
+                      {artist.profilePublicId && (
+                        <Link
+                          className="hover:underline"
+                          href={`/profiles/${artist.profileUsername.toLowerCase()}`}
+                          key={`/profiles/${artist.profileUsername.toLowerCase()}`}
+                          title={`View ${artist.profileName}'s profile`}
+                        >
+                          {artist.profileName}
+                        </Link>
+                      )}
+                      {!artist.profilePublicId && (
+                        <UserPlus className="h-4 w-4" />
+                      )}
+                      {!artist.profilePublicId && (
+                        <span className='truncate'>{artist.profileName}</span>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className='rounded-full'
+                        onClick={() => removeArtist(artist.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
                 <div className="relative">
                   <Input
                     placeholder="Search or add new artist"
                     value={artistInput}
-                    onChange={handleArtistInputChange}
+                    onChange={(e) => setArtistInput(e.target.value.slice(0, 50))}
+                    maxLength={50}
                   />
                   {(searchResults.length > 0 || artistInput.trim()) && (
                     <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md">
@@ -477,46 +511,6 @@ const NewAlbumContent = () => {
                       ))}
                     </div>
                   )}
-                </div>
-                <div className="grid grid-cols-2 gap-2 mt-2 sm:grid-cols-3 md:grid-cols-4">
-                  {featuredArtists.map(artist => (
-                    <div
-                      key={artist.id}
-                      className="px-3 py-2 rounded-full text-sm flex items-center justify-between w-full"
-                    >
-                      <div className="flex items-center overflow-hidden">
-                        {artist.profileId && (
-                          <Image
-                            src={`${getURL()}api/profiles/${artist.profilePublicId!}/image`}
-                            alt={artist.profileName}
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-2 flex-shrink-0"
-                          />
-                        )}
-                        <span className="truncate">{artist.profileName}</span>
-                      </div>
-                      <div className="flex items-center ml-2 flex-shrink-0">
-                        {artist.profileId && (
-                          <Link
-                            href={`/profiles/${artist.profilePublicId}`}
-                            className="text-current hover:text-primary-foreground/80 transition-colors mr-2"
-                            title={`View ${artist.profileName}'s profile`}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Link>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0 hover:bg-primary-foreground/20"
-                          onClick={() => removeArtist(artist.id)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </CardContent>

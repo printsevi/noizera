@@ -84,30 +84,26 @@ export const SongAccordionItem = (props: Props) => {
                 onClick={props.toggleAccordion}
             >
                 <span className='flex flex-row h-auto items-center w-full gap-x-4 justify-between'>
-                    <span className='flex w-full max-w-xs flex-1'>
+                    <span className='flex w-full flex-1 items-center'>
                         <span className={`transform ${props.isOpen ?
                             'rotate-180' : 'rotate-0'}  
                                         transition-transform duration-300`}>
                             <ChevronDown size={20} />
                         </span>
                         <span className='truncate flex'>
-                            <span className='truncate max-w-7'>{user?.name ?? user?.username}</span><span className='truncate'> - {songTitle ? songTitle : `Track ID`}</span>
+                            <span className='truncate flex-1 basis-2/5'>{user?.name ?? user?.username}</span><span className='truncate flex-auto'> - {songTitle ? songTitle : `Track ID`}</span>
+                        </span>
+                        <span className='flex items-center justify-end'>
+                            <Grip size={20} />
+                            <Button variant='ghost' className="rounded-full items-center" size="icon"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    props.onSongDelete();
+                                }} >
+                                <Trash2 size={20} />
+                            </Button>
                         </span>
                     </span>
-
-
-                    <span className='flex items-center flex-1'>
-                        <Grip size={20} />
-                        <Button variant='ghost' className="rounded-full" size="icon"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                props.onSongDelete();
-                            }} >
-                            <Trash2 size={20} />
-                        </Button>
-                    </span>
-
-
                 </span>
             </div>
             {props.isOpen && (

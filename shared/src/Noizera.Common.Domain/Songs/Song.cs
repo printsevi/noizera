@@ -38,7 +38,7 @@ public sealed class Song : EntityExtended
     public ICollection<ListeningHistory> ListeningHistories { get; } = [];
     public ICollection<StreamInfo> Streams { get; } = [];
 
-    public override string PublicIdPrefix => "t_";
+    public override string PublicIdPrefix => "t-";
 
     public bool HasAudioAttached => FlacContentLength > 0 && MpegContentLength > 0;
 
@@ -101,6 +101,11 @@ public sealed class Song : EntityExtended
         EnsureRule(new DraftAlbumRule(album));
 
         Title = newTitle;
+    }
+
+    public void Release()
+    {
+        IsPublic = true;
     }
 
     public void ValidateOwner(Guid userId) => EnsureRule(new OwnerSongRule(this, userId));

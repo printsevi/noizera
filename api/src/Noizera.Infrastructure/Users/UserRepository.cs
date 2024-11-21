@@ -13,7 +13,7 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
 {
     public async Task<User?> GetByEmailOrUsernameAsync(string emailOrUsername, CancellationToken ct) => await Db.Users
         .Include(u => u.Profile)
-        .FirstOrDefaultAsync(u => EF.Functions.ILike(u.Email, emailOrUsername) || EF.Functions.ILike(u.Profile!.PublicId, emailOrUsername), ct).ConfigureAwait(false);
+        .FirstOrDefaultAsync(u => EF.Functions.ILike(u.Email, emailOrUsername) || EF.Functions.ILike(u.Profile!.Username, emailOrUsername), ct).ConfigureAwait(false);
 
     public async Task<User?> GetAsync(Guid userId, CancellationToken ct) => await Db.Users
         .Include(u => u.Profile)

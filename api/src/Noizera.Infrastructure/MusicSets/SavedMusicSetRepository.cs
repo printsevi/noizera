@@ -16,7 +16,7 @@ public sealed class SavedMusicSetRepository(AppDbContext db) : BaseEntityReposit
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
-                p."PublicId" as OwnerPublicId,
+                p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
                 COUNT(mcs."Id") AS SongCount,
                 TRUE as IsSaved
@@ -40,7 +40,7 @@ public sealed class SavedMusicSetRepository(AppDbContext db) : BaseEntityReposit
                 AND mc."IsDeleted" = false
                 AND u."Id" = {userId}
             GROUP BY 
-                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId"
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username"
             Limit 300
             """;
 

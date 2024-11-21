@@ -6,7 +6,11 @@ public sealed class AuthenticateValidator : AbstractValidator<AuthenticateComman
 {
     public AuthenticateValidator()
     {
-        _ = RuleFor(x => x.EmailOrUsername).NotEmpty();
+        _ = RuleFor(x => x.EmailOrUsername)
+            .NotEmpty()
+            .Matches(@"^[a-zA-Z0-9\s\p{P}\p{S}]*$")
+            .WithMessage("The input must contain only Latin letters, numbers, and valid symbols.");
+
         _ = RuleFor(x => x.Code).NotEmpty();
     }
 }

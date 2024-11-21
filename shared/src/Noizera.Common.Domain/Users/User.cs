@@ -1,4 +1,5 @@
-﻿using Noizera.Common.Domain.Common;
+﻿using Microsoft.AspNetCore.Http;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Events;
 using Noizera.Common.Domain.ListeningHistories;
 using Noizera.Common.Domain.MusicSets;
@@ -63,7 +64,7 @@ public sealed class User : Entity
         string passwordHash = passwordHelper.HashPassword(password, out byte[]? passwordSalt);
         User user = new(email, passwordHash, passwordSalt, roles);
 
-        var profile = await PublicProfile.CreateAsync(profileUserName, ProfileType.Fan, profileChecker, user.Id, ct).ConfigureAwait(false);
+        var profile = await PublicProfile.CreateAsync(profileUserName, ProfileType.Fan, profileChecker, hashGenerator, user.Id, ct).ConfigureAwait(false);
         user.Profile = profile;
         user.SongLimitToUpload = 0;
 
@@ -150,6 +151,11 @@ public sealed class User : Entity
         Profile.SetProfileType(profileType);
         SetSongLimit(profileType);
     }
+
+    public async Task UploadProfileImageAsync([NotNull] IProfileImageUploader uploader, IFormFile file, CancellationToken ct)
+        => await Profile.UploadProfileImageAsync(uploader, file, ct).ConfigureAwait(false);
+
+    public void DeleteProfileImage() => Profile.DeleteProfileImage();
 
     public void SetCustomerStripeId(string value) => CustomerStripeId = value;
 

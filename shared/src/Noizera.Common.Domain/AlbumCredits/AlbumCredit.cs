@@ -7,10 +7,10 @@ namespace Noizera.Common.Domain.AlbumCredits;
 
 public sealed class AlbumCredit : Entity
 {
-    public Guid AlbumId { get; }
-    public ProfileType? ProfileType { get; }
-    public string? ProfileName { get; }
-    public Guid? ProfileId { get; }
+    public Guid AlbumId { get; private set; }
+    public ProfileType? ProfileType { get; private set; }
+    public string? ProfileName { get; private set; }
+    public Guid? ProfileId { get; private set; }
 
     public PublicProfile? Profile { get; }
     public Album Album { get; } = null!;

@@ -6,7 +6,8 @@ import { ApiResponse, handleErrorAndReturnProblem } from '../common';
 export interface GetArtistResponse {
   artistId?: string;
   name: string;
-  publicId: string;
+  publicId: string,
+  username: string;
 }
 
 const getArtists = async (axiosPrivate: AxiosInstance, text: string, userId: string): Promise<ApiResponse<GetArtistResponse[]>> => {

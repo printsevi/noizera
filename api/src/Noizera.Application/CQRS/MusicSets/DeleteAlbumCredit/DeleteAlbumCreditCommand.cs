@@ -20,7 +20,5 @@ public sealed record DeleteAlbumCreditCommand(Guid CreditId, Guid UserId) : IAut
 
             return Unit.Value;
         }
-
-        Task<Unit> IRequestHandler<DeleteAlbumCreditCommand, Unit>.Handle(DeleteAlbumCreditCommand request, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 }

@@ -5,6 +5,6 @@ public record MusicSetCardQueryResult(
     string Title,
     string CollectionType,
     bool IsSaved,
-    string OwnerPublicId,
+    string OwnerUsername,
     string OwnerName,
     short SongCount);

@@ -25,6 +25,7 @@ public sealed record GetArtistsQuery(string Text, Guid UserId)
                     p."Id" as ArtistId,
                     p."Name" as Name,
                     p."PublicId" as PublicId,
+                    p."Username" as Username,
                     SIMILARITY(p."Name", {request.Text}) AS Score
                 FROM public."Profiles" p
                 WHERE

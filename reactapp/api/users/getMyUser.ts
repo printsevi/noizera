@@ -4,6 +4,7 @@ import { axiosPublic } from '@/libs/axios';
 
 export interface GetMyUserResponse {
   profileType: ProfileType;
+  profilePublicId: string,
   username: string;
   name: string;
   activeSubscriptions: string[];

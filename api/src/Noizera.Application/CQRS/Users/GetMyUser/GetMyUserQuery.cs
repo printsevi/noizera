@@ -5,6 +5,7 @@ using Noizera.Common.Contracts.Security;
 using Noizera.Common.Domain.Common;
 using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Noizera.Application.CQRS.Users.GetMyUser;
 
@@ -24,9 +25,10 @@ public sealed record GetMyUserQuery(Guid UserId)
                 .Select(u => new GetMyUserResponse(
                     u.Profile.ProfileType.ToString(),
                     u.Profile.PublicId,
+                    u.Profile.Username,
                     u.Profile.Name,
                     u.ActiveSubscriptionTypes,
-                    u.Songs.Count,
+                    u.Songs.Count(x => x.IsPublic),
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddDays(-1))
                         .Sum(s => s.TimeInSeconds) >= 20 * 60,

@@ -47,19 +47,20 @@ public sealed record GetOrCreateAlbumDraftCommand(
 
             var songs = albumDraft.MusicSetSongs
                 .Select(x => new GetOrCreateAlbumDraftSongResponse(
-                    x.Song.Id, 
-                    x.Song.Title, 
+                    x.Song.Id,
+                    x.Song.Title,
                     x.Song.PublicId,
-                    x.Song.OriginalFileName, 
-                    x.Song.OriginalContentLength, 
+                    x.Song.OriginalFileName,
+                    x.Song.OriginalContentLength,
                     x.Song.OriginalContentType,
                     x.Sequence));
 
             var credits = albumDraft.AlbumCredits.Select(x => new GetOrCreateAlbumDraftCreditResponse(
                         x.Id,
+                        x.Profile?.Username ?? null,
                         x.Profile?.PublicId ?? null,
                         x.Profile?.Id ?? null,
-                        x.ProfileName ?? x.Profile?.Name ?? x.Profile?.PublicId!));
+                        x.ProfileName ?? x.Profile?.DisplayName!));
 
             return new(
                 albumDraft.Id,

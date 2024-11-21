@@ -28,7 +28,10 @@ public sealed class MusicSetSong : Entity
 
     public void SetSequence(short sequence) => Sequence = sequence;
 
-
+    public void Release()
+    {
+        Song.Release();
+    }
 
     private MusicSetSong() { }
 }

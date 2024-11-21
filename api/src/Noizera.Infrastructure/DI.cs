@@ -58,6 +58,8 @@ public static class DI
         _ = services.AddScoped<ICoverImageService, CoverImageS3Service>();
         _ = services.AddScoped<ICoverImageUploader, CoverImageUploader>();
 
+        _ = services.AddScoped<IProfileImageUploader, ProfileImageUploader>();
+
         _ = services.AddScoped<ISubscriptionService, SubscriptionService>();
 
         _ = services.AddScoped<IAudioFileService, AudioFileService>();

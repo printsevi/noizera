@@ -39,7 +39,7 @@ interface Props {
   isSaved: boolean;
   collectionType: CollectionType,
   ownerName: string,
-  ownerPublicId: string,
+  ownerUsername: string,
   songCount: number
 }
 
@@ -49,7 +49,7 @@ export function MusicArtwork({
   title,
   publicId,
   ownerName,
-  ownerPublicId,
+  ownerUsername,
   songCount,
   isSaved = false
 }: Props) {
@@ -80,7 +80,7 @@ export function MusicArtwork({
           durationInSeconds: s.durationInSeconds,
           coverPath: coverPath,
           ownerName: ownerName,
-          ownerPublicId: ownerPublicId
+          ownerPublicId: ownerUsername
         })));
         if (!isPlaying) {
           play(true);
@@ -104,7 +104,7 @@ export function MusicArtwork({
             title: title,
             collectionType: collectionType,
             ownerName: ownerName,
-            ownerPublicId: ownerPublicId,
+            ownerPublicId: ownerUsername,
             songCount: songCount
           });
           setCollectionIsSaved(true);
@@ -138,7 +138,7 @@ export function MusicArtwork({
                     aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
                   )}
                 />
-                <div onClick={() => router.push(`/collections/${publicId}`)} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
+                <div onClick={() => router.push(`/collections/${publicId.toLowerCase()}`)} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
                   {isAuthenticated && <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="hover:scale-125 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition">
@@ -188,8 +188,8 @@ export function MusicArtwork({
         </ContextMenuContent>}
       </ContextMenu>
       <div className="space-y-1 text-sm">
-        <h3 className="mt-2 text-sm font-medium"><Link href={`/collections/${publicId}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
-        <p className="text-sm text-muted-foreground">{songCount} songs • <Link href={`/profiles/${ownerPublicId.toLowerCase()}`} key={`/profiles/${ownerPublicId.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
+        <h3 className="mt-2 text-sm font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
+        <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount} songs • <Link href={`/profiles/${ownerUsername.toLowerCase()}`} key={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
       </div>
     </div>
   )

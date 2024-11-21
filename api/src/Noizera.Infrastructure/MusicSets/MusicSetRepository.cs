@@ -143,7 +143,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 s."PublicId" as SongPublicId,
                 s."Title" as Title,
                 mcs."Sequence" as Sequence,
-                s."Mp3ContentLength" as ContentLength,
+                s."MpegContentLength" as ContentLength,
                 s."DurationInSeconds" as DurationInSeconds
             FROM 
                 public."Songs" s
@@ -177,7 +177,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
-                p."PublicId" as OwnerPublicId,
+                p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
                 COUNT(mcs."Id") AS SongCount,
                 CASE 
@@ -204,7 +204,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 (mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                 AND mc."IsDeleted" = false
             GROUP BY 
-                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id", smc."UserId"
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id", smc."UserId"
             ORDER BY RANDOM()
             LIMIT 20
             """;
@@ -220,7 +220,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
-                p."PublicId" as OwnerPublicId,
+                p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
                 COUNT(mcs."Id") AS SongCount,
                 FALSE as IsSaved
@@ -239,7 +239,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 (mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
                 AND mc."IsDeleted" = false
             GROUP BY 
-                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id"
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id"
             ORDER BY RANDOM()
             LIMIT 20
             """;
@@ -255,7 +255,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
-                p."PublicId" as OwnerPublicId,
+                p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
                 COUNT(mcs."Id") AS SongCount,
                 CASE 
@@ -285,7 +285,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 public."MusicSetSongs" mcs
                     ON mcs."MusicSetId" = mc."Id"
             GROUP BY 
-                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id", smc."UserId"
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id", smc."UserId"
             ORDER BY RANDOM()
             LIMIT 20
             """;
@@ -301,7 +301,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 mc."PublicId" as PublicId,
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
-                p."PublicId" as OwnerPublicId,
+                p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
                 COUNT(mcs."Id") AS SongCount,
                 FALSE as IsSaved
@@ -323,7 +323,7 @@ public sealed class MusicSetRepository(AppDbContext db)
                 public."MusicSetSongs" mcs
                     ON mcs."MusicSetId" = mc."Id"
             GROUP BY 
-                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."PublicId", mc."Id"
+                mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id"
             ORDER BY RANDOM()
             LIMIT 20
             """;

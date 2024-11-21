@@ -92,7 +92,7 @@ export function ProfileMenu() {
       <DropdownMenuTrigger asChild>
         <Button size="icon" variant="ghost" className="relativen rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={`${getURL()}api/profiles/${user?.username}/image`} alt={user?.username} />
+            <AvatarImage src={`${getURL()}api/profiles/${user?.profilePublicId}/image`} alt={user?.username} />
             <AvatarFallback>{user?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>

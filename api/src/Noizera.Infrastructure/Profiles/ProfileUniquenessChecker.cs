@@ -8,6 +8,6 @@ public class ProfileUniquenessChecker(AppDbContext db) : IProfileUniquenessCheck
 {
     public async Task<bool> VerifyUsernameAsync(string username, CancellationToken ct)
         => !await db.Profiles
-        .AnyAsync(x => EF.Functions.ILike(x.PublicId, username), ct)
+        .AnyAsync(x => EF.Functions.ILike(x.Username, username), ct)
         .ConfigureAwait(false);
 }

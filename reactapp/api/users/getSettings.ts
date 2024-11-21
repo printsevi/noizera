@@ -5,10 +5,11 @@ import { axiosPublic } from '@/libs/axios';
 export interface SettingsResponse {
   name: string;
   bio?: string;
+  imageOriginalName?: string;
 }
 
-const getSettings = async (axiosPrivate : AxiosInstance, userId: string): Promise<ApiResponse<SettingsResponse>> => {
-  const result : ApiResponse<SettingsResponse> = { ok: true };
+const getSettings = async (axiosPrivate: AxiosInstance, userId: string): Promise<ApiResponse<SettingsResponse>> => {
+  const result: ApiResponse<SettingsResponse> = { ok: true };
   try {
     const response = await axiosPrivate.get<SettingsResponse>(`/users/${userId}/settings`);
     result.data = response.data;

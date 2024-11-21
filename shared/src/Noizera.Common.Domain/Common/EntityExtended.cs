@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Noizera.Common.Domain.Common;
 
 public abstract class EntityExtended : Entity
@@ -10,8 +8,6 @@ public abstract class EntityExtended : Entity
 
     protected EntityExtended(string publicId) : base()
         => PublicId = $"{PublicIdPrefix}{publicId}".ToUpperInvariant();
-
-    protected void UpdatePublicId([NotNull] string newPublicId) => PublicId = newPublicId.ToUpperInvariant();
 
     protected EntityExtended() { }
 }

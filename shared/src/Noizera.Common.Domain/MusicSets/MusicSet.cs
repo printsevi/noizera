@@ -22,7 +22,7 @@ public class MusicSet : EntityExtended, IDeletable
     public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
     public ICollection<SavedMusicSet> UserLibraries { get; } = [];
 
-    public override string PublicIdPrefix => "m_";
+    public override string PublicIdPrefix => "m-";
 
     protected MusicSet([NotNull] User user, string publicId, string title = "") : base(publicId)
     {

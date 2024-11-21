@@ -20,9 +20,10 @@ interface ImageUploadProps {
   uploadedImageUrl?: string;
   onUpload: (file: File, fileName: string) => Promise<boolean>;
   onDelete: () => Promise<void>;
+  cropShape?: 'rect' | 'round';
 }
 
-const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload, onDelete }) => {
+const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload, onDelete, cropShape = 'rect' }) => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [fileName, setFileName] = useState<string>('');
@@ -109,7 +110,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
       </div>
       {uploadedImageUrl && (
         <div>
-          <div className="bg-muted">
+          <div className={`bg-muted ${cropShape === "round" ? "rounded-full overflow-hidden" : ""}`}>
             <Image
               src={uploadedImageUrl ?? ""}
               width={500}
@@ -122,7 +123,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
             <div className="flex items-center space-x-2">
               <div>
                 <p className="font-medium">Cover image</p>
-                <p className="text-sm text-muted-foreground">Uploaded: 00/00/0000</p>
+                <p className="text-sm text-muted-foreground">Uploaded</p>
               </div>
             </div>
             <Button
@@ -148,6 +149,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
           </DialogHeader>
           <div className="relative w-full h-64">
             <Cropper
+              cropShape={cropShape}
               image={imageSrc}
               crop={crop}
               zoom={zoom}
@@ -162,7 +164,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
               max={3}
               step={0.1}
               value={[zoom]}
-              onValueChange={(e) => setZoom(e[0])}
+              onValueChange={(e: React.SetStateAction<number>[]) => setZoom(e[0])}
             />
           </div>
           <DialogFooter>

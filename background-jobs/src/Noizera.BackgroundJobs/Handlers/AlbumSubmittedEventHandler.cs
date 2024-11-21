@@ -17,9 +17,9 @@ internal sealed class AlbumSubmittedEventHandler(
         var album = await db.Albums
             .AsTracking()
             .Include(x => x.MusicSetSongs)
-                    .ThenInclude(x => x.Song)
+                .ThenInclude(x => x.Song)
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.AlbumId, cancellationToken: cancellationToken).ConfigureAwait(false)
-                ?? throw new ArgumentException($"Album {notification.DomainEvent.AlbumId} is not found");
+            ?? throw new ArgumentException($"Album {notification.DomainEvent.AlbumId} is not found");
 
         if (album.IsProcessable)
         {
@@ -34,7 +34,7 @@ internal sealed class AlbumSubmittedEventHandler(
                 double duration = audioService.GetMp3DurationInSecondsAsync(song.PublicId);
                 song.SaveAudioFileToMp3Bucket(mp3Bucket, mp3Length, duration);
 
-                audioService.DeleteAudioFiles(song.PublicId);
+                //audioService.DeleteAudioFiles(song.PublicId);
             }
 
             album.Release();

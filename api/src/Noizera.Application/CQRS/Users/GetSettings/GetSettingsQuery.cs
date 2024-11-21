@@ -19,8 +19,9 @@ public sealed record GetSettingsQuery(Guid UserId)
                 ?? throw new AppException($"User {request.UserId} not found", ErrorType.NotFound);
 
             return new(
-                user.Profile!.Name,
-                user.Profile!.Bio);
+                user.Profile.Name,
+                user.Profile.Bio,
+                user.Profile.ImageOriginalName);
         }
     }
 }

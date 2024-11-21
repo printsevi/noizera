@@ -38,9 +38,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
         setFile(selectedFile);
         setIsUploading(true);
         const response = await onFileUpload(selectedFile);
-        if (response) {
-          setFile(null);
-        }
+        setFile(null);
         setIsUploading(false);
       }
     }

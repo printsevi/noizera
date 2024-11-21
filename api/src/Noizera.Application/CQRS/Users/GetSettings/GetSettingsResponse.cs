@@ -2,4 +2,5 @@
 
 public sealed record GetSettingsResponse(
     string Name,
-    string? Bio);
+    string? Bio,
+    string? ImageOriginalName);

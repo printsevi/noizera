@@ -28,6 +28,6 @@ internal static class ConfigurationHelper
         ConfigureEntity<TEntity>(builder);
 
         _ = builder.HasIndex(e => e.PublicId).IsUnique();
-        _ = builder.Property(e => e.PublicId).IsRequired(false);
+        _ = builder.Property(e => e.PublicId).IsRequired(true);
     }
 }

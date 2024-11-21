@@ -13,6 +13,10 @@ internal sealed class ExceptionHandlingMiddleware(RequestDelegate next)
         {
             await next(context).ConfigureAwait(false);
         }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
         catch (AppException appException)
         {
             Dictionary<string, object?> data = new()

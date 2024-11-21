@@ -9,7 +9,7 @@ export interface MusicCollectionResponse {
   collectionType: CollectionType,
   isSaved: boolean,
   ownerName: string,
-  ownerPublicId: string,
+  ownerUsername: string,
   songCount: number
 }
 

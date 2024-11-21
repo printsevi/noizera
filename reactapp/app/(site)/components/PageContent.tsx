@@ -123,7 +123,7 @@ const PageContent = () => {
                     publicId={item.publicId}
                     isSaved={item.isSaved}
                     ownerName={item.ownerName}
-                    ownerPublicId={item.ownerPublicId}
+                    ownerUsername={item.ownerPublicId}
                     songCount={item.songCount}
                   />
                 </CarouselItem>

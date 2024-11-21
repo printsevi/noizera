@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -149,7 +150,7 @@ namespace Noizera.Common.Persistence.Migrations
                     AlbumReleaseDate = table.Column<DateOnly>(type: "DATE", nullable: true),
                     PlaylistTag = table.Column<string>(type: "text", nullable: true),
                     IsPublicPlaylist = table.Column<bool>(type: "boolean", nullable: true),
-                    PublicId = table.Column<string>(type: "text", nullable: true)
+                    PublicId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,13 +168,15 @@ namespace Noizera.Common.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     ProfileType = table.Column<string>(type: "text", nullable: false),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     ImageS3Folder = table.Column<string>(type: "text", nullable: true),
+                    ImageOriginalName = table.Column<string>(type: "text", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    PublicId = table.Column<string>(type: "text", nullable: true)
+                    PublicId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -231,7 +234,7 @@ namespace Noizera.Common.Persistence.Migrations
                     IsPublic = table.Column<bool>(type: "boolean", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     AlbumId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PublicId = table.Column<string>(type: "text", nullable: true)
+                    PublicId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -306,6 +309,8 @@ namespace Noizera.Common.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AlbumId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProfileType = table.Column<int>(type: "integer", nullable: true),
+                    ProfileName = table.Column<string>(type: "text", nullable: true),
                     ProfileId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
@@ -447,7 +452,8 @@ namespace Noizera.Common.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     SongId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TimeInSeconds = table.Column<int>(type: "integer", nullable: false)
+                    TimeInSeconds = table.Column<int>(type: "integer", nullable: false),
+                    StreamedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -518,6 +524,12 @@ namespace Noizera.Common.Persistence.Migrations
                 name: "IX_Profiles_UserId",
                 table: "Profiles",
                 column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Profiles_Username",
+                table: "Profiles",
+                column: "Username",
                 unique: true);
 
             migrationBuilder.CreateIndex(

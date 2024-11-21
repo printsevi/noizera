@@ -1,6 +1,7 @@
 ﻿using Noizera.Common.Domain.AlbumCredits;
 using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Events;
+using Noizera.Common.Domain.MusicSetSongs;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,7 +15,7 @@ public sealed class Album : MusicSet
 
     public ICollection<AlbumCredit> AlbumCredits { get; } = [];
 
-    public override string PublicIdPrefix => "a_";
+    public override string PublicIdPrefix => "a-";
 
     public bool IsProcessable => AlbumStatus is AlbumStatus.Submitted;
 
@@ -54,6 +55,11 @@ public sealed class Album : MusicSet
         EnsureRule(new AlbumReleaseRule(this));
 
         AlbumStatus = AlbumStatus.Released;
+
+        foreach (var song in MusicSetSongs)
+        {
+            song.Release();
+        }
 
         AddDomainEvent(new AlbumReleasedEvent(Id));
     }

@@ -4,18 +4,18 @@ import { ApiResponse, handleErrorAndReturnProblem } from '../common';
 import { axiosPublic } from '@/libs/axios';
 
 export interface GetProfileResponse {
-  profileImageSrc: string,
-  name?: string,
+  publicId: string,
+  name: string,
   isFollowing: boolean,
   bio: string,
   followersCount: number,
   followingsCount: number
 }
 
-const getProfile = async (profilePublicId: string): Promise<ApiResponse<GetProfileResponse>> => {
-  const result : ApiResponse<GetProfileResponse> = { ok: true };
+const getProfile = async (username: string): Promise<ApiResponse<GetProfileResponse>> => {
+  const result: ApiResponse<GetProfileResponse> = { ok: true };
   try {
-    const response = await axiosPublic.get<GetProfileResponse>(`/profiles/${profilePublicId}`);
+    const response = await axiosPublic.get<GetProfileResponse>(`/profiles/${username}`);
     result.data = response.data;
   } catch (err) {
     result.ok = false;

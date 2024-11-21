@@ -30,6 +30,7 @@ export interface GetOrCreateAlbumDraftSongResponse {
 export interface GetOrCreateAlbumDraftCreditResponse {
   id: string;
   profileId?: string;
+  profileUsername?: string;
   profilePublicId?: string;
   profileName: string;
 }

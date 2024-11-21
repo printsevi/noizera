@@ -2,6 +2,7 @@
 
 public sealed record GetMyUserResponse(
     string ProfileType,
+    string ProfilePublicId,
     string Username,
     string Name,
     IEnumerable<string> ActiveSubscriptions,

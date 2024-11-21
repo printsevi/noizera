@@ -7,17 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
+import { getURL } from "@/libs/helpers";
 import { Heart, PlayCircle, Share2 } from "lucide-react";
 import useSWR from "swr";
 
 interface Props {
-  profilePublicId: string,
+  username: string,
 }
 
 export default function ProfileContent(props: Props) {
   const { auth } = useAuth();
   const { user } = useUser();
-  const { data, isLoading } = useSWR(getProfile.name, () => getProfile(props.profilePublicId), {
+  const { data, isLoading } = useSWR(getProfile.name, () => getProfile(props.username), {
     revalidateIfStale: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -39,12 +40,12 @@ export default function ProfileContent(props: Props) {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
         <Avatar className="w-32 h-32 md:w-48 md:h-48 mb-4 md:mb-0 md:mr-8">
-          <AvatarImage src={data.data?.profileImageSrc ?? ""} alt={data.data?.name} />
+          <AvatarImage src={`${getURL()}api/profiles/${data.data?.publicId}/image`} alt={data.data?.name} />
           <AvatarFallback>{data.data!.name!.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="text-center md:text-left flex-grow">
           <h1 className="text-2xl font-bold mb-2 truncate max-w-xs">{data.data?.name}</h1>
-          <p className="text-xl text-muted-foreground mb-4">@{props.profilePublicId}</p>
+          <p className="text-xl text-muted-foreground mb-4">@{props.username}</p>
           {data.data?.bio && <p className="mb-4 max-w-md">{data.data?.bio}</p>}
           {/* <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">
             <div>

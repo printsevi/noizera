@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Infrastructure.Common;
 using Noizera.Common.Contracts.Repositories;
-using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.MusicSets;
 using Noizera.Common.Persistence.SQL;
+using Noizera.Infrastructure.Common;
 
 namespace Noizera.Infrastructure.MusicSets;
 

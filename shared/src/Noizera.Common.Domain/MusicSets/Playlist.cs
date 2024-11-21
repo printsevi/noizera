@@ -8,7 +8,7 @@ namespace Noizera.Common.Domain.MusicSets;
 
 public sealed class Playlist : MusicSet
 {
-    public override string PublicIdPrefix => "p_";
+    public override string PublicIdPrefix => "p-";
 
     public string? PlaylistTag { get; private set; }
 

@@ -13,6 +13,7 @@ interface Props {
 export interface IUserModel {
     profileType: ProfileType;
     username: string;
+    profilePublicId: string;
     name: string;
     activeSubscriptions: string[];
     songCount: number;
@@ -41,8 +42,17 @@ const UserContextProvider = ({ children }: Props) => {
 
     useEffect(() => {
         if (isReady && isAuthenticated) {
-            fetchUser();
+            fetchUser(); // Initial fetch when component mounts
         }
+
+        const intervalId = setInterval(() => {
+            if (isReady && isAuthenticated) {
+                fetchUser();
+            }
+        }, 60000); // 1 minute = 60,000 ms
+
+        // Cleanup the interval on unmount
+        return () => clearInterval(intervalId);
     }, [isReady, isAuthenticated, fetchUser]);
 
     return (

@@ -1,7 +1,7 @@
 ﻿namespace Noizera.Common.Contracts.QueryResults;
 
 public record ProfileQueryResult(
-    //string? ProfileImageSrc,
+    string PublicId,
     string Name,
     //bool? IsFollowing,
     string? Bio,

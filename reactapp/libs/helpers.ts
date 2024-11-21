@@ -14,6 +14,7 @@ export const getURL = () => {
 };
 
 export const USERNAME_REGEX = /^(?!\.)(?!.*\.$)(?!.*\.\.)[a-zA-Z0-9.]{2,30}$/;
+export const INPUT_REGEX = /^[a-zA-Z0-9\s\p{P}\p{S}]*$/u;
 export const MAX_USERNAME_LENGTH = 30
 
 export function formatDurationDisplay(duration: number) {

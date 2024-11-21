@@ -37,6 +37,12 @@ namespace Noizera.Common.Persistence.Migrations
                     b.Property<Guid?>("ProfileId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ProfileName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ProfileType")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AlbumId");
@@ -147,6 +153,7 @@ namespace Noizera.Common.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("PublicId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
@@ -229,6 +236,9 @@ namespace Noizera.Common.Persistence.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("text");
 
+                    b.Property<string>("ImageOriginalName")
+                        .HasColumnType("text");
+
                     b.Property<string>("ImageS3Folder")
                         .HasColumnType("text");
 
@@ -244,10 +254,15 @@ namespace Noizera.Common.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PublicId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -255,6 +270,9 @@ namespace Noizera.Common.Persistence.Migrations
                         .IsUnique();
 
                     b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Profiles");
@@ -427,6 +445,7 @@ namespace Noizera.Common.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("PublicId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Scale")

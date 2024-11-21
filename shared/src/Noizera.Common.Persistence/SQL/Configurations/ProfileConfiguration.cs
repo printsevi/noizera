@@ -11,6 +11,9 @@ internal sealed class ProfileConfiguration : IEntityTypeConfiguration<PublicProf
     {
         ConfigurationHelper.ConfigureEntityExtended(builder);
 
+        _ = builder.HasIndex(e => e.Username).IsUnique();
+        _ = builder.Property(e => e.Username).IsRequired(true);
+
         _ = builder.Property(e => e.Name);
 
         _ = builder.Property(e => e.ProfileType)

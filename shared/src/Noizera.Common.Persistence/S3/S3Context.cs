@@ -14,6 +14,7 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
     private const string originalAudioFolder = "original-audio";
     private const string emailTemplatesFolder = "email-templates";
     private const string coverImagesFolder = "cover-images";
+    private const string profileImagesFolder = "profile-images";
     private const string flacAudioFolder = "flac-audio";
     private const string mp3AudioFolder = "mp3-audio";
 
@@ -31,6 +32,15 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         await UploadFileAsync(coverImagesFolder, key, file, ct).ConfigureAwait(false);
 
         var (ContentLength, _) = await GetFileInfoAsync(coverImagesFolder, key, ct).ConfigureAwait(false);
+
+        return (ContentLength, coverImagesFolder);
+    }
+
+    public async Task<(long ContentLength, string BucketName)> UploadProfileImageAsync(string key, [NotNull] IFormFile file, CancellationToken ct)
+    {
+        await UploadFileAsync(profileImagesFolder, key, file, ct).ConfigureAwait(false);
+
+        var (ContentLength, _) = await GetFileInfoAsync(profileImagesFolder, key, ct).ConfigureAwait(false);
 
         return (ContentLength, coverImagesFolder);
     }
@@ -55,11 +65,17 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
     public async Task UploadEmailTemplateAsync(string templateName, [NotNull] IFormFile file, CancellationToken ct)
         => await UploadFileAsync(emailTemplatesFolder, templateName, file, ct).ConfigureAwait(false);
 
+    public async Task DeleteProfileImageAsync(string key, CancellationToken ct)
+        => await DeleteFileAsync(profileImagesFolder, key, ct).ConfigureAwait(false);
+
     public async Task DeleteOriginalAudioAsync(string key, CancellationToken ct)
         => await DeleteFileAsync(originalAudioFolder, key, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetCoverImageAsync(string key, CancellationToken ct)
         => await GetFileAsync(coverImagesFolder, key, ct).ConfigureAwait(false);
+
+    public async Task<(Stream Stream, string ContentType)> GetProfileImageAsync(string key, CancellationToken ct)
+        => await GetFileAsync(profileImagesFolder, key, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetOriginalAudioAsync(string key, long start, long end, CancellationToken ct)
         => await GetFilePartAsync(originalAudioFolder, key, start, end, ct).ConfigureAwait(false);
@@ -156,12 +172,7 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
             Key = $"{folderName}/{key}",
         };
 
-        var response = await s3.DeleteObjectAsync(deleteObjectRequest, ct).ConfigureAwait(false);
-
-        if (response.HttpStatusCode is not HttpStatusCode.OK)
-        {
-            throw new AmazonS3Exception($"File with Id {key} has not been deleted from folder {folderName}.");
-        }
+        _ = await s3.DeleteObjectAsync(deleteObjectRequest, ct).ConfigureAwait(false);
     }
 
     private async Task<(Stream Stream, string ContentType)> GetFileAsync(string folderName, string key, CancellationToken ct)
@@ -189,7 +200,6 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
 
         var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false)
             ?? throw new AmazonS3Exception($"File with Id {key} has not been found in folder {folderName}.");
-
 
         return (result.ResponseStream, result.Headers["Content-Type"]);
     }

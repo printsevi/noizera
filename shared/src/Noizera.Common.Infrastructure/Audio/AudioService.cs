@@ -1,5 +1,4 @@
-﻿using Amazon.S3.Model;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using NAudio.Wave;
 using Noizera.Common.Infrastructure.DataStructure;
 using Noizera.Common.Persistence.S3;
@@ -58,10 +57,10 @@ public class AudioService(
         string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputMp3File}";
 
         var mp3Command = AudioHelper.GenerateConversionToMp3Command(
-                dockerInputFilePath,
-                dockerOutputMp3FilePath,
-                settings.TargetLufsInNegative,
-                settings.TruePeakInNegative);
+            dockerInputFilePath,
+            dockerOutputMp3FilePath,
+            settings.TargetLufsInNegative,
+            settings.TruePeakInNegative);
 
         await ffmpegDockerService.ProcessAsync(
             dataStructureProvider.AudioPath,

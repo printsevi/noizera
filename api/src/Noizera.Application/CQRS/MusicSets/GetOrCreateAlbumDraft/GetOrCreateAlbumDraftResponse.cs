@@ -24,6 +24,7 @@ public sealed record GetOrCreateAlbumDraftSongResponse(
 
 public sealed record GetOrCreateAlbumDraftCreditResponse(
     Guid Id,
+    string? ProfileUsername,
     string? ProfilePublicId,
     Guid? ProfileId,
     string ProfileName);
