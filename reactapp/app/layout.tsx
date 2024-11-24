@@ -13,6 +13,8 @@ import { UserProvider } from '@/providers/UserProvider';
 import { LibraryProvider } from '@/providers/LibraryProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import Script from 'next/script';
+import { CookieConsentProvider } from '@/providers/CookieConsentProvider';
+import { CookieConsent } from '@/components/CookieConsent';
 
 export const metadata = {
   title: 'Noizera',
@@ -39,52 +41,52 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="h-screen flex flex-col h-screen dark:bg-black">
+
+
+
             <AuthProvider>
               <UserProvider>
-                <LibraryProvider>
-                  <SongProvider>
-                    <ModalProvider />
-                    <Sidebar>
-                      <div
-                        className='
+                <CookieConsentProvider>
+                  <LibraryProvider>
+                    <SongProvider>
+                      <ModalProvider />
+                      <Sidebar>
+                        <div
+                          className='
                       rounded-lg 
                       h-full 
                       w-full 
                       overflow-hidden 
                       overflow-y-auto
                     '
-                      >
-                        <Header />
-                        {children}
-                        <AudioPlayer />
-                      </div>
-                    </Sidebar>
-                  </SongProvider>
-                </LibraryProvider>
+                        >
+                          <Header />
+                          {children}
+                          <AudioPlayer />
+                          <CookieConsent />
+                        </div>
+                      </Sidebar>
+                    </SongProvider>
+                  </LibraryProvider>
+                </CookieConsentProvider>
               </UserProvider>
             </AuthProvider>
+
           </div>
         </ThemeProvider>
-
       </body>
-      <GoogleAnalytics gaId={process?.env?.NEXT_PUBLIC_GOOGLE_ANALYTICS ?? ""} />
-      {/* Google Analytics script */}
-      {/* <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=G-39TE4W9KX4`}
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${process?.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ?? ""}`}
         strategy="afterInteractive"
       />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-39TE4W9KX4');
-          `,
-        }}
-      /> */}
+            gtag('config', '${process?.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ?? ""}', { send_page_view: false, page_path: window.location.pathname });
+          `}
+      </Script>
     </html>
   );
 }

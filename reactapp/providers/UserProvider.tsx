@@ -42,18 +42,24 @@ const UserContextProvider = ({ children }: Props) => {
 
     useEffect(() => {
         if (isReady && isAuthenticated) {
-            fetchUser(); // Initial fetch when component mounts
+            fetchUser();
         }
-
-        const intervalId = setInterval(() => {
-            if (isReady && isAuthenticated) {
-                fetchUser();
-            }
-        }, 60000); // 1 minute = 60,000 ms
-
-        // Cleanup the interval on unmount
-        return () => clearInterval(intervalId);
     }, [isReady, isAuthenticated, fetchUser]);
+
+    // useEffect(() => {
+    //     if (isReady && isAuthenticated) {
+    //         fetchUser(); // Initial fetch when component mounts
+    //     }
+
+    //     const intervalId = setInterval(() => {
+    //         if (isReady && isAuthenticated) {
+    //             fetchUser();
+    //         }
+    //     }, 60000); // 1 minute = 60,000 ms
+
+    //     // Cleanup the interval on unmount
+    //     return () => clearInterval(intervalId);
+    // }, [isReady, isAuthenticated, fetchUser]);
 
     return (
         <UserContext.Provider value={{ user, setUser }}>

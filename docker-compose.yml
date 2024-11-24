@@ -4,7 +4,6 @@ services:
     image: $API_IMAGE_NAME
     ports:
       - 5000:5000
-      - 5001:5001
     environment:
       - ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_HTTP_PORTS=5000
@@ -12,9 +11,9 @@ services:
     volumes:
       - /home/printsev/noizera-data:/noizera-data
 
-  job:
-    container_name: job
-    image: $JOB_IMAGE_NAME
+  jobs:
+    container_name: jobs
+    image: $JOBS_IMAGE_NAME
     ports:
       - 5125:5125
     environment:

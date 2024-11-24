@@ -452,8 +452,8 @@ const NewAlbumContent = () => {
                       {artist.profilePublicId && (
                         <Link
                           className="hover:underline"
-                          href={`/profiles/${artist.profileUsername.toLowerCase()}`}
-                          key={`/profiles/${artist.profileUsername.toLowerCase()}`}
+                          href={`/profiles/${artist.profileUsername!.toLowerCase()}`}
+                          key={`/profiles/${artist.profileUsername!.toLowerCase()}`}
                           title={`View ${artist.profileName}'s profile`}
                         >
                           {artist.profileName}

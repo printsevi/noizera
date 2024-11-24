@@ -28,7 +28,7 @@ public sealed record DeleteProfileImageCommand(
 
             user.DeleteProfileImage();
 
-            await db.UpdateAsync(user.Profile, cancellationToken).ConfigureAwait(false);
+            await db.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
 
             return Unit.Value;
         }

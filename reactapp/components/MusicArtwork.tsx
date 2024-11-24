@@ -148,7 +148,7 @@ export function MusicArtwork({
                     <DropdownMenuContent>
                       <DropdownMenuGroup>
                         <DropdownMenuItem
-                          onClick={(e) => {
+                          onClick={(e: { stopPropagation: () => void; }) => {
                             e.stopPropagation();
                             onSaveDeleteToggle();
                           }}>

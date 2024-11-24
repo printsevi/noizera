@@ -18,13 +18,13 @@ public sealed class LoggingPipelineBehavior<TRequest, TResponse>()
     {
         TResponse response;
         string requestName = typeof(TRequest).Name;
-        var userId = request is IAuthorizeableRequest<TResponse> authRequest ? authRequest.UserId.ToString() : string.Empty;
+        string userId = request is IAuthorizeableRequest<TResponse> authRequest ? authRequest.UserId.ToString() : "Anonymous";
 
         using var listener = new ActivityListenerConfiguration()
             .Instrument.AspNetCoreRequests()
             .TraceTo(Log.Logger);
 
-        using var activity = Log.Logger.StartActivity("{requestName} completed. UserId = {userId}", requestName);
+        using var activity = Log.Logger.StartActivity("{requestName} completed. UserId = {userId}", requestName, userId);
         try
         {
             if (request is not ISensitiveRequest)
@@ -40,7 +40,7 @@ public sealed class LoggingPipelineBehavior<TRequest, TResponse>()
         }
         catch (Exception exception)
         {
-            activity.Complete(LogEventLevel.Fatal, exception);
+            activity.Complete(LogEventLevel.Error, exception);
 
             throw;
         }

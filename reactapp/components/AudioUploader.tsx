@@ -18,14 +18,18 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
   const [error, setError] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  const MAX_FILE_SIZE = 300 * 1024 * 1024; // 300MB
+  const MAX_FILE_SIZE = 300 * 1024 * 1024; // 310MB
+  const MIN_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
 
     if (selectedFile) {
-      if (selectedFile.size > MAX_FILE_SIZE) {
+      if (selectedFile.size >= MAX_FILE_SIZE) {
         setError('File size exceeds the 300MB limit.');
+        setFile(null);
+      } else if (selectedFile.size <= MIN_FILE_SIZE) {
+        setError('File size less than the 15MB limit.');
         setFile(null);
       } else if (!selectedFile.type.startsWith('audio/wav')
         && !selectedFile.type.startsWith('audio/aif')
@@ -75,8 +79,8 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
           <div className="flex items-center space-x-2">
             <div>
               <p className="font-medium">{uploadedFileName}</p>
-              <p className="text-sm text-muted-foreground">Uploaded: {uploadTime}</p>
-              {contentType === 'audio/wav' && <div>
+              <p className="text-sm text-muted-foreground">Uploaded</p>
+              {contentType === 'audio/wav' && audioSrc && contentType && <div>
                 <audio controls>
                   <source src={audioSrc} type={contentType} />
                   Your browser does not support the audio tag.

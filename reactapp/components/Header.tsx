@@ -18,6 +18,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { SettingsMenu } from './SettingsMenu';
 import fastSearchPublic from '@/api/search/fastSearchPublic';
+import { sendEvent } from '@/libs/helpers';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -49,6 +50,12 @@ const Header: React.FC = () => {
   }, []);
 
   const onSearch = useCallback(async (query: string) => {
+    sendEvent({
+      action: "fast_search",
+      category: "interaction",
+      label: "Fast search started",
+      value: query
+    });
     const response = await fastSearchPublic(query);
     if (response.ok) {
       setSearchResults(response.data?.map(x => x.value) ?? [])
@@ -158,7 +165,9 @@ const Header: React.FC = () => {
           <>
             <div>
               <Button
-                onClick={signUpModal.onOpen}
+                onClick={(e) => {
+                  signUpModal.onOpen();
+                }}
                 variant='ghost'
                 className='
                     rounded-full

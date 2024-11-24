@@ -172,8 +172,8 @@ public sealed class User : Entity
     private void SetSongLimit(ProfileType profileType)
         => SongLimitToUpload = profileType switch
         {
-            ProfileType.Artist => 30,
-            ProfileType.Label => 300,
+            ProfileType.Artist => 50,
+            ProfileType.Label => 500,
             ProfileType.Fan => 0,
             ProfileType.Editor => 0,
             _ => 0

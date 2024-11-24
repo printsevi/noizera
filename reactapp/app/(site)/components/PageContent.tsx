@@ -10,7 +10,7 @@ import useAuth from '@/hooks/useAuth';
 import getFeedCategories, { GetFeedMusicCollectionItem } from '@/api/feed/getFeedCategories';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import getFeedPublicCategories from '@/api/feed/getFeedPublicCategories';
-import getFeedPublicCollections from '@/api/feed/getFeedPublicCollections';
+import getFeedPublicCollections, { MusicCollectionResponse } from '@/api/feed/getFeedPublicCollections';
 import { AxiosInstance } from 'axios';
 import getFeedCollections from '@/api/feed/getFeedCollections';
 import Image from 'next/image';
@@ -23,17 +23,7 @@ interface PageContentProps {
 interface FeedMusicCategoryItem {
   title: string;
   api: string;
-  items: MusicCollectionResult[];
-}
-
-interface MusicCollectionResult {
-  publicId: string,
-  title: string,
-  collectionType: CollectionType,
-  isSaved: boolean,
-  ownerName: string,
-  ownerPublicId: string,
-  songCount: number
+  items: MusicCollectionResponse[];
 }
 
 const fetchCollectionsForPublicCategory = async (category: GetFeedMusicCollectionItem)
@@ -123,7 +113,7 @@ const PageContent = () => {
                     publicId={item.publicId}
                     isSaved={item.isSaved}
                     ownerName={item.ownerName}
-                    ownerUsername={item.ownerPublicId}
+                    ownerUsername={item.ownerUsername}
                     songCount={item.songCount}
                   />
                 </CarouselItem>

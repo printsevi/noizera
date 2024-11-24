@@ -34,7 +34,7 @@ internal sealed class AlbumSubmittedEventHandler(
                 double duration = audioService.GetMp3DurationInSecondsAsync(song.PublicId);
                 song.SaveAudioFileToMp3Bucket(mp3Bucket, mp3Length, duration);
 
-                //audioService.DeleteAudioFiles(song.PublicId);
+                audioService.DeleteAudioFiles(song.PublicId);
             }
 
             album.Release();

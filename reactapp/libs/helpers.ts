@@ -1,6 +1,5 @@
 import { DecodedToken, Price, UserDetails } from '@/types';
 import { jwtDecode } from "jwt-decode";
-import { sendGAEvent } from '@next/third-parties/google';
 
 export const getURL = () => {
   let url =
@@ -16,6 +15,40 @@ export const getURL = () => {
 export const USERNAME_REGEX = /^(?!\.)(?!.*\.$)(?!.*\.\.)[a-zA-Z0-9.]{2,30}$/;
 export const INPUT_REGEX = /^[a-zA-Z0-9\s\p{P}\p{S}]*$/u;
 export const MAX_USERNAME_LENGTH = 30
+
+let allowTracking = false;
+
+export const enableTracking = () => {
+  allowTracking = true;
+};
+
+export const disableTracking = () => {
+  allowTracking = false;
+};
+
+export const sendEvent = ({
+  action,
+  category,
+  label,
+  value,
+  userId,
+}: {
+  action: string;
+  category: string;
+  label: string;
+  value?: any;
+  userId?: string;
+}) => {
+  if (!allowTracking) {
+    return;
+  }
+  (window as any).gtag('event', action, {
+    event_category: category,
+    event_label: label,
+    user_id: userId ?? "Anonymous",
+    value: value,
+  });
+};
 
 export function formatDurationDisplay(duration: number) {
   const min = Math.floor(duration / 60);

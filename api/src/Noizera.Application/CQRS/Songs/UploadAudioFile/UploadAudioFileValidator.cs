@@ -12,11 +12,11 @@ public sealed class UploadAudioFileValidator : AbstractValidator<UploadAudioFile
 
         _ = RuleFor(x => x.File.Length)
             .NotEmpty()
-            .GreaterThanOrEqualTo(15_000_000) //a bit smaller than 15mb
+            .GreaterThanOrEqualTo(15 * 1024 * 1024) //a bit smaller than 15mb
             .WithMessage("File size is smaller than allowed");
 
         _ = RuleFor(x => x.File.Length)
-            .LessThanOrEqualTo(210_000_000) //a bit greater than 200mb
+            .LessThanOrEqualTo(300 * 1024 * 1024) //a bit greater than 200mb
             .WithMessage("File size is larger than allowed");
 
         _ = RuleFor(x => x.File.ContentType).Must(x

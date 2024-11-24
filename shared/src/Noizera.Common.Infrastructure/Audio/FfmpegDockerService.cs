@@ -11,24 +11,24 @@ public class FfmpegDockerService(IDockerClient dockerClient)
         IList<string> cmd,
         CancellationToken ct)
     {
-        string volumeBind = $"{dataFolderPath}:/{dockerFilesPath}";
-        var response = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
+        string volumeBind = $"{dataFolderPath}:{dockerFilesPath}";
+        var container = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
         {
             Image = "jrottenberg/ffmpeg",
-            Name = $"ffmpeg-{Guid.NewGuid()}",
             HostConfig = new HostConfig
             {
                 Binds = [volumeBind],
                 AutoRemove = true
             },
-            Volumes = new Dictionary<string, EmptyStruct>() { { volumeBind, new EmptyStruct() } },
             Cmd = cmd
         }, ct).ConfigureAwait(false);
 
-        bool result = await dockerClient.Containers.StartContainerAsync(response.ID, new ContainerStartParameters(), ct).ConfigureAwait(false);
-        if (!result)
+        _ = await dockerClient.Containers.StartContainerAsync(container.ID, new ContainerStartParameters(), ct).ConfigureAwait(false);
+
+        var waitResponse = await dockerClient.Containers.WaitContainerAsync(container.ID, ct).ConfigureAwait(false);
+        if (waitResponse.StatusCode != 0)
         {
-            throw new DockerApiException(System.Net.HttpStatusCode.InternalServerError, $"Container {response.ID} not started.");
+            throw new InvalidOperationException($"FFmpeg process failed with exit code {waitResponse.StatusCode}");
         }
     }
 }

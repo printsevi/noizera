@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { MAX_USERNAME_LENGTH, USERNAME_REGEX } from '@/libs/helpers';
+import { MAX_USERNAME_LENGTH, sendEvent, USERNAME_REGEX } from '@/libs/helpers';
 import { sendGAEvent } from '@next/third-parties/google';
 
 const FormSchema = z.object({
@@ -77,6 +77,12 @@ const RegistrationModal = () => {
       setIsLoading(false);
       return;
     }
+
+    sendEvent({
+      action: "user_registered",
+      category: "interaction",
+      label: "Register button clicked",
+    });
 
     sendGAEvent('button_click', {
       event_category: 'User Actions',

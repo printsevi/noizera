@@ -17,9 +17,9 @@ public sealed record GetProfileImageQuery(
     }
 }
 
-public sealed class GetCoverImageValidator : AbstractValidator<GetProfileImageQuery>
+public sealed class GetProfileImageValidator : AbstractValidator<GetProfileImageQuery>
 {
-    public GetCoverImageValidator()
+    public GetProfileImageValidator()
     {
         _ = RuleFor(x => x.ProfilePublicId).NotEmpty();
     }
