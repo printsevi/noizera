@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy the entire solution and all projects
-COPY ../../Noizera.sln ./
 COPY ../shared ./shared
 COPY ./src ./api/src
 
