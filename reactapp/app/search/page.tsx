@@ -2,14 +2,15 @@ import SearchContent from './components/SearchContent';
 
 export const revalidate = 0;
 
-interface Props {
-  searchParams: { query: string };
-}
-
-const Search = async ({ searchParams }: Props) => {
+const Search = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ query: string }>
+}) => {
+  const { query } = await searchParams;
   return (
     <div className='min-h-full px-3'>
-      <SearchContent query={searchParams.query} />
+      <SearchContent query={query} />
     </div>
   );
 };
