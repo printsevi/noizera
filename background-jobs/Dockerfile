@@ -4,7 +4,7 @@ WORKDIR /src
 
 # Copy the entire solution and all projects
 COPY ./shared ./shared
-COPY ./background-jobs/src ./src 
+COPY ./background-jobs ./background-jobs 
 
 # Restore only the relevant project
 RUN dotnet restore ./background-jobs/src/Noizera.BackgroundJobs/Noizera.BackgroundJobs.csproj
