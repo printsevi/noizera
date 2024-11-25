@@ -8,6 +8,8 @@ services:
       - ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_HTTP_PORTS=5000
       - ConnectionStrings__PostgresConnection
+      - S3__SpacesKey
+      - S3__SpacesSecret
     volumes:
       - /home/printsev/noizera-data:/noizera-data
 

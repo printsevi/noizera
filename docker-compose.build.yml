@@ -2,12 +2,14 @@ version: "3.9"
 services:
   api:
     build:
-      context: ./api
+      context: .
+      dockerfile: api/Dockerfile
 
   reactapp:
     build:
       context: ./reactapp
 
-  job:
+  jobs:
     build:
-      context: ./background-jobs
+      context: .
+      dockerfile: background-jobs/Dockerfile
