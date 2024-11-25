@@ -122,6 +122,7 @@ jobs:
             export JwtSettings__Issuer=${{ secrets.NOIZERA_PROD_API_JWT_ISSUER }}
             export JwtSettings__Audience=${{ secrets.NOIZERA_PROD_JWT_AUDIENCE }}
             export S3__SpacesKey=${{ secrets.S3_SPACES_KEY }}
+            export S3__SpacesSecret=${{ secrets.S3_SPACES_SECRET }}
             export EmailSettings__Username=${{ secrets.BREVO_USERNAME }}
             export EmailSettings__Password=${{ secrets.BREVO_PASSWORD }}
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
