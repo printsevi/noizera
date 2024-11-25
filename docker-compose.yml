@@ -29,6 +29,8 @@ services:
       - S3__SpacesKey
       - S3__SpacesSecret
       - StripeApiKey
+      - EmailSettings__Username
+      - EmailSettings__Password
     volumes:
       - /home/printsev/noizera-data:/noizera-data
     depends_on:

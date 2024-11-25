@@ -13,16 +13,16 @@ env:
   DOTNET_ENV: "Production"
   
 jobs:
-  build:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v3
+  # build:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #   - uses: actions/checkout@v3
 
-    - name: Build the Docker image
-      run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build --no-cache --force-rm 
+  #   - name: Build the Docker image
+  #     run: docker-compose -f docker-compose.yml -f docker-compose.build.yml build --no-cache --force-rm 
 
-    - name: Test the Docker image
-      run: docker-compose -f docker-compose.yml up -d
+  #   - name: Test the Docker image
+  #     run: docker-compose -f docker-compose.yml up -d
 
   push_images:
     name: push images to docker hub
@@ -108,7 +108,7 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           port: 22
           passphrase: ${{ secrets.PASSPHRASE }}
-          envs: REACT_IMAGE_NAME,API_IMAGE_NAME,JOBS_IMAGE_NAME,DOTNET_ENV,{{ secrets.NOIZERA_PROD_DB_CONNECTION }},{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},{{ secrets.DOCKERHUB_TOKEN }},{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.PGADMIN_EMAIL }},{{ secrets.PGADMIN_PASSWORD }},{{ secrets.NOIZERA_PROD_API_JWT_SECRET }},{{ secrets.NOIZERA_PROD_API_JWT_ISSUER }},{{ secrets.NOIZERA_PROD_JWT_AUDIENCE }},{{ secrets.S3_SPACES_KEY }},{{ secrets.S3_SPACES_SECRET }}
+          envs: REACT_IMAGE_NAME,API_IMAGE_NAME,JOBS_IMAGE_NAME,DOTNET_ENV,{{ secrets.NOIZERA_PROD_DB_CONNECTION }},{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},{{ secrets.DOCKERHUB_TOKEN }},{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.PGADMIN_EMAIL }},{{ secrets.PGADMIN_PASSWORD }},{{ secrets.NOIZERA_PROD_API_JWT_SECRET }},{{ secrets.NOIZERA_PROD_API_JWT_ISSUER }},{{ secrets.NOIZERA_PROD_JWT_AUDIENCE }},{{ secrets.S3_SPACES_KEY }},{{ secrets.S3_SPACES_SECRET }},{{ secrets.BREVO_USERNAME }}{{ secrets.BREVO_PASSWORD }}
           script: |
             #!/bin/bash
             export REACT_IMAGE_NAME=$REACT_IMAGE_NAME
@@ -122,7 +122,8 @@ jobs:
             export JwtSettings__Issuer=${{ secrets.NOIZERA_PROD_API_JWT_ISSUER }}
             export JwtSettings__Audience=${{ secrets.NOIZERA_PROD_JWT_AUDIENCE }}
             export S3__SpacesKey=${{ secrets.S3_SPACES_KEY }}
-            export S3__SpacesSecret=${{ secrets.S3_SPACES_SECRET }}
+            export EmailSettings__Username=${{ secrets.BREVO_USERNAME }}
+            export EmailSettings__Password=${{ secrets.BREVO_PASSWORD }}
             echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             cd ~/noizera
             echo "Pulling latest images..."
