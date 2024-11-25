@@ -108,12 +108,12 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           port: 22
           passphrase: ${{ secrets.PASSPHRASE }}
-          envs: REACT_IMAGE_NAME,API_IMAGE_NAME,DOTNET_ENV,{{ secrets.NOIZERA_PROD_DB_CONNECTION }},{{ secrets.SSL_CERT_PASSWORD }},{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},{{ secrets.DOCKERHUB_TOKEN }},{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.PGADMIN_EMAIL }},{{ secrets.PGADMIN_PASSWORD }}
+          envs: REACT_IMAGE_NAME,API_IMAGE_NAME,JOBS_IMAGE_NAME,DOTNET_ENV,{{ secrets.NOIZERA_PROD_DB_CONNECTION }},{{ secrets.SSL_CERT_PASSWORD }},{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},{{ secrets.DOCKERHUB_TOKEN }},{{ secrets.DOCKERHUB_USERNAME }},{{ secrets.PGADMIN_EMAIL }},{{ secrets.PGADMIN_PASSWORD }}
           script: |
             #!/bin/bash
             export REACT_IMAGE_NAME=$REACT_IMAGE_NAME
             export API_IMAGE_NAME=$API_IMAGE_NAME
-            export API_IMAGE_NAME=$JOBS_IMAGE_NAME
+            export JOBS_IMAGE_NAME=$JOBS_IMAGE_NAME
             export ASPNETCORE_ENVIRONMENT=$DOTNET_ENV
             export ConnectionStrings__PostgresConnection="${{ secrets.NOIZERA_PROD_DB_CONNECTION }}"
             export PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_EMAIL }}
