@@ -104,8 +104,9 @@ export function MusicArtwork({
             title: title,
             collectionType: collectionType,
             ownerName: ownerName,
-            ownerPublicId: ownerUsername,
-            songCount: songCount
+            ownerUsername: ownerUsername,
+            songCount: songCount,
+            isSaved: true
           });
           setCollectionIsSaved(true);
         }

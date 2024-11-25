@@ -1,6 +1,7 @@
 'use client';
 
 import { CollectionType } from "@/api/common";
+import { MusicCollectionResponse } from "@/api/feed/getFeedPublicCollections";
 import getSavedMusicCollections from "@/api/savedMusicCollections/getSavedMusicCollections";
 import useAuth from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
@@ -10,19 +11,10 @@ interface Props {
     children?: ReactNode
 }
 
-export interface IMusicCollectionModel {
-    collectionType: CollectionType;
-    title: string;
-    publicId: string;
-    ownerName: string,
-    ownerPublicId: string,
-    songCount: number
-}
-
 export interface ILibraryContext {
-    addCollection: (newCollection: IMusicCollectionModel) => void;
+    addCollection: (newCollection: MusicCollectionResponse) => void;
     removeCollection: (publicId: string) => void;
-    collections: IMusicCollectionModel[];
+    collections: MusicCollectionResponse[];
 }
 
 const LibraryContext = createContext<ILibraryContext | undefined>(undefined);
@@ -30,7 +22,7 @@ const LibraryContext = createContext<ILibraryContext | undefined>(undefined);
 const LibraryContextProvider = ({ children }: Props) => {
     const { axiosPrivate, isReady } = useAxiosPrivate();
     const { auth, isAuthenticated } = useAuth();
-    const [collections, setCollections] = useState<IMusicCollectionModel[]>([]);
+    const [collections, setCollections] = useState<MusicCollectionResponse[]>([]);
 
     const fetchCollections = useCallback(async () => {
         const data = await getSavedMusicCollections(auth.userId!, axiosPrivate)
@@ -45,7 +37,7 @@ const LibraryContextProvider = ({ children }: Props) => {
         }
     }, [isReady, isAuthenticated, fetchCollections]);
 
-    const addCollection = (newCollection: IMusicCollectionModel) => {
+    const addCollection = (newCollection: MusicCollectionResponse) => {
         setCollections(prevItems => [...prevItems, newCollection]);
     }
 

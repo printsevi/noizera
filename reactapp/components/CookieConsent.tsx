@@ -56,7 +56,7 @@ export function CookieConsent() {
             <Switch
               id="analytics"
               checked={preferences.analytics}
-              onCheckedChange={(checked) => setPreferences(prev => ({ ...prev, analytics: checked }))}
+              onCheckedChange={(checked: any) => setPreferences(prev => ({ ...prev, analytics: checked }))}
             />
             <Label htmlFor="analytics" className="flex flex-col">
               <span className="font-medium">Analytics</span>

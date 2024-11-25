@@ -60,7 +60,7 @@ const LibraryContent: React.FC = () => {
               collectionType={collection.collectionType}
               isSaved={true}
               ownerName={collection.ownerName}
-              ownerUsername={collection.ownerPublicId}
+              ownerUsername={collection.ownerUsername}
               songCount={collection.songCount}
             />
           </div>
