@@ -47,7 +47,6 @@ internal abstract class OutboxBackgroundJob<T>(
 
                 if (messages.Count == 0)
                 {
-                    Log.Logger.Information("No outbox message is found");
                     await Task.Delay(5000, stoppingToken).ConfigureAwait(false);
                     continue;
                 }

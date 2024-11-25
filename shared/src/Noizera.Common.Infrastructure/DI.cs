@@ -47,7 +47,7 @@ public static class DI
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-            .WriteTo.Seq(configuration["SeqUrl"]!)
+            .WriteTo.Seq(configuration["SeqUrl"]!, apiKey: configuration["SeqApiKey"]!)
             .Enrich.FromLogContext()
             .Enrich.WithSpanTiming()
             .CreateLogger();
@@ -56,6 +56,4 @@ public static class DI
 
         return services;
     }
-
-
 }
