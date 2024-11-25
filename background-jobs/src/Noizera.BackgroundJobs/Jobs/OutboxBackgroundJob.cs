@@ -68,7 +68,7 @@ internal abstract class OutboxBackgroundJob<T>(
                     }
                     catch (Exception ex)
                     {
-                        Log.Logger.Error("Message: {messageId} is failed: {errorMessage}", message.Id, ex.Message);
+                        Log.Logger.Error("Message {messageId} is failed with message {errorMessage}. Exception: {errorDetails}", message.Id, ex.Message, ex.ToString());
                         message.Fail(ex.Message);
                     }
                 }
