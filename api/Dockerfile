@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy the entire solution and all projects
-COPY ../shared ./shared
-COPY ./src ./api/src
+COPY ./shared ./shared
+COPY ./api/src ./src
 
 # Restore only the relevant project
 RUN dotnet restore ./api/src/Noizera.Api/Noizera.Api.csproj

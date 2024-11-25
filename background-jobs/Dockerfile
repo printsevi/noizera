@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy the entire solution and all projects
-COPY ../shared ./shared
-COPY ./src ./background-jobs/src
+COPY ./shared ./shared
+COPY ./background-jobs/src ./src 
 
 # Restore only the relevant project
 RUN dotnet restore ./background-jobs/src/Noizera.BackgroundJobs/Noizera.BackgroundJobs.csproj
