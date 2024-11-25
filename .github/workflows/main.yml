@@ -62,7 +62,8 @@ jobs:
       - name: Build and push - api
         uses: docker/build-push-action@v4
         with:
-          context: ./api
+          context: .
+          file: ./api/Dockerfile
           push: true
           tags: printsev/noizera:api-latest,printsev/noizera:api-${{ env.API_VERSION }}
 
@@ -75,7 +76,8 @@ jobs:
       - name: Build and push - jobs
         uses: docker/build-push-action@v4
         with:
-          context: ./background-jobs
+          context: .
+          file: ./background-jobs/Dockerfile
           push: true
           tags: printsev/noizera:jobs-latest,printsev/noizera:jobs-${{ env.JOBS_VERSION }}
 

@@ -10,6 +10,7 @@ services:
       - ConnectionStrings__PostgresConnection
       - S3__SpacesKey
       - S3__SpacesSecret
+      - StripeApiKey
     volumes:
       - /home/printsev/noizera-data:/noizera-data
 
