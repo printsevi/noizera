@@ -4,10 +4,15 @@ import Loading from '../../loading';
 import dynamic from 'next/dynamic';
 import ResetContent from './components/ResetContent';
 
-const Success = async () => {
+const Success = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ email: string, token: string }>
+}) => {
+  const { email, token } = await searchParams;
   return (
     <div className='my-0 mx-auto max-w-xl'>
-      <ResetContent />
+      <ResetContent email={email} token={token} />
     </div>
   );
 };

@@ -41,11 +41,13 @@ const FormSchema = z.object({
   })
 });
 
-export default function ResetContent() {
+interface Props {
+  email: string,
+  token: string
+}
+
+export default function ResetContent(props: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const email = searchParams.get('email');
-  const token = searchParams.get('token');
 
   const [isLoading, setIsLoading] = useState(false);
   const [inputPassword, setInputPassword] = useState("");
@@ -76,11 +78,11 @@ export default function ResetContent() {
       return;
     }
 
-    if (!email || !token) {
+    if (!props.email || !props.token) {
       return;
     }
 
-    const resetPasswordResponse = await resetPassword(email, token, data.password);
+    const resetPasswordResponse = await resetPassword(props.email, props.token, data.password);
     if (!resetPasswordResponse.ok) {
       setIsLoading(false);
       return;
@@ -93,7 +95,7 @@ export default function ResetContent() {
     router.push('/');
   };
 
-  if (!email || !token) {
+  if (!props.email || !props.token) {
     return (<></>);
   }
 

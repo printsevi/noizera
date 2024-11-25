@@ -1,11 +1,12 @@
 import SuccessContent from './components/SuccessContent';
 
-interface Props {
-  params: { session_id: string };
-}
-
-const Success = async ({ params }: Props) => {
-  return <SuccessContent sessionId={params.session_id} />;
+const Success = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ session_id: string }>
+}) => {
+  const { session_id } = await searchParams;
+  return <SuccessContent sessionId={session_id} />;
 };
 
 export default Success;
