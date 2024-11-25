@@ -7,13 +7,13 @@ COPY ./shared ./shared
 COPY ./api/src ./src
 
 # Restore only the relevant project
-RUN dotnet restore ./Noizera.Api/Noizera.Api.csproj
+RUN dotnet restore ./src/Noizera.Api/Noizera.Api.csproj
 
 # Build the project
-RUN dotnet build ./Noizera.Api/Noizera.Api.csproj -c Release -o /app/build
+RUN dotnet build ./src/Noizera.Api/Noizera.Api.csproj -c Release -o /app/build
 
 # Publish the project
-RUN dotnet publish ./Noizera.Api/Noizera.Api.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish ./src/Noizera.Api/Noizera.Api.csproj -c Release -o /app/publish --no-restore
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
