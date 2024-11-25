@@ -1,5 +1,6 @@
 'use client';
 
+import { ProfileType } from "@/api/common";
 import getFollowersCount from "@/api/profiles/getFollowersCount";
 import getProfile from "@/api/profiles/getProfile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
 import useUser from "@/hooks/useUser";
-import { getURL } from "@/libs/helpers";
+import { getProfileImageSrc, getURL } from "@/libs/helpers";
 import { Heart, PlayCircle, Share2 } from "lucide-react";
 import useSWR from "swr";
 
@@ -40,7 +41,7 @@ export default function ProfileContent(props: Props) {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
         <Avatar className="w-32 h-32 md:w-48 md:h-48 mb-4 md:mb-0 md:mr-8">
-          <AvatarImage src={`${getURL()}api/profiles/${data.data?.publicId}/image`} alt={data.data?.name} />
+          <AvatarImage src={getProfileImageSrc(data.data?.publicId)} alt={data.data?.name} />
           <AvatarFallback>{data.data!.name!.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="text-center md:text-left flex-grow">
@@ -73,7 +74,7 @@ export default function ProfileContent(props: Props) {
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-4">Released Music</h2>
+      {user?.profileType !== ProfileType.Fan && <h2 className="text-2xl font-bold mb-4">Released Music</h2>}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {/* {albums.map((album) => (
           <Card key={album.id} className="overflow-hidden">

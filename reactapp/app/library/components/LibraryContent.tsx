@@ -38,7 +38,7 @@ const LibraryContent: React.FC = () => {
           onClick={() => router.push("/")}
           className='px-6 py-2'
         >
-          Listen
+          Explore
         </PurpleButton>
       </CardFooter>
     </Card>

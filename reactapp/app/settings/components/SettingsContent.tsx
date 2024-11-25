@@ -31,7 +31,7 @@ import { Label } from "@/components/ui/label"
 import updateName from "@/api/users/updateName"
 import updateBio from "@/api/users/updateBio"
 import { useSearchParams } from "next/navigation"
-import { getURL, MAX_USERNAME_LENGTH, USERNAME_REGEX } from "@/libs/helpers"
+import { getProfileImageSrc, getURL, MAX_USERNAME_LENGTH, USERNAME_REGEX } from "@/libs/helpers"
 import ImageUploader from "@/components/ImageUploader"
 import getAntiforgeryToken from "@/api/auth/getAntiforgeryToken"
 import uploadProfileImage from "@/api/users/uploadProfileImage"
@@ -66,7 +66,7 @@ export default function SettingsContent() {
 
   useEffect(() => {
     if (settings?.imageOriginalName && user?.profilePublicId) {
-      setCoverImageSrc(`${getURL()}api/profiles/${user?.profilePublicId}/image?${Date.now()}`);
+      setCoverImageSrc(getProfileImageSrc(user?.profilePublicId, true));
     }
   }, [user?.profilePublicId, settings?.imageOriginalName]);
 
@@ -167,7 +167,7 @@ export default function SettingsContent() {
       return false;
     }
 
-    setCoverImageSrc(`${getURL()}api/profiles/${user?.profilePublicId}/image?${Date.now()}`);
+    setCoverImageSrc(getProfileImageSrc(user?.profilePublicId, true));
 
     return true;
   };

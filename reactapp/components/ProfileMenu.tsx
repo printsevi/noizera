@@ -66,7 +66,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import useUser from "@/hooks/useUser";
 import { ProfileType } from "@/api/common";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { getURL } from "@/libs/helpers";
+import { getProfileImageSrc, getURL } from "@/libs/helpers";
 
 export function ProfileMenu() {
   const router = useRouter();
@@ -92,7 +92,7 @@ export function ProfileMenu() {
       <DropdownMenuTrigger asChild>
         <Button size="icon" variant="ghost" className="relativen rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={`${getURL()}api/profiles/${user?.profilePublicId}/image`} alt={user?.username} />
+            <AvatarImage src={getProfileImageSrc(user?.profilePublicId)} alt={user?.username} />
             <AvatarFallback>{user?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>

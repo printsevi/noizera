@@ -14,7 +14,7 @@ internal sealed class VerificationCodeCreatedEventHandler(EmailService emailServ
             notification.DomainEvent.Email,
             notification.DomainEvent.Email,
             "notifications@noizera.com",
-            "Noizera Notifications",
+            "Noizera",
             "Confirm email",
             cancellationToken,
             new Dictionary<string, string>() { { "//p[@id='verification-code']", notification.DomainEvent.Code } }

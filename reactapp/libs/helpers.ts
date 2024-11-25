@@ -50,6 +50,14 @@ export const sendEvent = ({
   });
 };
 
+export function getProfileImageSrc(id?: string, addDate = false) {
+  if (!id) {
+    return "";
+  }
+
+  return `${getURL()}api/profiles/${id}/image${addDate ? `?${Date.now()}` : ""}`
+}
+
 export function formatDurationDisplay(duration: number) {
   const min = Math.floor(duration / 60);
   const sec = Math.floor(duration - min * 60);

@@ -9,7 +9,8 @@ const nextConfig = {
       'media.pitchfork.com',
       'seed-mix-image.spotifycdn.com',
       'noizera.com',
-      'localhost'
+      'localhost',
+      '161.35.83.203'
     ],
   },
 };

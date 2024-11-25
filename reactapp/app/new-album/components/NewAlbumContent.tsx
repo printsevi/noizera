@@ -42,7 +42,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ImageUploader from '@/components/ImageUploader';
 import uploadAlbumCoverImage from '@/api/musicCollections/uploadAlbumCoverImage';
-import { getURL } from '@/libs/helpers';
+import { getProfileImageSrc, getURL } from '@/libs/helpers';
 import PurpleButton from '@/components/Button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -445,7 +445,7 @@ const NewAlbumContent = () => {
                     >
                       {artist.profileId && (
                         <Avatar className="h-7 w-7 mr-2">
-                          <AvatarImage src={`${getURL()}api/profiles/${artist.profilePublicId}/image`} alt={artist.profileName} />
+                          <AvatarImage src={getProfileImageSrc(artist?.profilePublicId)} alt={artist.profileName} />
                           <AvatarFallback>{artist.profileName.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                       )}
@@ -503,7 +503,7 @@ const NewAlbumContent = () => {
                           onClick={() => addArtist(artist)}
                         >
                           <Avatar className="h-7 w-7 mr-2">
-                            <AvatarImage src={`${getURL()}api/profiles/${artist.publicId}/image`} alt={artist.name} />
+                            <AvatarImage src={getProfileImageSrc(artist.publicId)} alt={artist.name} />
                             <AvatarFallback>{artist.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           {artist.name}
