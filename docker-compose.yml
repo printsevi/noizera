@@ -11,6 +11,9 @@ services:
       - S3__SpacesKey
       - S3__SpacesSecret
       - StripeApiKey
+      - JwtSettings__Secret
+      - JwtSettings__Issuer
+      - JwtSettings__Audience
     volumes:
       - /home/printsev/noizera-data:/noizera-data
 
@@ -23,6 +26,9 @@ services:
       - ASPNETCORE_ENVIRONMENT
       - ASPNETCORE_HTTP_PORTS=5125
       - ConnectionStrings__PostgresConnection
+      - S3__SpacesKey
+      - S3__SpacesSecret
+      - StripeApiKey
     volumes:
       - /home/printsev/noizera-data:/noizera-data
     depends_on:
