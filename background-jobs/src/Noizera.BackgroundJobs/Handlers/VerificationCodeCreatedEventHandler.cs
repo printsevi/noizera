@@ -11,8 +11,8 @@ internal sealed class VerificationCodeCreatedEventHandler(EmailService emailServ
     public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)
         => await emailService.SendEmailAsync(
             EmailTemplateNames.AccountConfirmation,
-            "ildarprintsev@gmail.com",//notification.DomainEvent.Email,
-            "ildarprintsev@gmail.com",//notification.DomainEvent.Email,
+            notification.DomainEvent.Email,
+            notification.DomainEvent.Email,
             "notifications@noizera.com",
             "Noizera Notifications",
             "Confirm email",
