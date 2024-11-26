@@ -9,7 +9,7 @@ namespace Noizera.BackgroundJobs.Handlers;
 
 internal sealed class UserSubscriptionActivatedEventHandler(
     AppDbContext db,
-    EmailService emailService)
+    BrevoService emailService)
     : INotificationHandler<DomainEventNotification<UserSubscriptionActivatedEvent>>
 {
     public async Task Handle(DomainEventNotification<UserSubscriptionActivatedEvent> notification, CancellationToken cancellationToken)
@@ -20,15 +20,11 @@ internal sealed class UserSubscriptionActivatedEventHandler(
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.UserSubscriptionId, cancellationToken).ConfigureAwait(false)
             ?? throw new ArgumentException($"UserSubscription {notification.DomainEvent.UserSubscriptionId} is not found.");
 
-        await emailService.SendEmailAsync(
-            EmailTemplateNames.AccountConfirmation,
+        await emailService.SendTransactionalEmailAsync(
             userSubscription.User.Email,
             userSubscription.User.Email,
-            "notifications@noizera.com",
-            "Noizera Notifications",
-            "Your subscription is activated",
-            cancellationToken,
-            new Dictionary<string, string>() { { "verification-code", notification.DomainEvent.UserSubscriptionId.ToString() } }
+            1,
+            new Dictionary<string, object>() { { "code", notification.DomainEvent.UserSubscriptionId.ToString() } }
         ).ConfigureAwait(false);
     }
 }

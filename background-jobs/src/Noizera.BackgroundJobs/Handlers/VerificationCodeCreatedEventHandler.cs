@@ -5,18 +5,14 @@ using Noizera.Common.Infrastructure.Emails;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal sealed class VerificationCodeCreatedEventHandler(EmailService emailService)
+internal sealed class VerificationCodeCreatedEventHandler(BrevoService emailService)
     : INotificationHandler<DomainEventNotification<VerificationCodeCreatedEvent>>
 {
     public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)
-        => await emailService.SendEmailAsync(
-            EmailTemplateNames.AccountConfirmation,
+        => await emailService.SendTransactionalEmailAsync(
             notification.DomainEvent.Email,
             notification.DomainEvent.Email,
-            "notifications@noizera.com",
-            "Noizera",
-            "Confirm email",
-            cancellationToken,
-            new Dictionary<string, string>() { { "//p[@id='verification-code']", notification.DomainEvent.Code } }
+            1,
+            new Dictionary<string, object>() { { "code", notification.DomainEvent.Code } }
         ).ConfigureAwait(false);
 }

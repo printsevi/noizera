@@ -40,9 +40,7 @@ public static class DI
         _ = services.AddScoped<AudioService>();
         _ = services.Configure<AudioSettings>(configuration.GetSection("AudioSettings"));
 
-        _ = services.AddScoped<EmailService>();
-        _ = services.AddScoped<EmailSender>();
-        _ = services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        _ = builder.Services.AddHttpClient<BrevoService>();
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
