@@ -9,10 +9,10 @@ internal sealed class VerificationCodeCreatedEventHandler(BrevoService emailServ
     : INotificationHandler<DomainEventNotification<VerificationCodeCreatedEvent>>
 {
     public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)
-        => await emailService.SendTransactionalEmailAsync(
+        => await emailService.SendConfirmationAccountEmailAsync(
             notification.DomainEvent.Email,
             notification.DomainEvent.Email,
-            1,
-            new Dictionary<string, object>() { { "code", notification.DomainEvent.Code } }
+            notification.DomainEvent.Code,
+            cancellationToken
         ).ConfigureAwait(false);
 }

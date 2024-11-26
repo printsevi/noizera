@@ -19,7 +19,16 @@ public class BrevoService
         this.httpClient.BaseAddress = new Uri("https://api.brevo.com/v3/");
     }
 
-    public async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, Dictionary<string, object>? parameters = null)
+    public async Task SendConfirmationAccountEmailAsync(string recipientEmail, string recipientName, string code, CancellationToken ct)
+        => await SendTransactionalEmailAsync(
+            recipientEmail,
+            recipientName,
+            1,
+            ct,
+            new Dictionary<string, object>() { { "code", code } }
+        ).ConfigureAwait(false);
+
+    private async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null)
     {
         var emailPayload = new
         {
@@ -31,7 +40,7 @@ public class BrevoService
             @params = parameters ?? []
         };
 
-        var response = await httpClient.PostAsJsonAsync("smtp/email", emailPayload).ConfigureAwait(false);
+        var response = await httpClient.PostAsJsonAsync("smtp/email", emailPayload, ct).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {

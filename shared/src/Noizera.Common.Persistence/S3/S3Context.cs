@@ -12,7 +12,6 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
     private readonly S3BucketSettings settings = s3Settings.Value;
 
     private const string originalAudioFolder = "original-audio";
-    private const string emailTemplatesFolder = "email-templates";
     private const string coverImagesFolder = "cover-images";
     private const string profileImagesFolder = "profile-images";
     private const string flacAudioFolder = "flac-audio";
@@ -62,9 +61,6 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         return (ContentLength, mp3AudioFolder);
     }
 
-    public async Task UploadEmailTemplateAsync([NotNull] string templateName, [NotNull] IFormFile file, CancellationToken ct)
-        => await UploadFileAsync(emailTemplatesFolder, templateName, file, ct).ConfigureAwait(false);
-
     public async Task DeleteProfileImageAsync([NotNull] string key, CancellationToken ct)
         => await DeleteFileAsync(profileImagesFolder, key, ct).ConfigureAwait(false);
 
@@ -95,24 +91,6 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         };
 
         return await s3.GetObjectAsync(request, ct).ConfigureAwait(false);
-    }
-
-    public async Task<string> GetEmailTemplateContentAsync(string key, CancellationToken ct)
-    {
-        GetObjectRequest request = new()
-        {
-            BucketName = settings.BucketName,
-            Key = $"{emailTemplatesFolder}/{key}.html"
-        };
-
-        string result;
-        using (var response = await s3.GetObjectAsync(request, ct).ConfigureAwait(false))
-        using (StreamReader reader = new(response.ResponseStream))
-        {
-            result = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
-        }
-
-        return result;
     }
 
     private async Task<(long ContentLength, string ContentType)> GetFileInfoAsync(string folderName, [NotNull] string key, CancellationToken ct)
