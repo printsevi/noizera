@@ -94,11 +94,11 @@ const Header: React.FC = () => {
               </SheetDescription>
             </SheetHeader>
             <nav className="flex flex-col space-y-4">
-              <Button variant="ghost" className="justify-start">
+              <Button variant="ghost" className="justify-start" onClick={() => router.push(`/`)}>
                 <Home className="mr-2 h-4 w-4" />
                 Home
               </Button>
-              <Button variant="ghost" className="justify-start">
+              <Button variant="ghost" className="justify-start" onClick={() => router.push(`/library`)}>
                 <Library className="mr-2 h-4 w-4" />
                 Library
               </Button>

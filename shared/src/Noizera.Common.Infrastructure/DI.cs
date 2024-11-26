@@ -47,7 +47,7 @@ public static class DI
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
-            .WriteTo.Seq(configuration["SeqUrl"]!, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning, apiKey: configuration["SeqApiKey"]!)
+            .WriteTo.Seq(configuration["SeqUrl"]!, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information, apiKey: configuration["SeqApiKey"]!)
             .Enrich.WithProperty("AppName", configuration["AppName"]!)
             .Enrich.FromLogContext()
             .Enrich.WithSpanTiming()
