@@ -208,25 +208,29 @@ export default function MusicCollectionContent(props: Props) {
           {songs.map((track, index) => (
             <div
               key={track.id}
-              className="flex items-center space-x-4 p-2 rounded-md transition-colors duration-200"
+              className="h-8 flex items-center space-x-4 p-2 rounded-md transition-colors duration-200"
               onMouseEnter={() => setHoveredTrack(track.id)}
               onMouseLeave={() => setHoveredTrack(null)}
             >
               <div className="w-8 text-center flex-shrink-0">
                 {hoveredTrack === track.id ? (
-                  <PlayCircle className="h-6 w-6" />
+                  <Button size="icon" variant="ghost" className="rounded-full">
+                    <PlayCircle className="h-6 w-6" />
+                    <span className="sr-only">Play</span>
+                  </Button>
+
                 ) : (
                   <span className="text-muted-foreground">{index + 1}</span>
                 )}
               </div>
-              <div className="flex-grow min-w-0 h-8">
+              <div className="flex-grow min-w-0">
                 <p className="font-medium truncate">{track.title}</p>
                 {/* <p className="text-sm text-gray-500 truncate">{track.ownerName}1</p> */}
               </div>
               <div className="flex items-center space-x-4">
                 {hoveredTrack === track.id && (
-                  <Button size="icon" variant="ghost" className="h-8 w-8">
-                    <Heart className="h-4 w-4" />
+                  <Button size="icon" variant="ghost" className="rounded-full">
+                    <Heart className="h-6 w-6" />
                     <span className="sr-only">Like</span>
                   </Button>
                 )}
