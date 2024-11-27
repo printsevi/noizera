@@ -41,9 +41,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="h-screen flex flex-col h-screen dark:bg-black">
-
-
-
             <AuthProvider>
               <UserProvider>
                 <CookieConsentProvider>
@@ -51,20 +48,10 @@ export default function RootLayout({
                     <SongProvider>
                       <ModalProvider />
                       <Sidebar>
-                        <div
-                          className='
-                      rounded-lg 
-                      h-full 
-                      w-full 
-                      overflow-hidden 
-                      overflow-y-auto
-                    '
-                        >
-                          <Header />
-                          {children}
-                          <AudioPlayer />
-                          <CookieConsent />
-                        </div>
+                        <Header />
+                        {children}
+                        <AudioPlayer />
+                        <CookieConsent />
                       </Sidebar>
                     </SongProvider>
                   </LibraryProvider>

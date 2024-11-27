@@ -46,14 +46,15 @@ const Sidebar = ({ children }: SidebarProps) => {
 
   return (
     <div
-      className={twMerge(
-        `
+      className="
         bg-neutral-950        
         flex 
-        h-full
-        `,
-        player.activeId && 'h-[calc(100%-80px)]'
-      )}
+        flex-1
+        rounded-lg 
+        h-full 
+        w-full 
+        overflow-hidden 
+        overflow-y-auto"
     >
       {/* <div
         className='
@@ -93,7 +94,7 @@ const Sidebar = ({ children }: SidebarProps) => {
           </Box>
         </nav>
       </aside>
-      <main className='flex-1'>
+      <main className='flex-1 overflow-y-auto overflow-x-hidden'>
         {children}
       </main>
       <Toaster />

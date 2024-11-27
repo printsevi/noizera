@@ -11,6 +11,9 @@ internal sealed class AlbumCreditConfiguration : IEntityTypeConfiguration<AlbumC
     {
         ConfigurationHelper.ConfigureEntity(builder);
 
+        _ = builder.Property(e => e.ProfileType)
+            .HasConversion<string>();
+
         _ = builder
             .HasOne(e => e.Profile)
             .WithMany(e => e.AlbumCredits)

@@ -18,6 +18,4 @@ public interface IProfileRepository : IRepository<PublicProfile>
     Task<CountQueryResult> GetFollowingsCountAsync(string profilePublicId, CancellationToken ct);
 
     Task<List<ArtistQueryResult>> GetArtistsByTextAsync(string text, CancellationToken ct);
-
-    Task<List<FastSearchQueryResult>> FastSearchAsync(string searchQuery, CancellationToken ct);
 }

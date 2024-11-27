@@ -3,6 +3,8 @@
 public record MusicSetQueryResult(
     string Title,
     string CollectionType,
-    //bool? IsFavourite,
     string? Description,
-    DateOnly? ReleaseDate);
+    DateOnly? ReleaseDate,
+    string OwnerUsername,
+    string OwnerName,
+    string OwnerProfileType);

@@ -27,14 +27,20 @@ public sealed class MusicSetRepository(AppDbContext db)
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
                 mc."Description" as Description,
-                mc."AlbumReleaseDate" as ReleaseDate
+                mc."AlbumReleaseDate" as ReleaseDate,
+                p."Username" as OwnerUsername,
+                p."Name" as OwnerName,
+                p."ProfileType" as OwnerProfileType
             FROM 
                 public."MusicSets" mc
+            JOIN 
+                public."Profiles" p
+                    ON p."UserId" = mc."OwnerId"
             WHERE 
                 mc."PublicId" = UPPER({collectionPublicId})
                     AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
-                        OR mc."CollectionType" = 'collection_playlist')
-                    AND mc."IsDeleted" = false
+                        OR (mc."CollectionType" = 'collection_playlist' AND mc."IsPublicPlaylist" = TRUE))
+                    AND mc."IsDeleted" = FALSE
             LIMIT 1
          """;
 

@@ -49,54 +49,6 @@ public sealed class ProfileRepository(AppDbContext db)
         return result;
     }
 
-    public async Task<List<FastSearchQueryResult>> FastSearchAsync(string searchQuery, CancellationToken ct)
-    {
-        if (string.IsNullOrWhiteSpace(searchQuery))
-        {
-            return [];
-        }
-
-        FormattableString sql = $"""
-            WITH Results AS (
-                SELECT 
-                    p."Name" as Value, 
-                    SIMILARITY(p."Name", {searchQuery}) AS Score
-                FROM 
-                    public."Profiles" p
-                WHERE 
-                    SIMILARITY(p."Name", {searchQuery}) > 0.1
-
-                UNION ALL
-
-                SELECT 
-                    s."Title" as Value, 
-                    SIMILARITY(s."Title", {searchQuery}) AS Score
-                FROM 
-                    public."Songs" s
-                WHERE 
-                    SIMILARITY(s."Title", {searchQuery}) > 0.1
-
-                UNION ALL
-
-                SELECT 
-                    mc."Title" as Value, 
-                    SIMILARITY(mc."Title", {searchQuery}) AS Score
-                FROM 
-                    public."MusicSets" mc
-                WHERE 
-                    SIMILARITY(mc."Title", {searchQuery}) > 0.1
-            )
-            SELECT DISTINCT ON (Value) *
-            FROM Results
-            ORDER BY Value, Score DESC
-            LIMIT 10;
-            """;
-
-        var result = await Db.Database.SqlQuery<FastSearchQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
-
-        return result;
-    }
-
     public Task<PublicProfile> GetAsync(Guid profileId, CancellationToken ct) => throw new NotImplementedException();
 
     public async Task<ProfileQueryResult?> GetProfileAsync(string profilePublicId, CancellationToken ct)

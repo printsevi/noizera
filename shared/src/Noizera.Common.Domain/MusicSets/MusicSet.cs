@@ -15,7 +15,6 @@ public class MusicSet : EntityExtended, IDeletable
     public long? CoverImageContentLength { get; private set; }
     public string? CoverImageOriginalName { get; private set; }
     public Guid OwnerId { get; private set; }
-    public bool AllowedAsPreview { get; private set; }
     public bool IsDeleted { get; set; }
 
     public User Owner { get; } = null!;

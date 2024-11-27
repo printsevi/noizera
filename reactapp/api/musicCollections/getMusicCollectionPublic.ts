@@ -7,6 +7,9 @@ export interface MusicCollectionResponse {
   collectionType: string;
   releaseDate?: string;
   description?: string;
+  ownerUsername: string;
+  ownerName: string;
+  ownerProfileType: ProfileType;
 }
 
 const getMusicCollectionPublic = async (collectionPublicId: string): Promise<ApiResponse<MusicCollectionResponse>> => {
