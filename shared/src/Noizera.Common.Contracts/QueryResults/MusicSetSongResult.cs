@@ -5,4 +5,7 @@ public record MusicSetSongResult(
     string Title,
     long ContentLength,
     double DurationInSeconds,
-    short Sequence);
+    short Sequence,
+    string OwnerUsername,
+    string OwnerName,
+    string AlbumPublicId);

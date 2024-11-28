@@ -17,7 +17,7 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate"
 import getMusicCollection from "@/api/musicCollections/getMusicCollection"
 import useUser from "@/hooks/useUser"
 import { ISongModel } from "@/providers/SongProvider"
-import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
+import getMusicCollectionSongs, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongs"
 import { formatDurationDisplay, getURL } from "@/libs/helpers"
 import useSong from "@/hooks/useSong"
 import useSignUpModal from "@/hooks/useSignUpModal"
@@ -25,25 +25,16 @@ import getAlbumCredits, { GetAlbumCreditsResponse } from "@/api/musicCollections
 import Link from "next/link"
 import React from "react"
 
-interface Track {
-  number: number
-  title: string
-  duration: string
-  liked?: boolean
-}
-
-
 interface Props {
   collectionPublicId: string,
 }
 
 export default function MusicCollectionContent(props: Props) {
-  const signUpModal = useSignUpModal();
   const { auth, isAuthenticated } = useAuth();
   const { user } = useUser();
   const { isReady, axiosPrivate } = useAxiosPrivate();
   const [musicCollection, setMusicCollection] = useState<MusicCollectionResponse>();
-  const [songs, setSongs] = useState<ISongModel[]>([]);
+  const [songs, setSongs] = useState<MusicCollectionSongResponse[]>([]);
   const [credits, setCredits] = useState<GetAlbumCreditsResponse[]>([]);
   const { updateQueue, isPlaying, play } = useSong();
   const [hoveredTrack, setHoveredTrack] = useState<string | null>(null)
@@ -59,20 +50,9 @@ export default function MusicCollectionContent(props: Props) {
 
   const fetchSongs = useCallback(async () => {
     const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
-    const songsData = isAuthenticated
-      ? await getMusicCollectionSongs(props.collectionPublicId, audioType)
-      : await getMusicCollectionSongs(props.collectionPublicId, audioType);
+    const songsData = await getMusicCollectionSongs(props.collectionPublicId, audioType);
     if (songsData.ok) {
-      setSongs(songsData.data!.songs!.map(s => ({
-        id: s.songPublicId,
-        title: s.title,
-        contentLength: s.contentLength,
-        contentType: audioType,
-        durationInSeconds: s.durationInSeconds,
-        coverPath: "",
-        ownerName: "",
-        ownerPublicId: ""
-      })));
+      setSongs(songsData.data!.songs!);
     }
   }, [isAuthenticated, isReady, axiosPrivate, auth.userId, user?.activeSubscriptions?.length]);
 
@@ -102,29 +82,14 @@ export default function MusicCollectionContent(props: Props) {
   }, [isReady, fetchAlbumCredits]);
 
   const trackCount = songs?.length ?? 0
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
   const [likedTracks, setLikedTracks] = useState<Set<number>>(new Set())
 
-  const onPlay = useCallback(async () => {
+  const onPlay = useCallback(async (songPublicId?: string) => {
     if (!isReady) {
       return;
     }
-    if (!isAuthenticated) {
-      signUpModal.onOpen();
-    } else {
-      updateQueue(songs.map(s => ({
-        id: s.id,
-        title: s.title,
-        contentLength: s.contentLength,
-        contentType: s.contentType,
-        durationInSeconds: s.durationInSeconds,
-        coverPath: "",
-        ownerName: "",
-        ownerPublicId: ""
-      })));
-      play(true);
-    }
-  }, [songs, updateQueue, play, signUpModal, isReady, isAuthenticated]);
+    updateQueue(songs!.map(s => ({ song: s, credits: [], contentType: user?.activeSubscriptions && user.activeSubscriptions.length ? "audio/flac" : "audio/mpeg" }))!, songPublicId);
+  }, [songs, updateQueue, play, isReady, user?.activeSubscriptions]);
 
   const handleLikeTrack = (trackNumber: number) => {
     setLikedTracks((prev) => {
@@ -207,14 +172,17 @@ export default function MusicCollectionContent(props: Props) {
         <div className="space-y-2">
           {songs.map((track, index) => (
             <div
-              key={track.id}
+              key={track.songPublicId}
               className="h-8 flex items-center space-x-4 p-2 rounded-md transition-colors duration-200"
-              onMouseEnter={() => setHoveredTrack(track.id)}
+              onMouseEnter={() => setHoveredTrack(track.songPublicId)}
               onMouseLeave={() => setHoveredTrack(null)}
             >
               <div className="w-8 text-center flex-shrink-0">
-                {hoveredTrack === track.id ? (
-                  <Button size="icon" variant="ghost" className="rounded-full">
+                {hoveredTrack === track.songPublicId ? (
+                  <Button size="icon" variant="ghost" className="rounded-full" onClick={(e) => {
+                    e.stopPropagation();
+                    onPlay(track.songPublicId);
+                  }}>
                     <PlayCircle className="h-6 w-6" />
                     <span className="sr-only">Play</span>
                   </Button>
@@ -228,7 +196,7 @@ export default function MusicCollectionContent(props: Props) {
                 {/* <p className="text-sm text-gray-500 truncate">{track.ownerName}1</p> */}
               </div>
               <div className="flex items-center space-x-4">
-                {hoveredTrack === track.id && (
+                {hoveredTrack === track.songPublicId && (
                   <Button size="icon" variant="ghost" className="rounded-full">
                     <Heart className="h-6 w-6" />
                     <span className="sr-only">Like</span>

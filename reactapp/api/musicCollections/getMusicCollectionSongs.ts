@@ -12,6 +12,9 @@ export interface MusicCollectionSongResponse {
   contentLength: number;
   sequence: number;
   durationInSeconds: number;
+  albumPublicId: string;
+  ownerUsername: string;
+  ownerName: string;
 }
 
 const getMusicCollectionSongs = async (collectionPublicId: string, audioType: string): Promise<ApiResponse<GetMusicCollectionSongsResponse>> => {

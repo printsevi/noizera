@@ -1,7 +1,7 @@
 'use client';
 
 import { ProfileType } from "@/api/common";
-import getMyUser from "@/api/users/getMyUser";
+import getMyUser, { GetMyUserResponse } from "@/api/users/getMyUser";
 import useAuth from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { ReactNode, createContext, useCallback, useEffect, useState } from "react";
@@ -10,18 +10,9 @@ interface Props {
     children?: ReactNode
 }
 
-export interface IUserModel {
-    profileType: ProfileType;
-    username: string;
-    profilePublicId: string;
-    name: string;
-    activeSubscriptions: string[];
-    songCount: number;
-}
-
 export interface IUserContext {
-    user?: IUserModel;
-    setUser: (action: IUserModel | ((prevState: IUserModel | undefined) => IUserModel)) => void;
+    user?: GetMyUserResponse;
+    setUser: (action: GetMyUserResponse | ((prevState: GetMyUserResponse | undefined) => GetMyUserResponse)) => void;
 }
 
 const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -29,7 +20,7 @@ const UserContext = createContext<IUserContext | undefined>(undefined);
 const UserContextProvider = ({ children }: Props) => {
     const { auth, isAuthenticated } = useAuth();
     const { isReady, axiosPrivate } = useAxiosPrivate();
-    const [user, setUser] = useState<IUserModel>();
+    const [user, setUser] = useState<GetMyUserResponse>();
 
     const fetchUser = useCallback(async () => {
         if (isReady && isAuthenticated) {

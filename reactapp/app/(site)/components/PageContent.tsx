@@ -50,6 +50,13 @@ const PageContent = () => {
   const { auth, isAuthenticated } = useAuth();
   const { isReady, axiosPrivate } = useAxiosPrivate();
   const [musicCategories, setMusicCategories] = useState<FeedMusicCategoryItem[]>([]);
+  const [currentCategory, setCurrentCategory] = useState<FeedMusicCategoryItem>();
+  const [currentMusicSet, setCurrentMusicSet] = useState<MusicCollectionResponse>();
+
+  const onPlay = (category: FeedMusicCategoryItem, musicSet: MusicCollectionResponse) => {
+    setCurrentCategory(category);
+    setCurrentMusicSet(musicSet);
+  };
 
   const fetchFeed = useCallback(async () => {
     if (!isReady) return;
@@ -77,6 +84,7 @@ const PageContent = () => {
       fetchFeed();
     }
   }, [isReady, isAuthenticated, fetchFeed]);
+
 
 
   if (musicCategories.length === 0) {
@@ -115,6 +123,7 @@ const PageContent = () => {
                     ownerName={item.ownerName}
                     ownerUsername={item.ownerUsername}
                     songCount={item.songCount}
+                    onPlay={() => onPlay(category, item)}
                   />
                 </CarouselItem>
               ))}

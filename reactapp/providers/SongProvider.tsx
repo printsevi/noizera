@@ -1,29 +1,29 @@
 'use client';
 
+import { GetAlbumCreditsResponse } from "@/api/musicCollections/getAlbumCredits";
+import getMusicCollectionSongs, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongs";
 import addStream from "@/api/songs/addStream";
+import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import useSignUpModal from "@/hooks/useSignUpModal";
 import useUser from "@/hooks/useUser";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useCallback, useEffect, useState } from "react";
 
 interface Props {
     children?: ReactNode
 }
 
 export interface ISongModel {
-    id: string;
-    title: string;
-    contentLength: number;
-    contentType: string;
-    durationInSeconds: number;
-    coverPath: string;
-    ownerName: string;
-    ownerPublicId: string;
+    song: MusicCollectionSongResponse,
+    credits: GetAlbumCreditsResponse[],
+    contentType: string
 }
 
 export interface ISongContext {
     currentSong: ISongModel | undefined;
-    updateQueue: (newSongs: ISongModel[]) => void;
+    updateQueue: (newSongs: ISongModel[], songPublicId?: string) => void;
+    fetchAndPlay: (musicSetPublicId: string) => Promise<void>;
     queue: ISongModel[];
     next: () => void;
     prev: () => void;
@@ -39,57 +39,110 @@ const SongContextProvider = ({ children }: Props) => {
     const { auth, isAuthenticated } = useAuth();
     const { user } = useUser();
     const { isReady, axiosPrivate } = useAxiosPrivate();
-    const [queue, setQueue] = useState<ISongModel[]>([]);
+    const [songs, setSongs] = useState<ISongModel[]>([]);
     const [currentSong, setCurrentSong] = useState<ISongModel>();
     const [isPlaying, setIsPlaying] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
+    const [limitExceeded, setLimitExceeded] = useState(false);
+    const signUpModal = useSignUpModal();
 
-    const updateQueue = (newSongs: ISongModel[]) => {
+    const validateUser = useCallback(() => {
+        if (!isAuthenticated) {
+            signUpModal.onOpen();
+            return false;
+        }
+
+        if (limitExceeded) {
+            toast({
+                title: "Your free listening limit has been reached.",
+                description: "Upgrade to a subscription to enjoy unlimited access!",
+            })
+            return false;
+        }
+
+        return true;
+    }, [isAuthenticated, limitExceeded]);
+
+    const fetchAndPlay = useCallback(async (musicSetPublicId: string) => {
+        if (!isReady || !validateUser()) {
+            return;
+        }
+        const audioType = user?.activeSubscriptions && user?.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
+        const response = await getMusicCollectionSongs(musicSetPublicId, audioType);
+        if (response.ok) {
+            const songs = response.data?.songs ?? [];
+            updateQueue(songs.map(s => ({ song: s, credits: [], contentType: audioType })));
+        }
+    }, [isReady, user?.activeSubscriptions, validateUser]);
+
+    const updateQueue = (newSongs: ISongModel[], songPublicId?: string) => {
         setIsPlaying(false);
         setCurrentSong(undefined);
-        setQueue([]);
-        setQueue(newSongs);
+        setSongs([]);
+        if (!validateUser()) {
+            return;
+        }
+        setSongs(newSongs);
         if (newSongs.length > 0) {
-            setCurrentSong(newSongs[0]);
+            let songToPlay = newSongs[0];
+            if (songPublicId) {
+                const existingSong = newSongs.filter(x => x.song.songPublicId === songPublicId)[0];
+                if (existingSong) {
+                    songToPlay = existingSong;
+                }
+            }
+            setCurrentSong(songToPlay);
+            if (!isPlaying) {
+                play(true);
+            }
+        } else {
+            play(false);
         }
     };
 
-    const play = (isPlaying: boolean) => {
-        setIsPlaying(isPlaying);
+    const play = (isPlayingNew: boolean) => {
+        if (isPlayingNew) {
+        }
+        setIsPlaying(isPlayingNew);
     };
 
     const next = () => {
-        const currentIndex = queue.findIndex(x => x.id === currentSong?.id);
-        if (currentIndex === -1 || currentIndex === queue.length - 1) {
+        const currentIndex = songs.findIndex(x => x.song.songPublicId === currentSong?.song.songPublicId);
+        if (currentIndex === -1 || currentIndex === songs.length - 1) {
             //get next bunch of recommended songs
             return;
         }
-        setCurrentSong(queue[currentIndex + 1]);
+        setCurrentSong(songs[currentIndex + 1]);
     };
 
     const prev = () => {
-        const currentIndex = queue.findIndex(x => x.id === currentSong?.id);
+        const currentIndex = songs.findIndex(x => x.song.songPublicId === currentSong?.song.songPublicId);
         if (currentIndex === -1 || currentIndex === 0) {
             return;
         }
-        setCurrentSong(queue[currentIndex - 1]);
+        setCurrentSong(songs[currentIndex - 1]);
     };
 
     useEffect(() => {
-        if (!isReady || !isAuthenticated) {
-            return;
-        }
+        if (isReady && isAuthenticated && currentSong?.song.songPublicId) {
+            if (isPlaying) {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                }
 
-        if (isPlaying) {
+                const id = setInterval(async () => await addStream(axiosPrivate, auth.userId!, currentSong.song.songPublicId, STREAM_IN_SECONDS), STREAM_IN_SECONDS * 1000); // call API every 15 seconds
+                setIntervalId(id);
+            } else {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    setIntervalId(undefined);
+                }
+            }
+        } else {
             if (intervalId) {
                 clearInterval(intervalId);
+                setIntervalId(undefined);
             }
-
-            const id = setInterval(async () => await addStream(axiosPrivate, auth.userId!, currentSong?.id!, STREAM_IN_SECONDS), STREAM_IN_SECONDS * 1000); // call API every 15 seconds
-            setIntervalId(id);
-        } else if (intervalId) {
-            clearInterval(intervalId); // stop the interval when paused
-            setIntervalId(undefined);
         }
 
         return () => {
@@ -97,10 +150,35 @@ const SongContextProvider = ({ children }: Props) => {
                 clearInterval(intervalId);
             }
         };
-    }, [isPlaying, currentSong?.id, isReady, isAuthenticated]);
+    }, [isPlaying, currentSong?.song.songPublicId, isReady, isAuthenticated]);
+
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.hidden && isPlaying) {
+                play(false);
+            }
+        };
+
+        if (user?.activeSubscriptions && user.activeSubscriptions.length > 0) {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            return;
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [user, isPlaying]);
+
+    useEffect(() => {
+        if (user && user.activeSubscriptions.length === 0 && (user.dayLimitExceeded || user.monthLimitExceeded || user.weekLimitExceeded || user.semiAnnualLimitExceeded)) {
+            setLimitExceeded(true);
+        }
+    }, [user]);
 
     return (
-        <SongContext.Provider value={{ currentSong, updateQueue, next, prev, play, isPlaying, queue }}>
+        <SongContext.Provider value={{ fetchAndPlay, currentSong, updateQueue, next, prev, play, isPlaying, queue: songs }}>
             {children}
         </SongContext.Provider>
     )

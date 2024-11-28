@@ -116,12 +116,21 @@ public sealed class MusicSetRepository(AppDbContext db)
                 s."Title" as Title,
                 mcs."Sequence" as Sequence,
                 s."FlacContentLength" as ContentLength,
-                s."DurationInSeconds" as DurationInSeconds
+                s."DurationInSeconds" as DurationInSeconds,
+                a."PublicId" as AlbumPublicId,
+                p."Username" as OwnerUsername,
+                p."Name" as OwnerName
             FROM 
                 public."Songs" s
             JOIN 
                 public."MusicSetSongs" mcs
                     ON s."Id" = mcs."SongId"
+            JOIN 
+                public."MusicSets" a
+                    ON a."Id" = s."AlbumId"
+            JOIN 
+                public."Profiles" p
+                    ON p."UserId" = s."OwnerId"
             WHERE 
                 mcs."MusicSetId" = (                                 
                     SELECT mc."Id"
@@ -150,12 +159,21 @@ public sealed class MusicSetRepository(AppDbContext db)
                 s."Title" as Title,
                 mcs."Sequence" as Sequence,
                 s."MpegContentLength" as ContentLength,
-                s."DurationInSeconds" as DurationInSeconds
+                s."DurationInSeconds" as DurationInSeconds,
+                a."PublicId" as AlbumPublicId,
+                p."Username" as OwnerUsername,
+                p."Name" as OwnerName
             FROM 
                 public."Songs" s
             JOIN 
                 public."MusicSetSongs" mcs
                     ON s."Id" = mcs."SongId"
+            JOIN 
+                public."MusicSets" a
+                    ON a."Id" = s."AlbumId"
+            JOIN 
+                public."Profiles" p
+                    ON p."UserId" = s."OwnerId"
             WHERE 
                 mcs."MusicSetId" = (                                 
                     SELECT mc."Id"

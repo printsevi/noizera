@@ -9,6 +9,10 @@ export interface GetMyUserResponse {
   name: string;
   activeSubscriptions: string[];
   songCount: number;
+  dayLimitExceeded: boolean,
+  weekLimitExceeded: boolean,
+  monthLimitExceeded: boolean,
+  semiAnnualLimitExceeded: boolean
 }
 
 const getMyUser = async (axiosPrivate: AxiosInstance, userId: string): Promise<ApiResponse<GetMyUserResponse>> => {

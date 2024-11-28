@@ -5,7 +5,6 @@ using Noizera.Common.Contracts.Security;
 using Noizera.Common.Domain.Common;
 using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Noizera.Application.CQRS.Users.GetMyUser;
 
@@ -31,16 +30,16 @@ public sealed record GetMyUserQuery(Guid UserId)
                     u.Songs.Count(x => x.IsPublic),
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddDays(-1))
-                        .Sum(s => s.TimeInSeconds) >= 20 * 60,
+                        .Sum(s => s.TimeInSeconds) >= 15 * 60,
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddDays(-7))
-                        .Sum(s => s.TimeInSeconds) >= 60 * 60,
+                        .Sum(s => s.TimeInSeconds) >= 30 * 60,
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddMonths(-1))
-                        .Sum(s => s.TimeInSeconds) >= 2 * 60 * 60,
+                        .Sum(s => s.TimeInSeconds) >= 60 * 60,
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddMonths(-6))
-                        .Sum(s => s.TimeInSeconds) >= 4 * 60 * 60))
+                        .Sum(s => s.TimeInSeconds) >= 2 * 60 * 60))
                 .FirstOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false)
                 ?? throw new AppException($"User {request.UserId} not found", ErrorType.NotFound);

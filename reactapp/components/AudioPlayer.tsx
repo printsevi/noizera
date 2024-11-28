@@ -16,7 +16,7 @@ import IconButton from './IconButton';
 import VolumeInput from './VolumeInput';
 import useSong from '@/hooks/useSong';
 import { useEffect, useRef, useState } from 'react';
-import { formatDurationDisplay, getURL } from '@/libs/helpers';
+import { formatDurationDisplay, getCoverImageSrc, getURL } from '@/libs/helpers';
 import { Loader2, Pause, PauseCircleIcon, Play, PlayCircleIcon, Repeat, Shuffle, SkipBack, SkipForward, Volume2, Volume2Icon, VolumeIcon, VolumeX, VolumeXIcon } from 'lucide-react';
 import { Slider } from './ui/slider';
 import { Button } from './ui/button';
@@ -26,7 +26,6 @@ import useUser from '@/hooks/useUser';
 
 export default function AudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
-  const user = useUser();
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -90,7 +89,7 @@ export default function AudioPlayer() {
   useEffect(() => {
     play(false);
     changeAudioProgress(0);
-    if (!currentSong?.id) {
+    if (!currentSong?.song.songPublicId) {
       return;
     }
     const timeout = setTimeout(() => {
@@ -100,26 +99,7 @@ export default function AudioPlayer() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [currentSong?.id]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        play(false);
-      }
-    };
-
-    if (user.user?.activeSubscriptions && user.user.activeSubscriptions.length > 0) {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      return;
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [user.user?.activeSubscriptions]);
+  }, [currentSong?.song.songPublicId]);
 
   const handleBufferProgress: React.ReactEventHandler<HTMLAudioElement> = (e) => {
     const audio = e.currentTarget;
@@ -159,7 +139,7 @@ export default function AudioPlayer() {
     setVolume(volumeValue);
   };
 
-  if (!queue.length) {
+  if (!queue.length || !currentSong?.song) {
     return <></>;
   }
 
@@ -167,10 +147,10 @@ export default function AudioPlayer() {
     <div className="
       sticky bottom-0 bg-background border-t p-2 sm:p-4
     ">
-      {currentSong?.id && (
+      {currentSong?.song.songPublicId && (
         <audio
           ref={audioRef}
-          key={currentSong?.id}
+          key={currentSong?.song.songPublicId}
           preload="metadata"
           onDurationChange={(e) => setDuration(e.currentTarget.duration)}
           onEnded={handleEnded}
@@ -185,7 +165,7 @@ export default function AudioPlayer() {
           onProgress={handleBufferProgress}
           onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
         >
-          <source src={`${getURL()}api/songs/${currentSong.id}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.contentLength}`} type={currentSong.contentType} />
+          <source src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`} type={currentSong.contentType} />
         </audio>
       )}
       <AudioProgressBar
@@ -221,14 +201,14 @@ export default function AudioPlayer() {
         </div>
         <div className="flex items-center justify-center flex-1">
           <Image
-            src={currentSong?.coverPath ?? ""}
+            src={getCoverImageSrc(currentSong.song.albumPublicId)}
             alt="Cover"
             width={500}
             height={500}
             className="w-10 h-10 aspect-square object-cover rounded-md flex-col" />
           <div className="flex flex-col ml-1">
-            <h3 className="font-medium text-sm truncate">{currentSong?.title ?? 'Track ID'}</h3>
-            <p className="text-xs text-muted-foreground truncate"><Link href={`/profiles/${currentSong?.ownerPublicId}`} key={`/profiles/${currentSong?.ownerPublicId}`} className="hover:underline">{currentSong?.ownerName}</Link></p>
+            <h3 className="font-medium text-sm truncate">{currentSong?.song.title ?? 'Track ID'}</h3>
+            <p className="text-xs text-muted-foreground truncate"><Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline">{currentSong?.song.ownerName}</Link></p>
           </div>
         </div>
         <div className="flex items-center justify-end space-x-2 flex-1">

@@ -40,7 +40,8 @@ interface Props {
   collectionType: CollectionType,
   ownerName: string,
   ownerUsername: string,
-  songCount: number
+  songCount: number,
+  onPlay: () => void;
 }
 
 export function MusicArtwork({
@@ -51,45 +52,17 @@ export function MusicArtwork({
   ownerName,
   ownerUsername,
   songCount,
+  onPlay,
   isSaved = false
 }: Props) {
   const { axiosPrivate, isReady } = useAxiosPrivate();
-  const signUpModal = useSignUpModal();
   const { isAuthenticated, auth } = useAuth();
-  const { updateQueue, isPlaying, play } = useSong();
+  const { fetchAndPlay } = useSong();
   const { addCollection, removeCollection } = useLibrary();
   const router = useRouter();
   const { user } = useUser();
   const [collectionIsSaved, setCollectionIsSaved] = useState(isSaved);
   const coverPath = `${getURL()}api/music-collections/${publicId}/cover-image`;
-
-  const onPlay = useCallback(async () => {
-    if (!isReady) {
-      return;
-    }
-    if (isAuthenticated) {
-      const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
-      const response = await getMusicCollectionSongs(publicId, audioType);
-      if (response.ok) {
-        const songs = response.data?.songs ?? [];
-        updateQueue(songs.map(s => ({
-          id: s.songPublicId,
-          title: s.title,
-          contentLength: s.contentLength,
-          contentType: audioType,
-          durationInSeconds: s.durationInSeconds,
-          coverPath: coverPath,
-          ownerName: ownerName,
-          ownerPublicId: ownerUsername
-        })));
-        if (!isPlaying) {
-          play(true);
-        }
-      }
-    } else {
-      signUpModal.onOpen();
-    }
-  }, [updateQueue, isReady, isPlaying, user?.activeSubscriptions?.length, play]);
 
   const onSaveDeleteToggle = useCallback(async () => {
     if (!isReady) {
@@ -164,8 +137,9 @@ export function MusicArtwork({
                     </DropdownMenuContent>
                   </DropdownMenu>}
                   <button
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
+                      await fetchAndPlay(publicId);
                       onPlay();
                     }}
                     className="hover:scale-150 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition"
