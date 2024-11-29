@@ -4,14 +4,14 @@ import { AxiosInstance } from 'axios';
 import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
 
-export interface SearchQueryResult {
+export interface FastSearchQueryResult {
   value: string
 }
 
-const fastSearchPublic = async (searchQuery: string): Promise<ApiResponse<SearchQueryResult[]>> => {
-  const result: ApiResponse<SearchQueryResult[]> = { ok: true };
+const fastSearchPublic = async (searchQuery: string): Promise<ApiResponse<FastSearchQueryResult[]>> => {
+  const result: ApiResponse<FastSearchQueryResult[]> = { ok: true };
   try {
-    const response = await axiosPublic.get<SearchQueryResult[]>(`/public/fast-search?searchQuery=${searchQuery}`);
+    const response = await axiosPublic.get<FastSearchQueryResult[]>(`/public/fast-search?searchQuery=${searchQuery}`);
     result.data = response.data;
   } catch (err) {
     result.ok = false;

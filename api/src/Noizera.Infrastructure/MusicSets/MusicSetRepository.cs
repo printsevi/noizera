@@ -30,17 +30,27 @@ public sealed class MusicSetRepository(AppDbContext db)
                 mc."AlbumReleaseDate" as ReleaseDate,
                 p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
-                p."ProfileType" as OwnerProfileType
+                p."ProfileType" as OwnerProfileType,
+                CASE 
+                    WHEN smc."UserId" IS NOT NULL 
+                    THEN true
+                    ELSE false 
+                END AS IsSaved
             FROM 
                 public."MusicSets" mc
             JOIN 
                 public."Profiles" p
                     ON p."UserId" = mc."OwnerId"
+             LEFT JOIN 
+                 public."SavedMusicSets" smc
+                     ON smc."MusicSetId" = mc."Id"
+                     AND smc."UserId" = {userId}
             WHERE 
                 mc."PublicId" = UPPER({collectionPublicId})
-                    AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
-                        OR (mc."CollectionType" = 'collection_playlist' AND mc."IsPublicPlaylist" = TRUE))
-                    AND mc."IsDeleted" = FALSE
+                AND ((mc."CollectionType" = 'collection_album' AND mc."AlbumStatus" = 'Released')
+                    OR (mc."CollectionType" = 'collection_playlist' AND (mc."IsPublicPlaylist" = TRUE OR mc."OwnerId" = {userId}))
+                )
+                AND mc."IsDeleted" = FALSE
             LIMIT 1
          """;
 
@@ -216,11 +226,8 @@ public sealed class MusicSetRepository(AppDbContext db)
                     ON smc."MusicSetId" = mc."Id"
                     AND smc."UserId" = {userId}
             LEFT JOIN 
-                public."Users" u
-                    ON mc."OwnerId" = u."Id"
-            LEFT JOIN 
                 public."Profiles" p
-                    ON p."UserId" = u."Id"
+                    ON p."UserId" = mc."OwnerId"
             LEFT JOIN 
                 public."MusicSetSongs" mcs
                     ON mcs."MusicSetId" = mc."Id"
@@ -251,11 +258,8 @@ public sealed class MusicSetRepository(AppDbContext db)
             FROM 
                 public."MusicSets" mc
             LEFT JOIN 
-                public."Users" u
-                    ON mc."OwnerId" = u."Id"
-            LEFT JOIN 
                 public."Profiles" p
-                    ON p."UserId" = u."Id"
+                    ON p."UserId" = mc."OwnerId"
             LEFT JOIN 
                 public."MusicSetSongs" mcs
                     ON mcs."MusicSetId" = mc."Id"
@@ -300,11 +304,8 @@ public sealed class MusicSetRepository(AppDbContext db)
                     ON smc."MusicSetId" = mc."Id"
                     AND smc."UserId" = {userId}
             LEFT JOIN 
-                public."Users" u
-                    ON mc."OwnerId" = u."Id"
-            LEFT JOIN 
                 public."Profiles" p
-                    ON p."UserId" = u."Id"
+                    ON p."UserId" = mc."OwnerId"
             LEFT JOIN 
                 public."MusicSetSongs" mcs
                     ON mcs."MusicSetId" = mc."Id"
@@ -338,11 +339,8 @@ public sealed class MusicSetRepository(AppDbContext db)
                  ORDER BY mc1."Id" DESC
                  LIMIT 50) mc
             LEFT JOIN 
-                public."Users" u
-                    ON mc."OwnerId" = u."Id"
-            LEFT JOIN 
                 public."Profiles" p
-                    ON p."UserId" = u."Id"
+                    ON p."UserId" = mc."OwnerId"
             LEFT JOIN 
                 public."MusicSetSongs" mcs
                     ON mcs."MusicSetId" = mc."Id"

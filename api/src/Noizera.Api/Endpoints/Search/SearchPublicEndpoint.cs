@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Noizera.Api.Common;
-using Noizera.Application.CQRS.Search.SearchPublic;
+using Noizera.Application.CQRS.Search;
 
 namespace Noizera.Api.Endpoints.Search;
 

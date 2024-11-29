@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Noizera.Api.Common;
-using Noizera.Application.CQRS.SavedMusicSets.AddSavedMusicCollection;
+using Noizera.Application.CQRS.SavedMusicSets;
 
 namespace Noizera.Api.Endpoints.SavedMusicSets;
 

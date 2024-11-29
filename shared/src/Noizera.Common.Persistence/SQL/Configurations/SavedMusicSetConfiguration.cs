@@ -9,9 +9,7 @@ internal sealed class SavedMusicSetConfiguration : IEntityTypeConfiguration<Save
 {
     public void Configure(EntityTypeBuilder<SavedMusicSet> builder)
     {
-        ConfigurationHelper.ConfigureBaseEntity(builder);
-
-        _ = builder.HasKey(x => new { x.UserId, x.MusicSetId });
+        ConfigurationHelper.ConfigureEntity(builder);
 
         _ = builder
             .HasOne(e => e.User)

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Application.CQRS.Search.FastSearchPublic;
+namespace Noizera.Application.CQRS.Search;
 
 public sealed record FastSearchPublicQuery(string SearchQuery)
     : IRequest<List<FastSearchQueryResult>>
@@ -28,6 +28,7 @@ public sealed record FastSearchPublicQuery(string SearchQuery)
                         public."Profiles" p
                     WHERE 
                         (p."ProfileType" = 'Artist' OR p."ProfileType" = 'Label')
+                        AND p."IsDeleted" = FALSE
                         AND SIMILARITY(p."Name", {request.SearchQuery}) > 0.1
 
                     UNION ALL
@@ -66,3 +67,6 @@ public sealed record FastSearchPublicQuery(string SearchQuery)
         }
     }
 }
+
+public record FastSearchQueryResult(
+    string Value);

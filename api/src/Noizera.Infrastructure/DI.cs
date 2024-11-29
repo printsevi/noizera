@@ -75,7 +75,6 @@ public static class DI
         _ = services.AddScoped<ISongRepository, SongRepository>();
         _ = services.AddScoped<IAlbumRepository, AlbumRepository>();
         _ = services.AddScoped<IMusicSetRepository, MusicSetRepository>();
-        _ = services.AddScoped<ISavedMusicSetRepository, SavedMusicSetRepository>();
         _ = services.AddScoped<IListeningHistoryRepository, ListeningHistoryRepository>();
         _ = services.AddScoped<IStreamInfoRepository, StreamInfoRepository>();
         _ = services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();

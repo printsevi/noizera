@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
-import { PlayCircle, MoreVertical, Share, ListPlus, Pause, Heart, PauseCircle, Forward } from "lucide-react"
+import { PlayCircle, MoreVertical, Share, ListPlus, Pause, Heart, PauseCircle, Forward, CopyMinus, CopyPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -18,12 +18,16 @@ import getMusicCollection from "@/api/musicCollections/getMusicCollection"
 import useUser from "@/hooks/useUser"
 import { ISongModel } from "@/providers/SongProvider"
 import getMusicCollectionSongs, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongs"
-import { formatDurationDisplay, getURL } from "@/libs/helpers"
+import { formatDurationDisplay, getCoverImageSrc, getURL } from "@/libs/helpers"
 import useSong from "@/hooks/useSong"
 import useSignUpModal from "@/hooks/useSignUpModal"
 import getAlbumCredits, { GetAlbumCreditsResponse } from "@/api/musicCollections/getAlbumCredits"
 import Link from "next/link"
 import React from "react"
+import { toast } from "@/hooks/use-toast"
+import useLibrary from "@/hooks/useLibrary"
+import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection"
+import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection"
 
 interface Props {
   collectionPublicId: string,
@@ -38,6 +42,9 @@ export default function MusicCollectionContent(props: Props) {
   const [credits, setCredits] = useState<GetAlbumCreditsResponse[]>([]);
   const { updateQueue, isPlaying, play } = useSong();
   const [hoveredTrack, setHoveredTrack] = useState<string | null>(null)
+  const [collectionIsSaved, setCollectionIsSaved] = useState(false);
+  const { addCollection, removeCollection } = useLibrary();
+  const signUpModal = useSignUpModal();
 
   const fetchCollection = useCallback(async () => {
     const collectionData = isAuthenticated
@@ -45,6 +52,7 @@ export default function MusicCollectionContent(props: Props) {
       : await getMusicCollectionPublic(props.collectionPublicId);
     if (collectionData.ok) {
       setMusicCollection(collectionData.data!);
+      setCollectionIsSaved(collectionData.data!.isSaved);
     }
   }, [isAuthenticated, axiosPrivate, auth.userId]);
 
@@ -103,6 +111,56 @@ export default function MusicCollectionContent(props: Props) {
     })
   }
 
+  const onSaveDeleteToggle = useCallback(async () => {
+    if (!isReady || !musicCollection) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      signUpModal.onOpen();
+      return;
+    }
+
+    if (!collectionIsSaved) {
+      const response = await addSavedMusicCollection(axiosPrivate, auth.userId!, props.collectionPublicId);
+      if (response.ok) {
+        addCollection({
+          publicId: props.collectionPublicId,
+          title: musicCollection.title,
+          collectionType: musicCollection.collectionType,
+          ownerName: musicCollection.ownerName,
+          ownerUsername: musicCollection.ownerUsername,
+          songCount: trackCount,
+          isSaved: true
+        });
+        setCollectionIsSaved(true);
+      }
+    } else {
+      const response = await deleteSavedMusicCollection(axiosPrivate, auth.userId!, props.collectionPublicId);
+      if (response.ok) {
+        removeCollection(props.collectionPublicId);
+        setCollectionIsSaved(false);
+      }
+    }
+  }, [isAuthenticated, trackCount, musicCollection, isReady, collectionIsSaved, auth.userId, axiosPrivate, addCollection]);
+
+  const copyCollectionUrl = async () => {
+    try {
+      const domain = window.location.origin;
+      const urlToCopy = `${domain}/collections/${props.collectionPublicId.toLowerCase()}`;
+      await navigator.clipboard.writeText(urlToCopy);
+      toast({
+        title: "The URL copied to clipboard!"
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Oops... something went wrong",
+        description: "Please try again in a while",
+      });
+    }
+  };
+
   if (!musicCollection) {
     return <></>
   }
@@ -113,7 +171,7 @@ export default function MusicCollectionContent(props: Props) {
       <div className="lg:w-1/3 mb-8 lg:mb-0">
         <div className="flex flex-col items-center lg:items-start min-w-0 w-full">
           <Image
-            src={`${getURL()}api/music-collections/${props.collectionPublicId}/cover-image`}
+            src={getCoverImageSrc(props.collectionPublicId)}
             alt={`${musicCollection.title} by ${musicCollection.title}`}
             width={300}
             height={300}
@@ -143,8 +201,11 @@ export default function MusicCollectionContent(props: Props) {
               variant="ghost"
               size="icon"
               className="rounded-full"
-            >
-              <ListPlus className="h-6 w-6" />
+              onClick={(e: { stopPropagation: () => void; }) => {
+                e.stopPropagation();
+                onSaveDeleteToggle();
+              }}>
+              {collectionIsSaved ? <CopyMinus className="h-6 w-6" /> : <CopyPlus className="h-6 w-6" />}
             </Button>
             <Button
               disabled={!songs.length}
@@ -162,6 +223,10 @@ export default function MusicCollectionContent(props: Props) {
               variant="ghost"
               size="icon"
               className="rounded-full"
+              onClick={(e: { stopPropagation: () => void; }) => {
+                e.stopPropagation();
+                copyCollectionUrl();
+              }}
             >
               <Forward className="h-5 w-5" />
             </Button>

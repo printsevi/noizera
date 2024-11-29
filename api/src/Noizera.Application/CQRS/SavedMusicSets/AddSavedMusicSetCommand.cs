@@ -1,11 +1,13 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Noizera.Common.Contracts.Errors;
 using Noizera.Common.Contracts.Repositories;
 using Noizera.Common.Contracts.Security;
 using Noizera.Common.Domain.SavedMusicSets;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Noizera.Application.CQRS.SavedMusicSets.AddSavedMusicCollection;
+namespace Noizera.Application.CQRS.SavedMusicSets;
 
 public sealed record AddSavedMusicSetCommand(
     string MusicSetPublicId,
@@ -13,9 +15,9 @@ public sealed record AddSavedMusicSetCommand(
     : IAuthorizeableRequest<Unit>
 {
     public sealed class Handler(
+        AppDbContext db,
         IUserRepository userRepository,
-        IMusicSetRepository MusicSetRepository,
-        ISavedMusicSetRepository savedMusicSetRepository)
+        IMusicSetRepository MusicSetRepository)
         : IRequestHandler<AddSavedMusicSetCommand, Unit>
     {
         public async Task<Unit> Handle([NotNull] AddSavedMusicSetCommand request, CancellationToken cancellationToken)
@@ -26,11 +28,19 @@ public sealed record AddSavedMusicSetCommand(
             var MusicSet = await MusicSetRepository.GetAsync(request.MusicSetPublicId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException("A music collection not found", ErrorType.NotFound);
 
-            var savedMusicSet = SavedMusicSet.New(user, MusicSet);
+            SavedMusicSet savedMusicSet = SavedMusicSet.New(user, MusicSet);
 
-            await savedMusicSetRepository.InsertAsync(savedMusicSet, cancellationToken).ConfigureAwait(false);
+            await db.InsertAsync(savedMusicSet, cancellationToken).ConfigureAwait(false);
 
             return Unit.Value;
         }
+    }
+}
+
+public sealed class AddSavedMusicSetValidator : AbstractValidator<AddSavedMusicSetCommand>
+{
+    public AddSavedMusicSetValidator()
+    {
+        _ = RuleFor(x => x.MusicSetPublicId).NotEmpty();
     }
 }

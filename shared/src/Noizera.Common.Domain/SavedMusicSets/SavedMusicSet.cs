@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Common.Domain.SavedMusicSets;
 
-public sealed class SavedMusicSet : BaseEntity
+public sealed class SavedMusicSet : Entity
 {
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
@@ -18,8 +18,13 @@ public sealed class SavedMusicSet : BaseEntity
         MusicSetId = MusicSet.Id;
     }
 
-    public static SavedMusicSet New([NotNull] User user, [NotNull] MusicSet MusicSet) 
-        => new(user, MusicSet);
+    public static SavedMusicSet New([NotNull] User user, [NotNull] MusicSet musicSet)
+    {
+        EnsureRule(new SavedMusicSetRule(user, musicSet));
+        EnsureRule(new MusicSetOwnerRule(user, musicSet));
+
+        return new(user, musicSet);
+    }
 
     private SavedMusicSet() { }
 }

@@ -116,7 +116,7 @@ public sealed class User : Entity
 
     public void SaveMusicSet(MusicSet collection)
     {
-        EnsureRule(new SavedMusicSetRule(this, collection));
+        
 
         SavedMusicSets.Add(SavedMusicSet.New(this, collection));
     }

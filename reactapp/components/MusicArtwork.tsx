@@ -22,7 +22,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import useUser from "@/hooks/useUser";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getURL } from "@/libs/helpers";
+import { getCoverImageSrc, getURL } from "@/libs/helpers";
 import useLibrary from "@/hooks/useLibrary";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import useAuth from "@/hooks/useAuth";
@@ -31,6 +31,7 @@ import { CollectionType } from "@/api/common";
 import useSignUpModal from "@/hooks/useSignUpModal";
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection";
 import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   aspectRatio?: "portrait" | "square",
@@ -40,8 +41,7 @@ interface Props {
   collectionType: CollectionType,
   ownerName: string,
   ownerUsername: string,
-  songCount: number,
-  onPlay: () => void;
+  songCount: number
 }
 
 export function MusicArtwork({
@@ -52,7 +52,6 @@ export function MusicArtwork({
   ownerName,
   ownerUsername,
   songCount,
-  onPlay,
   isSaved = false
 }: Props) {
   const { axiosPrivate, isReady } = useAxiosPrivate();
@@ -60,9 +59,24 @@ export function MusicArtwork({
   const { fetchAndPlay } = useSong();
   const { addCollection, removeCollection } = useLibrary();
   const router = useRouter();
-  const { user } = useUser();
   const [collectionIsSaved, setCollectionIsSaved] = useState(isSaved);
-  const coverPath = `${getURL()}api/music-collections/${publicId}/cover-image`;
+
+  const copyCollectionUrl = async () => {
+    try {
+      const domain = window.location.origin;
+      const urlToCopy = `${domain}/collections/${publicId.toLowerCase()}`;
+      await navigator.clipboard.writeText(urlToCopy);
+      toast({
+        title: "The URL copied to clipboard!"
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Oops... something went wrong",
+        description: "Please try again in a while",
+      });
+    }
+  };
 
   const onSaveDeleteToggle = useCallback(async () => {
     if (!isReady) {
@@ -94,6 +108,10 @@ export function MusicArtwork({
     }
   }, [isAuthenticated, isReady, collectionIsSaved, auth.userId, axiosPrivate, addCollection]);
 
+  if (!publicId) {
+    return (<></>);
+  }
+
   return (
     <div className="space-y-3">
       <ContextMenu>
@@ -102,7 +120,7 @@ export function MusicArtwork({
             <Card className="border-none">
               <CardContent className="flex aspect-square items-center justify-center group relative">
                 <Image
-                  src={coverPath}
+                  src={getCoverImageSrc(publicId)}
                   alt={title}
                   fill
                   sizes="500"
@@ -113,7 +131,7 @@ export function MusicArtwork({
                   )}
                 />
                 <div onClick={() => router.push(`/collections/${publicId.toLowerCase()}`)} className="absolute bg-black rounded-md bg-opacity-0 group-hover:bg-opacity-60 w-full h-full top-0 flex items-end group-hover:opacity-100 transition flex-col justify-between p-2.5">
-                  {isAuthenticated && <DropdownMenu>
+                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="hover:scale-125 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition">
                         <EllipsisVerticalIcon size={25} />
@@ -121,26 +139,28 @@ export function MusicArtwork({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuGroup>
-                        <DropdownMenuItem
+                        {isAuthenticated && <DropdownMenuItem
                           onClick={(e: { stopPropagation: () => void; }) => {
                             e.stopPropagation();
                             onSaveDeleteToggle();
                           }}>
                           {collectionIsSaved ? <CopyMinus className="mr-2 h-4 w-4" /> : <CopyPlus className="mr-2 h-4 w-4" />}
                           <span>{collectionIsSaved ? "Remove from library" : "Save to library"}</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        </DropdownMenuItem>}
+                        <DropdownMenuItem onClick={(e: { stopPropagation: () => void; }) => {
+                          e.stopPropagation();
+                          copyCollectionUrl();
+                        }}>
                           <Forward className="mr-2 h-4 w-4" />
                           <span>Share</span>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                     </DropdownMenuContent>
-                  </DropdownMenu>}
+                  </DropdownMenu>
                   <button
                     onClick={async (e) => {
                       e.stopPropagation();
                       await fetchAndPlay(publicId);
-                      onPlay();
                     }}
                     className="hover:scale-150 text-white opacity-0 transform translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition"
                   >

@@ -7,4 +7,5 @@ public record MusicSetQueryResult(
     DateOnly? ReleaseDate,
     string OwnerUsername,
     string OwnerName,
-    string OwnerProfileType);
+    string OwnerProfileType,
+    bool IsSaved);

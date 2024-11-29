@@ -128,7 +128,7 @@ const Header: React.FC = () => {
           <X className="h-4 w-4" />
         </Button>
         {isSearching && searchResults.length > 0 && (
-          <div className="absolute top-full left-0 right-0 bg-popover border rounded-md mt-1 shadow-lg z-10">
+          <div className="absolute md:top-full md:left-0 md:right-0 top-16 left-3.5 right-16 bg-popover border rounded-md mt-1 shadow-lg z-10">
             <ScrollArea className="h-[300px]">
               {searchResults.map((result, index) => (
                 <Button key={index} variant="ghost" onClick={() => onFullSearch(result)} className="items-center flex w-full justify-start px-4 py-2">

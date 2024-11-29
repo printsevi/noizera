@@ -4,9 +4,9 @@ using Noizera.Common.Domain.Users;
 
 namespace Noizera.Common.Domain.SavedMusicSets;
 
-public sealed record SavedMusicSetRule(User User, MusicSet Collection) : ISyncDomainRule
+public sealed record SavedMusicSetRule(User User, MusicSet MusicSet) : ISyncDomainRule
 {
     public string ErrorMessage => $"The collection is already in library.";
 
-    public bool Verify() => !User.SavedMusicSets.Any(x => x.MusicSetId == Collection.Id);
+    public bool Verify() => !User.SavedMusicSets.Any(x => x.MusicSetId == MusicSet.Id);
 }
