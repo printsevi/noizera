@@ -1,7 +1,8 @@
 'use client';
 
 import { GetAlbumCreditsResponse } from "@/api/musicCollections/getAlbumCredits";
-import getMusicCollectionSongs, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongs";
+import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs";
+import getMusicCollectionSongsPublic, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongsPublic";
 import addStream from "@/api/songs/addStream";
 import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
@@ -22,8 +23,7 @@ export interface ISongModel {
 
 export interface ISongContext {
     currentSong: ISongModel | undefined;
-    updateQueue: (newSongs: ISongModel[], songPublicId?: string) => void;
-    fetchAndPlay: (musicSetPublicId: string) => Promise<void>;
+    fetchAndPlay: (musicSetPublicId: string, songPublicId?: string) => Promise<void>;
     queue: ISongModel[];
     next: () => void;
     prev: () => void;
@@ -44,6 +44,7 @@ const SongContextProvider = ({ children }: Props) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
     const [limitExceeded, setLimitExceeded] = useState(false);
+    const [lastMusicSetPublicId, setLastMusicSetPublicId] = useState("");
     const signUpModal = useSignUpModal();
 
     const validateUser = useCallback(() => {
@@ -63,17 +64,23 @@ const SongContextProvider = ({ children }: Props) => {
         return true;
     }, [isAuthenticated, limitExceeded]);
 
-    const fetchAndPlay = useCallback(async (musicSetPublicId: string) => {
+    const fetchAndPlay = useCallback(async (musicSetPublicId: string, songPublicId?: string) => {
         if (!isReady || !validateUser()) {
             return;
         }
-        const audioType = user?.activeSubscriptions && user?.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
-        const response = await getMusicCollectionSongs(musicSetPublicId, audioType);
-        if (response.ok) {
-            const songs = response.data?.songs ?? [];
-            updateQueue(songs.map(s => ({ song: s, credits: [], contentType: audioType })));
+
+        if (lastMusicSetPublicId === musicSetPublicId) {
+            updateQueue(songs, songPublicId);
+            return;
         }
-    }, [isReady, user?.activeSubscriptions, validateUser]);
+
+        const audioType = user?.activeSubscriptions && user?.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
+        const response = await getMusicCollectionSongs(musicSetPublicId, audioType, axiosPrivate, auth.userId!);
+        if (response.ok) {
+            setLastMusicSetPublicId(musicSetPublicId);
+            updateQueue(response.data!.map(s => ({ song: s, credits: [], contentType: audioType })), songPublicId);
+        }
+    }, [isReady, songs, user?.activeSubscriptions, auth.userId, validateUser, lastMusicSetPublicId, setLastMusicSetPublicId, axiosPrivate]);
 
     const updateQueue = (newSongs: ISongModel[], songPublicId?: string) => {
         setIsPlaying(false);
@@ -178,7 +185,7 @@ const SongContextProvider = ({ children }: Props) => {
     }, [user]);
 
     return (
-        <SongContext.Provider value={{ fetchAndPlay, currentSong, updateQueue, next, prev, play, isPlaying, queue: songs }}>
+        <SongContext.Provider value={{ fetchAndPlay, currentSong, next, prev, play, isPlaying, queue: songs }}>
             {children}
         </SongContext.Provider>
     )

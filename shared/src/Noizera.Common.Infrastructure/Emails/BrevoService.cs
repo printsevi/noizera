@@ -23,7 +23,7 @@ public class BrevoService
         => await SendTransactionalEmailAsync(
             recipientEmail,
             recipientName,
-            1,
+            3,
             ct,
             new Dictionary<string, object>() { { "code", code } }
         ).ConfigureAwait(false);

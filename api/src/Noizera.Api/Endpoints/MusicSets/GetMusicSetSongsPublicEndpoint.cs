@@ -5,20 +5,18 @@ using Noizera.Application.CQRS.MusicSets;
 
 namespace Noizera.Api.Endpoints.MusicSets;
 
-internal sealed class GetMusicSetSongsEndpoint : IEndpoint
+internal sealed class GetMusicSetSongsPublicEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapGet("/api/music-collections/{collectionPublicId}/songs", Handle)
+        => app.MapGet("/api/public/music-collections/{collectionPublicId}/songs", Handle)
               .AllowAnonymous();
 
     internal static async Task<IResult> Handle(
         string collectionPublicId,
-        string audioType,
-        Guid userId,
         [FromServices] ISender sender,
         CancellationToken ct)
     {
-        GetMusicSetSongsQuery query = new(userId, collectionPublicId, audioType);
+        GetMusicSetSongsPublicQuery query = new(collectionPublicId);
         var result = await sender.Send(query, ct).ConfigureAwait(false);
 
         return Results.Ok(result);

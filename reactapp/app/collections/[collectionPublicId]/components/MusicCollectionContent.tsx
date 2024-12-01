@@ -17,7 +17,7 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate"
 import getMusicCollection from "@/api/musicCollections/getMusicCollection"
 import useUser from "@/hooks/useUser"
 import { ISongModel } from "@/providers/SongProvider"
-import getMusicCollectionSongs, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongs"
+import getMusicCollectionSongsPublic, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongsPublic"
 import { formatDurationDisplay, getCoverImageSrc, getURL } from "@/libs/helpers"
 import useSong from "@/hooks/useSong"
 import useSignUpModal from "@/hooks/useSignUpModal"
@@ -28,6 +28,7 @@ import { toast } from "@/hooks/use-toast"
 import useLibrary from "@/hooks/useLibrary"
 import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection"
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection"
+import { CollectionType } from "@/api/common"
 
 interface Props {
   collectionPublicId: string,
@@ -40,7 +41,7 @@ export default function MusicCollectionContent(props: Props) {
   const [musicCollection, setMusicCollection] = useState<MusicCollectionResponse>();
   const [songs, setSongs] = useState<MusicCollectionSongResponse[]>([]);
   const [credits, setCredits] = useState<GetAlbumCreditsResponse[]>([]);
-  const { updateQueue, isPlaying, play } = useSong();
+  const { fetchAndPlay, play } = useSong();
   const [hoveredTrack, setHoveredTrack] = useState<string | null>(null)
   const [collectionIsSaved, setCollectionIsSaved] = useState(false);
   const { addCollection, removeCollection } = useLibrary();
@@ -57,10 +58,9 @@ export default function MusicCollectionContent(props: Props) {
   }, [isAuthenticated, axiosPrivate, auth.userId]);
 
   const fetchSongs = useCallback(async () => {
-    const audioType = user?.activeSubscriptions?.length ? "audio/flac" : "audio/mpeg";
-    const songsData = await getMusicCollectionSongs(props.collectionPublicId, audioType);
+    const songsData = await getMusicCollectionSongsPublic(props.collectionPublicId);
     if (songsData.ok) {
-      setSongs(songsData.data!.songs!);
+      setSongs(songsData.data!);
     }
   }, [isAuthenticated, isReady, axiosPrivate, auth.userId, user?.activeSubscriptions?.length]);
 
@@ -96,8 +96,8 @@ export default function MusicCollectionContent(props: Props) {
     if (!isReady) {
       return;
     }
-    updateQueue(songs!.map(s => ({ song: s, credits: [], contentType: user?.activeSubscriptions && user.activeSubscriptions.length ? "audio/flac" : "audio/mpeg" }))!, songPublicId);
-  }, [songs, updateQueue, play, isReady, user?.activeSubscriptions]);
+    await fetchAndPlay(props.collectionPublicId, songPublicId);
+  }, [fetchAndPlay, isReady]);
 
   const handleLikeTrack = (trackNumber: number) => {
     setLikedTracks((prev) => {
@@ -171,7 +171,7 @@ export default function MusicCollectionContent(props: Props) {
       <div className="lg:w-1/3 mb-8 lg:mb-0">
         <div className="flex flex-col items-center lg:items-start min-w-0 w-full">
           <Image
-            src={getCoverImageSrc(props.collectionPublicId)}
+            src={musicCollection.collectionType === CollectionType.Album ? getCoverImageSrc(props.collectionPublicId) : "/images/favourites.png"}
             alt={`${musicCollection.title} by ${musicCollection.title}`}
             width={300}
             height={300}

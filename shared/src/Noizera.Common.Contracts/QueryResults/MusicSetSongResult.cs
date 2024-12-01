@@ -8,4 +8,5 @@ public record MusicSetSongResult(
     short Sequence,
     string OwnerUsername,
     string OwnerName,
-    string AlbumPublicId);
+    string AlbumPublicId,
+    bool? IsFavourite);

@@ -17,7 +17,7 @@ import {
 import { Card, CardContent } from "./ui/card"
 import { CopyMinus, CopyPlus, EllipsisVerticalIcon, Forward, PlayCircleIcon, PlayIcon, PlusCircleIcon, User } from "lucide-react"
 import useSong from "@/hooks/useSong";
-import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs";
+import getMusicCollectionSongsPublic from "@/api/musicCollections/getMusicCollectionSongsPublic";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import useUser from "@/hooks/useUser";
 import { useCallback, useEffect, useState } from "react";
@@ -120,11 +120,13 @@ export function MusicArtwork({
             <Card className="border-none">
               <CardContent className="flex aspect-square items-center justify-center group relative">
                 <Image
-                  src={getCoverImageSrc(publicId)}
+                  src={collectionType === CollectionType.Album ? getCoverImageSrc(publicId) : "/images/favourites.png"}
                   alt={title}
                   fill
                   sizes="500"
                   priority={false}
+                  placeholder="blur"
+                  blurDataURL="/images/favourites.png"
                   className={cn(
                     "object-cover transition-all group-hover:scale-105",
                     aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
