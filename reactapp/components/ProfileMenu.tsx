@@ -1,7 +1,5 @@
 'use client';
 
-import * as React from "react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -40,6 +38,7 @@ import {
   PlusCircle,
   Settings,
   Shield,
+  Star,
   User,
   UserPlus,
   Users,
@@ -67,6 +66,8 @@ import useUser from "@/hooks/useUser";
 import { ProfileType } from "@/api/common";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { getProfileImageSrc, getURL } from "@/libs/helpers";
+import { useCallback } from "react";
+import getSubscriptionPortal from "@/api/subscriptions/getSubscriptionPortal";
 
 export function ProfileMenu() {
   const router = useRouter();
@@ -82,6 +83,17 @@ export function ProfileMenu() {
     //player.reset();
     router.push('/');
   };
+
+  const openPortal = useCallback(async () => {
+    if (!isReady || !isAuthenticated) {
+      return;
+    }
+
+    const response = await getSubscriptionPortal(axiosPrivate, auth.userId!);
+    if (response.ok) {
+      document.location.href = response.data!.url;
+    }
+  }, [isReady, axiosPrivate, isAuthenticated, auth.userId]);
 
   if (!isAuthenticated || !isReady) {
     return <></>;
@@ -103,9 +115,9 @@ export function ProfileMenu() {
             <User className="mr-2 h-4 w-4" />
             <span>Your profile</span>
           </DropdownMenuItem>
-          {user?.activeSubscriptions.length! > 0 && <DropdownMenuItem>
+          {user?.activeSubscriptions && user.activeSubscriptions.length > 0 && <DropdownMenuItem onClick={() => openPortal()}>
             <CreditCard className="mr-2 h-4 w-4" />
-            <span>My Subscriptions</span>
+            <span>Manage subscriptions</span>
           </DropdownMenuItem>}
           <DropdownMenuItem onClick={() => router.push(`/settings`)}>
             <Settings className="mr-2 h-4 w-4" />
@@ -115,19 +127,22 @@ export function ProfileMenu() {
             <Disc3Icon className="mr-2 h-4 w-4" />
             <span>Upload music</span>
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/subscriptions')}>
+            <Star className="mr-2 h-4 w-4" />
+            <span>Subscriptions</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Sign out</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => router.push(`/terms`)}>
+            <Shield className="mr-2 h-4 w-4" />
+            <span>Terms & privacy policy</span>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Sign out</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push(`/terms`)}>
-          <Shield className="mr-2 h-4 w-4" />
-          <span>Terms & privacy policy</span>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>);
   }
 }
-
 

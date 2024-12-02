@@ -28,13 +28,16 @@ public sealed class Playlist : MusicSet
         return playlist;
     }
 
-    public void AddSong(Song song)
+    public MusicSetSong AddSong(Song song)
     {
         EnsureRule(new SongToPlaylistRule(this, song));
 
         short maxSequence = MusicSetSongs.Count > 0 ? MusicSetSongs.Max(x => x.Sequence) : (short)0;
         MusicSetSong musicSetSong = MusicSetSong.Create(song, this, ++maxSequence);
         MusicSetSongs.Add(musicSetSong);
+        song.MusicSetSongs.Add(musicSetSong);
+
+        return musicSetSong;
     }
 
     private Playlist() { }

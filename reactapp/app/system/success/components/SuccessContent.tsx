@@ -25,8 +25,7 @@ export default function SuccessContent({ sessionId }: Props) {
 
   useEffect(() => {
     if (data?.ok) {
-      // setUser(prev => ({...prev!, activeSubscriptions: [...prev.activeSubscriptions, data.data?.activeSubscriptionType]}))
-      console.log(data.data?.activeSubscriptionType);
+      setUser(prev => ({ ...prev!, activeSubscriptions: [...prev!.activeSubscriptions, data.data!.activeSubscriptionType] }))
       router.push('/')
     }
   }, [data]);

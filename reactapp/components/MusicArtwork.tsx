@@ -1,7 +1,6 @@
 'use client';
 
 import Image from "next/image"
-//import { PlusCircledIcon } from "@radix-ui/react-icons"
 
 import { cn } from "@/lib/utils"
 import {
@@ -17,9 +16,7 @@ import {
 import { Card, CardContent } from "./ui/card"
 import { CopyMinus, CopyPlus, EllipsisVerticalIcon, Forward, PlayCircleIcon, PlayIcon, PlusCircleIcon, User } from "lucide-react"
 import useSong from "@/hooks/useSong";
-import getMusicCollectionSongsPublic from "@/api/musicCollections/getMusicCollectionSongsPublic";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import useUser from "@/hooks/useUser";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCoverImageSrc, getURL } from "@/libs/helpers";
@@ -28,7 +25,6 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import useAuth from "@/hooks/useAuth";
 import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection";
 import { CollectionType } from "@/api/common";
-import useSignUpModal from "@/hooks/useSignUpModal";
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";

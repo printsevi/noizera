@@ -26,7 +26,7 @@ public sealed record GetMyUserQuery(Guid UserId)
                     u.Profile.PublicId,
                     u.Profile.Username,
                     u.Profile.Name,
-                    u.ActiveSubscriptionTypes,
+                    u.Subscriptions.Where(x => x.IsActive).Select(x => x.Subscription.SubscriptionType),
                     u.Songs.Count(x => x.IsPublic),
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddDays(-1))

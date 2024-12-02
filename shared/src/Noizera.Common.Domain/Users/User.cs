@@ -90,9 +90,6 @@ public sealed class User : Entity
 
     public SecretToken? GetTokenOfValue(string secretToken) => SecretTokens.FirstOrDefault(x => x.Token == secretToken);
 
-    public IEnumerable<string> ActiveSubscriptionTypes
-        => Subscriptions.Where(x => x.IsActive).Select(x => x.Subscription.SubscriptionType);
-
     public UserSubscription? GetIncompleteSubscriptionOfType(string subscriptionType)
         => Subscriptions.FirstOrDefault(x =>
             x.Subscription.SubscriptionType.Equals(subscriptionType, StringComparison.OrdinalIgnoreCase)

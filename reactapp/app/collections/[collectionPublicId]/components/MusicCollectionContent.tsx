@@ -2,21 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
-import { PlayCircle, MoreVertical, Share, ListPlus, Pause, Heart, PauseCircle, Forward, CopyMinus, CopyPlus } from "lucide-react"
+import { PlayCircle, Heart, PauseCircle, Forward, CopyMinus, CopyPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import getMusicCollectionPublic, { MusicCollectionResponse } from "@/api/musicCollections/getMusicCollectionPublic"
 import useAuth from "@/hooks/useAuth"
 import useAxiosPrivate from "@/hooks/useAxiosPrivate"
 import getMusicCollection from "@/api/musicCollections/getMusicCollection"
 import useUser from "@/hooks/useUser"
-import { ISongModel } from "@/providers/SongProvider"
 import getMusicCollectionSongsPublic, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongsPublic"
 import { formatDurationDisplay, getCoverImageSrc, getURL } from "@/libs/helpers"
 import useSong from "@/hooks/useSong"
@@ -29,6 +21,9 @@ import useLibrary from "@/hooks/useLibrary"
 import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection"
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection"
 import { CollectionType } from "@/api/common"
+import addSongToFavourites from "@/api/songs/addSongToFavourites"
+import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
+import removeSongFromFavourites from "@/api/songs/removeSongFromFavourites"
 
 interface Props {
   collectionPublicId: string,
@@ -41,7 +36,7 @@ export default function MusicCollectionContent(props: Props) {
   const [musicCollection, setMusicCollection] = useState<MusicCollectionResponse>();
   const [songs, setSongs] = useState<MusicCollectionSongResponse[]>([]);
   const [credits, setCredits] = useState<GetAlbumCreditsResponse[]>([]);
-  const { fetchAndPlay, play } = useSong();
+  const { fetchAndPlay } = useSong();
   const [hoveredTrack, setHoveredTrack] = useState<string | null>(null)
   const [collectionIsSaved, setCollectionIsSaved] = useState(false);
   const { addCollection, removeCollection } = useLibrary();
@@ -58,7 +53,9 @@ export default function MusicCollectionContent(props: Props) {
   }, [isAuthenticated, axiosPrivate, auth.userId]);
 
   const fetchSongs = useCallback(async () => {
-    const songsData = await getMusicCollectionSongsPublic(props.collectionPublicId);
+    const songsData = isAuthenticated
+      ? await getMusicCollectionSongs(props.collectionPublicId, "audio/mpeg", axiosPrivate, auth.userId!)
+      : await getMusicCollectionSongsPublic(props.collectionPublicId);
     if (songsData.ok) {
       setSongs(songsData.data!);
     }
@@ -89,8 +86,27 @@ export default function MusicCollectionContent(props: Props) {
     }
   }, [isReady, fetchAlbumCredits]);
 
-  const trackCount = songs?.length ?? 0
-  const [likedTracks, setLikedTracks] = useState<Set<number>>(new Set())
+  const trackCount = songs?.length ?? 0;
+
+  const onClickLike = useCallback(async (songPublicId: string, favouriteSongId?: string) => {
+    if (!isReady || !isAuthenticated) {
+      return;
+    }
+
+    const response = favouriteSongId
+      ? await removeSongFromFavourites(axiosPrivate, auth.userId!, favouriteSongId)
+      : await addSongToFavourites(axiosPrivate, auth.userId!, songPublicId);
+    if (response.ok) {
+      const updatedSongs = songs.map((songItem) => {
+        if (songItem.songPublicId === songPublicId) {
+          return { ...songItem, favouriteSongId: response.data?.value };
+        }
+        return { ...songItem, favouriteSongId: songItem.favouriteSongId };
+      });
+      setSongs(updatedSongs);
+    }
+
+  }, [fetchAndPlay, isReady, isAuthenticated, setSongs, songs, axiosPrivate, auth.userId]);
 
   const onPlay = useCallback(async (songPublicId?: string) => {
     if (!isReady) {
@@ -98,18 +114,6 @@ export default function MusicCollectionContent(props: Props) {
     }
     await fetchAndPlay(props.collectionPublicId, songPublicId);
   }, [fetchAndPlay, isReady]);
-
-  const handleLikeTrack = (trackNumber: number) => {
-    setLikedTracks((prev) => {
-      const newLiked = new Set(prev)
-      if (newLiked.has(trackNumber)) {
-        newLiked.delete(trackNumber)
-      } else {
-        newLiked.add(trackNumber)
-      }
-      return newLiked
-    })
-  }
 
   const onSaveDeleteToggle = useCallback(async () => {
     if (!isReady || !musicCollection) {
@@ -166,7 +170,6 @@ export default function MusicCollectionContent(props: Props) {
   }
 
   return (
-    //<div className="container mx-auto px-4 py-8">
     <div className="flex flex-col lg:flex-row lg:space-x-8">
       <div className="lg:w-1/3 mb-8 lg:mb-0">
         <div className="flex flex-col items-center lg:items-start min-w-0 w-full">
@@ -262,8 +265,8 @@ export default function MusicCollectionContent(props: Props) {
               </div>
               <div className="flex items-center space-x-4">
                 {hoveredTrack === track.songPublicId && (
-                  <Button size="icon" variant="ghost" className="rounded-full">
-                    <Heart className="h-6 w-6" />
+                  <Button onClick={() => onClickLike(track.songPublicId, track.favouriteSongId)} size="icon" variant="ghost" className="rounded-full">
+                    <Heart className={`h-6 w-6 ${track.favouriteSongId ? "fill-current" : ""}`} />
                     <span className="sr-only">Like</span>
                   </Button>
                 )}
@@ -274,118 +277,5 @@ export default function MusicCollectionContent(props: Props) {
         </div>
       </div>
     </div>
-    //</div>
   )
-
-  // return (
-  //   <div className="flex flex-col min-h-screen bg-background text-foreground">
-  //     <div className="flex flex-col md:flex-row gap-8 p-10 flex-grow">
-  //       <div className="flex flex-col items-center md:items-start gap-4">
-  //         <Image
-  //           src={`${getURL()}api/music-collections/${props.collectionPublicId}/cover-image`}
-  //           alt={`${musicCollection.title} by ${musicCollection.title}`}
-  //           width={300}
-  //           height={300}
-  //           className="rounded-lg shadow-lg"
-  //         />
-  //         <div className="text-center md:text-left">
-  //           <div className="flex items-center gap-2 max-w-[300px]">
-  //             <h1 className="text-2xl font-bold line-clamp-2 text-ellipsis">{musicCollection.title}</h1>
-  //           </div>
-  //           <p className="text-xl text-muted-foreground">
-  //             <Link href={`/profiles/${musicCollection.ownerUsername.toLowerCase()}`} key={`/profiles/${musicCollection.ownerUsername.toLowerCase()}`} className="hover:underline">
-  //               {musicCollection.ownerName}
-  //             </Link>
-  //             {credits.map((credit, index) => (
-  //               <span key={index}> • {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} key={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline"> {credit.name}</Link> : credit.profileName}</span>
-  //             ))}
-  //           </p>
-  //           <p className="text-sm text-muted-foreground">{musicCollection.releaseDate} • {trackCount} songs</p>
-  //         </div>
-  //         <div className="flex gap-4">
-  //           <Button
-  //             variant="ghost"
-  //             size="icon"
-  //             className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-  //           >
-  //             <ListPlus className="h-5 w-5" />
-  //           </Button>
-  //           <Button
-  //             disabled={!songs.length}
-  //             variant="ghost"
-  //             size="icon"
-  //             className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-  //             onClick={(e) => {
-  //               e.stopPropagation();
-  //               onPlay();
-  //             }}
-  //           >
-  //             <PlayCircle className="h-12 w-12" />
-  //           </Button>
-  //           <Button
-  //             variant="ghost"
-  //             size="icon"
-  //             className="rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-  //           >
-  //             <Forward className="h-5 w-5" />
-  //           </Button>
-  //         </div>
-  //       </div>
-  //       <div className="space-y-1 flex-grow">
-  //         {songs!.map((track, index) => (
-  //           <div
-  //             key={index + 1}
-  //             className="flex items-center gap-4 p-2 rounded-md group relative"
-  //           >
-  //             <div className="absolute inset-y-0 left-0 flex items-center justify-center w-12 opacity-0 group-hover:opacity-100 transition-opacity">
-  //               <Button
-  //                 variant="ghost"
-  //                 size="icon"
-  //                 className="h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-colors"
-  //               //onClick={() => handleTrackPlay(track)}
-  //               >
-  //                 <PlayCircle className="h-6 w-6" />
-  //                 <span className="sr-only">Play</span>
-  //               </Button>
-  //             </div>
-  //             <span className="w-12 text-center text-muted-foreground group-hover:opacity-0 transition-opacity">
-  //               {index + 1}
-  //             </span>
-  //             <span className="flex-grow truncate max-w-[200px]">{track.title}</span>
-  //             <div className="flex items-center gap-2 ml-auto">
-  //               <Button
-  //                 variant="ghost"
-  //                 size="icon"
-  //                 className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all"
-  //               //onClick={() => handleLikeTrack(track.number)}
-  //               >
-  //                 <Heart className={`h-5 w-5 ${likedTracks.has(0) ? 'fill-current text-red-500' : ''} transition-colors`} />
-  //                 <span className="sr-only">Like</span>
-  //               </Button>
-  //               {/* <DropdownMenu>
-  //                 <DropdownMenuTrigger asChild>
-  //                   <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 h-10 w-10 p-0 hover:bg-primary hover:text-primary-foreground transition-all">
-  //                     <MoreVertical className="h-5 w-5" />
-  //                     <span className="sr-only">More options</span>
-  //                   </Button>
-  //                 </DropdownMenuTrigger>
-  //                 <DropdownMenuContent>
-  //                   <DropdownMenuItem>
-  //                     <Forward className="mr-2 h-4 w-4" />
-  //                     <span>Share</span>
-  //                   </DropdownMenuItem>
-  //                   <DropdownMenuItem>
-  //                     <ListPlus className="mr-2 h-4 w-4" />
-  //                     <span>Save to playlist</span>
-  //                   </DropdownMenuItem>
-  //                 </DropdownMenuContent>
-  //               </DropdownMenu> */}
-  //               <span className="text-muted-foreground w-12 text-right">{formatDurationDisplay(track.durationInSeconds)}</span>
-  //             </div>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </div>
-  // )
 }

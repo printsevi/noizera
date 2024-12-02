@@ -12,7 +12,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
 {
     public async Task CreateStripeCustomerAsync([NotNull] User user, CancellationToken ct)
     {
-        string? customerId = await stripeService.CreateCustomerAsync(user.Id, user.Email, user.Profile!.Name, ct).ConfigureAwait(false);
+        string? customerId = await stripeService.CreateCustomerAsync(user.Email, user.Profile!.Name, ct).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(customerId))
         {
             throw new StripeException($"Failed to create a Stripe customer for user {user.Id}");
@@ -30,7 +30,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             incompleteUserSubscription.ExpireCheckoutSession();
         }
 
-        string? frontendUrl = configuration["FrontendUrl"];
+        string? frontendUrl = configuration.GetSection("FrontendUrls")?.Get<string[]>()?.FirstOrDefault();
 
         short? trialPeriodDays = user.GetTrialDaysIfEntitled(subscription.SubscriptionType);
 
@@ -60,7 +60,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             _ = db.UserSubscriptions.Update(incompleteUserSubscription);
         }
 
-        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _ = await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return checkoutSession.Value.Url;
     }
@@ -82,7 +82,8 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
 
     public async Task<Uri?> GetSubscriptionPortalUrlAsync([NotNull] User user, [NotNull] IConfiguration configuration, CancellationToken ct)
     {
-        var result = await stripeService.GetBillingPortalLinkAsync(user.CustomerStripeId!, new Uri(configuration["FrontendUrl"]!), ct).ConfigureAwait(false);
+        string? frontendUrl = configuration.GetSection("FrontendUrls")?.Get<string[]>()?.FirstOrDefault();
+        var result = await stripeService.GetBillingPortalLinkAsync(user.CustomerStripeId!, new Uri(frontendUrl!), ct).ConfigureAwait(false);
 
         return result;
     }

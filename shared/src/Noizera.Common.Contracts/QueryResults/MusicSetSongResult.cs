@@ -9,4 +9,4 @@ public record MusicSetSongResult(
     string OwnerUsername,
     string OwnerName,
     string AlbumPublicId,
-    bool? IsFavourite);
+    Guid? FavouriteSongId);

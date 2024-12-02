@@ -9,5 +9,5 @@ internal sealed class DelayedOutboxBackgroundJob(
     : OutboxBackgroundJob<RealTimeOutboxBackgroundJob>(factory, eventSettings)
 {
     public override bool IsRealTime => false;
-    public override short MaxBunchAmount { get; set; } = 10;
+    public override short MaxBunchAmount { get; set; } = 1;
 }

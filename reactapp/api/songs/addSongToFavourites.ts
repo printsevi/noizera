@@ -1,10 +1,12 @@
 import { ApiResponse, handleErrorAndReturnProblem, IdResponse } from '../common';
 import { AxiosInstance } from 'axios';
 
-const addSongToFavourites = async (axiosPrivate: AxiosInstance, userId: string, songPublicId: string): Promise<ApiResponse<void>> => {
-  const result: ApiResponse<void> = { ok: true };
+const addSongToFavourites = async (axiosPrivate: AxiosInstance, userId: string, songPublicId: string): Promise<ApiResponse<IdResponse>> => {
+  const result: ApiResponse<IdResponse> = { ok: true };
   try {
-    const response = await axiosPrivate.put<void>(`/songs/${songPublicId}/favourites?userId=${userId}`);
+    const response = await axiosPrivate.post<IdResponse>(`/favourite-songs?userId=${userId}`,
+      JSON.stringify({ songPublicId: songPublicId })
+    );
     result.data = response.data;
   } catch (err) {
     result.ok = false;

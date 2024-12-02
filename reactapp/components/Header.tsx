@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { SettingsMenu } from './SettingsMenu';
 import fastSearchPublic from '@/api/search/fastSearchPublic';
 import { sendEvent } from '@/libs/helpers';
+import useUser from '@/hooks/useUser';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -30,8 +31,8 @@ const Header: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<string[]>([]);
-
   const [isClient, setIsClient] = useState(false)
+  const user = useUser();
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -151,11 +152,11 @@ const Header: React.FC = () => {
         </Button>
         {isClient && isReady && isAuthenticated && (
           <>
-            <div>
+            {!user.user?.activeSubscriptions || user.user.activeSubscriptions.length === 0 && <div>
               <PurpleButton onClick={() => router.push('/subscriptions')} className='px-6 py-2'>
                 Start free trial
               </PurpleButton>
-            </div>
+            </div>}
             <div className={cn('md:block', showMobileSearch ? "hidden" : "")}>
               <ProfileMenu />
             </div>

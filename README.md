@@ -164,4 +164,39 @@ openssl pkcs12 -export -out aspnetcore.pfx -inkey aspnetcore.key -in aspnetcore.
 
 19. create public certificate https://www.inmotionhosting.com/support/website/ssl/lets-encrypt-ssl-ubuntu-with-certbot/
 
+20. Subscriptions 
+
+
+INSERT INTO public."Subscriptions" (
+    "Id", "Title", "Price", "IsDisabled", "ProfileTypes", "StripePriceId",
+    "FreeTrialInDays", "IsAnnual", "RoyaltyShare", "SubscriptionType"
+) VALUES (
+    gen_random_uuid(), -- Auto-generate a new UUID for the Id
+    'Noizera Premium', -- Replace with the title of the plan
+    7.99, -- Replace with the plan price
+    FALSE, -- Replace with true if the plan is disabled
+    'Fan,Artist,Label', -- Comma-separated profile types
+    'price_1QIDRBDUaPTgFsFqAFlcvs2b', -- Replace with the Stripe price ID
+    7, -- Replace with the free trial period in days
+    FALSE, -- Replace with true for annual plans
+    0.7, -- Replace with the royalty share percentage
+    'PremiumListeningWithFreeTrial' -- Replace with the type of subscription
+);
+
+INSERT INTO public."Subscriptions" (
+    "Id", "Title", "Price", "IsDisabled", "ProfileTypes", "StripePriceId",
+    "FreeTrialInDays", "IsAnnual", "RoyaltyShare", "SubscriptionType"
+) VALUES (
+    gen_random_uuid(), -- Auto-generate a new UUID for the Id
+    'Noizera Premium', -- Replace with the title of the plan
+    69.99, -- Replace with the plan price
+    FALSE, -- Replace with true if the plan is disabled
+    'Fan,Artist,Label', -- Comma-separated profile types
+    'price_1QIDRBDUaPTgFsFqCzZ6T7WV', -- Replace with the Stripe price ID
+    14, -- Replace with the free trial period in days
+    TRUE, -- Replace with true for annual plans
+    0.7, -- Replace with the royalty share percentage
+    'PremiumListeningWithFreeTrial' -- Replace with the type of subscription
+);
+
 

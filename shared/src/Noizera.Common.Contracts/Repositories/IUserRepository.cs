@@ -1,5 +1,4 @@
-﻿using Noizera.Common.Contracts.QueryResults;
-using Noizera.Common.Domain.Users;
+﻿using Noizera.Common.Domain.Users;
 
 namespace Noizera.Common.Contracts.Repositories;
 
@@ -18,6 +17,4 @@ public interface IUserRepository : IRepository<User>
     Task<User?> GetWithActiveRefreshTokensAsync(Guid userId, CancellationToken ct);
 
     Task<User?> GetWithSubscriptionsAsync(Guid userId, CancellationToken ct);
-
-    Task<MyUserQueryResult?> GetMyUserAsync(Guid userId, CancellationToken ct);
 }

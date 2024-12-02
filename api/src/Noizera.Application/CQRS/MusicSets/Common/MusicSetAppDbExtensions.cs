@@ -23,12 +23,10 @@ internal static class MusicSetAppDbExtensions
                 p."Username" as OwnerUsername,
                 p."Name" as OwnerName,
                 CASE 
-                    WHEN {userId}::UUID IS NULL 
-                        THEN NULL
-                    WHEN fav_mcs."SongId" IS NOT NULL 
-                        THEN true
-                    ELSE false 
-                END AS IsFavourite
+                    WHEN {userId}::UUID IS NOT NULL AND fav_mcs."Id" IS NOT NULL
+                        THEN fav_mcs."Id"
+                    ELSE NULL
+                END AS FavouriteSongId
             FROM 
                 public."Songs" s
             JOIN 
@@ -40,23 +38,25 @@ internal static class MusicSetAppDbExtensions
             JOIN 
                 public."Profiles" p
                     ON p."UserId" = s."OwnerId"
-            LEFT JOIN 
-                public."MusicSetSongs" fav_mcs
-                    ON fav_mcs."SongId" = s."Id"
-                    AND ({userId}::UUID IS NULL 
-                        OR fav_mcs."MusicSetId" = (
-                            SELECT 
-                                fav_mc."Id"
-                            FROM 
-                                public."MusicSets" fav_mc
-                            WHERE 
-                                fav_mc."CollectionType" = 'collection_playlist'
-                                    AND fav_mc."OwnerId" = {userId}::UUID
-                                    AND fav_mc."IsDeleted" = false
-                                    AND fav_mc."PlaylistTag" = 'favourites'
-                            LIMIT 1
-                        )
+            LEFT JOIN (
+                SELECT 
+                    fav_mcs_sub."Id",
+                    fav_mcs_sub."SongId"
+                FROM 
+                    public."MusicSetSongs" fav_mcs_sub
+                WHERE 
+                    fav_mcs_sub."MusicSetId" = (
+                        SELECT fav_mc."Id"
+                        FROM public."MusicSets" fav_mc
+                        WHERE 
+                            fav_mc."CollectionType" = 'collection_playlist'
+                            AND fav_mc."OwnerId" = {userId}::UUID
+                            AND fav_mc."IsDeleted" = false
+                            AND fav_mc."PlaylistTag" = 'favourites'
+                        LIMIT 1
                     )
+            ) fav_mcs
+                ON fav_mcs."SongId" = s."Id"
             WHERE 
                 mcs."MusicSetId" = (                                 
                     SELECT mc."Id"

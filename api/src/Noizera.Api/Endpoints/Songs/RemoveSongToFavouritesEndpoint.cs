@@ -5,21 +5,19 @@ using Noizera.Application.CQRS.Songs;
 
 namespace Noizera.Api.Endpoints.Songs;
 
-internal sealed class AddSongToFavouritesEndpoint : IEndpoint
+internal sealed class RemoveSongToFavouritesEndpoint : IEndpoint
 {
-    internal sealed record Request(string SongPublicId);
-
     public void Setup(IEndpointRouteBuilder app)
-        => app.MapPost("/api/favourite-songs", Handle)
+        => app.MapDelete("/api/favourite-songs/{songId}", Handle)
               .RequireAuthorization();
 
     internal static async Task<IResult> Handle(
+        Guid songId,
         Guid userId,
-        [FromBody] Request request,
         [FromServices] ISender sender,
         CancellationToken ct)
     {
-        AddSongToFavouritesCommand command = new(request.SongPublicId, userId);
+        RemoveSongFromFavouritesCommand command = new(songId, userId);
         var result = await sender.Send(command, ct).ConfigureAwait(false);
 
         return Results.Ok(result);

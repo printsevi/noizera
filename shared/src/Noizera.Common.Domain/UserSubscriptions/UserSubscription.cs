@@ -48,6 +48,11 @@ public sealed class UserSubscription : Entity
 
     public void ActivateSubscription(string subscriptionStripeId, DateTimeOffset currentPeriodStart, DateTimeOffset currentPeriodEnd)
     {
+        if (IsActive)
+        {
+            return;
+        }
+
         SubscriptionStripeId = subscriptionStripeId;
         CurrentPeriodStart = currentPeriodStart;
         CurrentPeriodEnd = currentPeriodEnd;

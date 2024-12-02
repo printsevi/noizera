@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Noizera.Infrastructure.Common;
-using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Repositories;
 using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.SecretTokens;
 using Noizera.Common.Domain.Users;
 using Noizera.Common.Persistence.SQL;
+using Noizera.Infrastructure.Common;
 
 namespace Noizera.Infrastructure.Users;
 
@@ -41,10 +40,4 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
         .Include(u => u.Subscriptions)
             .ThenInclude(u => u.Subscription)
         .FirstOrDefaultAsync(u => u.Id == userId, ct).ConfigureAwait(false);
-
-    public async Task<MyUserQueryResult?> GetMyUserAsync(Guid userId, CancellationToken ct) => await Db.Users
-        .Where(u => u.Id == userId)
-        .Select(u => new MyUserQueryResult(u.Profile!.ProfileType.ToString(), u.Profile!.PublicId, u.Profile!.Name, u.ActiveSubscriptionTypes, u.Songs.Count, true))
-        .FirstOrDefaultAsync(ct)
-        .ConfigureAwait(false);
 }

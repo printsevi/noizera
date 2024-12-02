@@ -48,7 +48,6 @@ public class StripeService(
     }
 
     public async Task<string?> CreateCustomerAsync(
-        Guid userId,
         string userEmail,
         string userName,
         CancellationToken ct)
@@ -79,7 +78,6 @@ public class StripeService(
         bool isTrial = subscriptionStatus == "trialing";
         bool isPaid = session.Status == "complete"
             && session.PaymentStatus == "paid"
-            && !string.IsNullOrWhiteSpace(subscriptionStatus)
             && (subscriptionStatus == "active"
                 || subscriptionStatus == "trialing");
 

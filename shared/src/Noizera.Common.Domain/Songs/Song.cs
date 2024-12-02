@@ -56,12 +56,12 @@ public sealed class Song : EntityExtended
         EnsureRule(new OwnerSongAmountRule(user));
 
         string publicId = await hashGenerator.GenerateAsync(ct).ConfigureAwait(false);
-        Song result = new(user, album, publicId);
+        Song song = new(user, album, publicId);
         short maxSequence = album.MusicSetSongs.Count > 0 ? album.MusicSetSongs.Max(x => x.Sequence) : (short)0;
-        MusicSetSong MusicSetSong = MusicSetSong.Create(result, album, ++maxSequence);
-        result.MusicSetSongs.Add(MusicSetSong);
+        MusicSetSong MusicSetSong = MusicSetSong.Create(song, album, ++maxSequence);
+        song.MusicSetSongs.Add(MusicSetSong);
         album.MusicSetSongs.Add(MusicSetSong);
-        return result;
+        return song;
     }
 
     public void UploadOriginalAudioFile([NotNull] ValidFileName fileName, string extension, long contentLength, string contentType, string bucket)
