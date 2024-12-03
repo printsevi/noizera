@@ -7,7 +7,7 @@ const Profile = async ({
 }) => {
   const { profilePublicId } = await params;
   return (
-    <div className='my-0 mx-auto max-w-full h-full'>
+    <div className='my-0 mx-auto max-w-full min-h-full'>
       <ProfileContent username={profilePublicId} />
     </div>
   );

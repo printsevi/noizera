@@ -110,7 +110,7 @@ const Header: React.FC = () => {
       <div className={cn("md:flex-1 md:max-w-xl md:relative md:p-0 flex items-center p-4 ", showMobileSearch ? "bg-background inset-0 absolute" : "")}>
         <Input
           type="search"
-          placeholder="Search songs, artists, albums"
+          placeholder="Search songs, albums, artists, labels"
           className={cn("w-full md:block", showMobileSearch ? "z-50" : "hidden")}
           value={searchQuery}
           onChange={handleSearchChange}

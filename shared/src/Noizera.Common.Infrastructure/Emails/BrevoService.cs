@@ -30,6 +30,19 @@ public class BrevoService
 
     private async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null)
     {
+        Dictionary<string, object> baseParameters = new()
+        {
+            { "name", recipientName }
+        };
+
+        if (parameters != null)
+        {
+            foreach (var param in parameters)
+            {
+                baseParameters[param.Key] = param.Value;
+            }
+        }
+
         var emailPayload = new
         {
             to = new[]
@@ -37,7 +50,7 @@ public class BrevoService
                 new { email = recipientEmail, name = recipientName }
             },
             templateId,
-            @params = parameters ?? []
+            @params = baseParameters
         };
 
         var response = await httpClient.PostAsJsonAsync("smtp/email", emailPayload, ct).ConfigureAwait(false);

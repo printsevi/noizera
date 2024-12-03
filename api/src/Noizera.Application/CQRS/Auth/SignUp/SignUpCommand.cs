@@ -20,7 +20,7 @@ public sealed record SignUpCommand(string Email)
         {
             await User.VerifyEmailAsync(request.Email, userUniquenessChecker, cancellationToken).ConfigureAwait(false);
 
-            var code = VerificationCode.New(request.Email, verificationCodeGenerator);
+            VerificationCode code = VerificationCode.New(request.Email, request.Email, verificationCodeGenerator);
 
             await verificationCodeRepository.InsertAsync(code, cancellationToken).ConfigureAwait(false);
 

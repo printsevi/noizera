@@ -6,7 +6,7 @@ import TermsContent from './components/TermsContent';
 
 const Terms = async () => {
   return (
-    <div className='my-0 mx-auto max-w-3xl'>
+    <div className='my-0 mx-auto max-w-3xl min-h-full'>
       <TermsContent />
     </div>
   );

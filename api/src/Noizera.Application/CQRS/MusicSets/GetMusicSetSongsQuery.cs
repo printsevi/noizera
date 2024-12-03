@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Noizera.Application.CQRS.MusicSets.Common;
+using Noizera.Application.CQRS.Profiles.Common;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Security;
 using Noizera.Common.Persistence.SQL;

@@ -11,7 +11,7 @@ internal sealed class VerificationCodeCreatedEventHandler(BrevoService emailServ
     public async Task Handle(DomainEventNotification<VerificationCodeCreatedEvent> notification, CancellationToken cancellationToken)
         => await emailService.SendConfirmationAccountEmailAsync(
             notification.DomainEvent.Email,
-            notification.DomainEvent.Email,
+            notification.DomainEvent.Name,
             notification.DomainEvent.Code,
             cancellationToken
         ).ConfigureAwait(false);

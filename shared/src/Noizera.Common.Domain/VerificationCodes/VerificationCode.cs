@@ -22,13 +22,13 @@ public class VerificationCode : Entity
         ExpireAt = expireAt;
     }
 
-    public static VerificationCode New(string key, [NotNull] IVerificationCodeGenerator codeGenerator)
+    public static VerificationCode New(string email, string name, [NotNull] IVerificationCodeGenerator codeGenerator)
     {
         var code = codeGenerator.Generate();
 
-        VerificationCode result = new(key, code.Code, code.ExpireAt);
+        VerificationCode result = new(email, code.Code, code.ExpireAt);
 
-        result.AddDomainEvent(new VerificationCodeCreatedEvent(key, code.Code));
+        result.AddDomainEvent(new VerificationCodeCreatedEvent(email, name, code.Code));
 
         return result;
     }

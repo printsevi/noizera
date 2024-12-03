@@ -11,7 +11,7 @@ const Success = async ({
 }) => {
   const { email, token } = await searchParams;
   return (
-    <div className='my-0 mx-auto max-w-xl'>
+    <div className='my-0 mx-auto max-w-xl min-h-full'>
       <ResetContent email={email} token={token} />
     </div>
   );

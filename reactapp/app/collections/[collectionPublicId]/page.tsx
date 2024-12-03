@@ -7,12 +7,9 @@ const MusicCollection = async ({
 }) => {
   const { collectionPublicId } = await params;
   return (
-    //<div className='my-0 mx-auto max-w-5xl h-full'>
-    <div className='container mx-auto px-4 py-8'>
+    <div className='container mx-auto px-4 py-8 min-h-full'>
       <MusicCollectionContent collectionPublicId={collectionPublicId} />
     </div>
-
-    //</div>
   );
 };
 

@@ -3,10 +3,14 @@
 import { ProfileType } from "@/api/common";
 import getFollowersCount from "@/api/profiles/getFollowersCount";
 import getProfile from "@/api/profiles/getProfile";
+import getProfileMusicSets from "@/api/profiles/getProfileMusicSets";
+import getProfileMusicSetsPublic from "@/api/profiles/getProfileMusicSetsPublic";
+import { MusicArtwork } from "@/components/MusicArtwork";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import useUser from "@/hooks/useUser";
 import { getProfileImageSrc, getURL } from "@/libs/helpers";
 import { Heart, PlayCircle, Share2 } from "lucide-react";
@@ -17,9 +21,15 @@ interface Props {
 }
 
 export default function ProfileContent(props: Props) {
-  const { auth } = useAuth();
-  const { user } = useUser();
+  const { auth, isAuthenticated } = useAuth();
+  const { axiosPrivate, isReady } = useAxiosPrivate();
   const { data, isLoading } = useSWR(getProfile.name, () => getProfile(props.username), {
+    revalidateIfStale: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  });
+
+  const { data: musicData, isLoading: isMusicLoading } = useSWR(!isReady ? null : (isAuthenticated ? getProfileMusicSets.name : getProfileMusicSetsPublic.name), () => (isAuthenticated ? getProfileMusicSets(axiosPrivate, props.username, auth.userId!) : getProfileMusicSetsPublic(props.username)), {
     revalidateIfStale: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -74,26 +84,21 @@ export default function ProfileContent(props: Props) {
         </div>
       </div>
 
-      {user?.profileType !== ProfileType.Fan && <h2 className="text-2xl font-bold mb-4">Released Music</h2>}
+      {musicData?.data && musicData?.data.length > 0 && <h2 className="text-2xl font-bold mb-4">Released Music</h2>}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {/* {albums.map((album) => (
-          <Card key={album.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              <div className="relative aspect-square">
-                <Image
-                  src={album.imageUrl}
-                  alt={album.title}
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex flex-col items-start p-2">
-              <h3 className="font-semibold text-sm truncate w-full">{album.title}</h3>
-              <p className="text-xs text-muted-foreground">{album.year} • {album.tracks} tracks</p>
-            </CardFooter>
-          </Card>
-        ))} */}
+        {musicData?.data?.map((item) => (
+          <section key={item.publicId}>
+            <MusicArtwork
+              title={item.title}
+              collectionType={item.collectionType}
+              publicId={item.publicId}
+              isSaved={item.isSaved}
+              ownerName={item.ownerName}
+              ownerUsername={item.ownerUsername}
+              songCount={item.songCount}
+            />
+          </section>
+        ))}
       </div>
     </div>
     // <div className="pl-6 pr-6">

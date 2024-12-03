@@ -83,7 +83,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             throw new StripeException($"The session {checkoutSessionId} is not found or the invoice is unpaid");
         }
 
-        userSubscription.ActivateSubscription(session.SubscriptionId, session.CurrentPeriodStart.Value, session.CurrentPeriodEnd.Value);
+        userSubscription.ActivateSubscription(session.SubscriptionId, session.CurrentPeriodStart.Value, session.CurrentPeriodEnd.Value, session.IsTrial);
     }
 
     public async Task<Uri?> GetSubscriptionPortalUrlAsync([NotNull] User user, [NotNull] IConfiguration configuration, CancellationToken ct)

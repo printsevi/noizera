@@ -53,8 +53,7 @@ export function handleErrorAndReturnProblem(err: any) {
         } else if (err.response?.status === 400) {
             toast({
                 variant: "destructive",
-                title: err.response.data?.detail,
-                description: "Please fix your request and try again",
+                title: err.response.data?.detail
             });
         } else {
             toast({

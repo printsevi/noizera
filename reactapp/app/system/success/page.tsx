@@ -6,7 +6,11 @@ const Success = async ({
   searchParams: Promise<{ session_id: string }>
 }) => {
   const { session_id } = await searchParams;
-  return <SuccessContent sessionId={session_id} />;
+  return (
+    <div className='my-0 mx-auto max-w-xl min-h-full'>
+      <SuccessContent sessionId={session_id} />
+    </div>
+  );
 };
 
 export default Success;

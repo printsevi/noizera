@@ -5,7 +5,7 @@ using Noizera.Application.CQRS.Songs;
 
 namespace Noizera.Api.Endpoints.Songs;
 
-internal sealed class RemoveSongToFavouritesEndpoint : IEndpoint
+internal sealed class RemoveSongFromFavouritesEndpoint : IEndpoint
 {
     public void Setup(IEndpointRouteBuilder app)
         => app.MapDelete("/api/favourite-songs/{songId}", Handle)

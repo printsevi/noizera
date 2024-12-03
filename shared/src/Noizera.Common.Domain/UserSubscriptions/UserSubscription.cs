@@ -46,7 +46,7 @@ public sealed class UserSubscription : Entity
         AddDomainEvent(new CheckoutSessionCreatedEvent(Id, CheckoutSessionId));
     }
 
-    public void ActivateSubscription(string subscriptionStripeId, DateTimeOffset currentPeriodStart, DateTimeOffset currentPeriodEnd)
+    public void ActivateSubscription(string subscriptionStripeId, DateTimeOffset currentPeriodStart, DateTimeOffset currentPeriodEnd, bool isTrial)
     {
         if (IsActive)
         {
@@ -62,7 +62,7 @@ public sealed class UserSubscription : Entity
         AddDomainEvent(new UserSubscriptionActivatedEvent(Id));
         AddDomainEvent(new SubscriptionRenewalPlannedEvent(Id, currentPeriodEnd));
 
-        if (Subscription.RoyaltyShare > 0)
+        if (Subscription.RoyaltyShare > 0 && !isTrial)
         {
             AddDomainEvent(new RoyaltyPaymentPlannedEvent(UserId, currentPeriodStart, currentPeriodEnd, Subscription.RoyaltyShare, Subscription.Price));
         }
