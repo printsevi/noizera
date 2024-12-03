@@ -71,8 +71,11 @@ public class StripeService(
             return null;
         }
 
-        string subscriptionId = session.SubscriptionId;
-        var subscription = await subscriptionService.GetAsync(subscriptionId, cancellationToken: ct).ConfigureAwait(false);
+        Stripe.Subscription? subscription = null;
+        if (!string.IsNullOrEmpty(session.SubscriptionId))
+        {
+            subscription = await subscriptionService.GetAsync(session.SubscriptionId, cancellationToken: ct).ConfigureAwait(false);
+        }
 
         string? subscriptionStatus = subscription?.Status;
         bool isTrial = subscriptionStatus == "trialing";
@@ -84,7 +87,7 @@ public class StripeService(
         return new(
             isPaid,
             isTrial,
-            subscriptionId,
+            session.SubscriptionId,
             subscription?.CurrentPeriodStart,
             subscription?.CurrentPeriodEnd);
     }
