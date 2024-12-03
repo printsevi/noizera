@@ -65,7 +65,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
             className="flex items-center justify-between w-full py-2 h-10 px-3 text-sm border rounded-md cursor-pointer transition-colors ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
           >
             <span>
-              {file ? file.name : "Choose file"}
+              {file ? file.name : "Choose audio file (wav or aif/aiff)"}
             </span>
             {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {!isUploading && <FileAudio size={20} />}

@@ -114,6 +114,10 @@ export default function SettingsContent() {
   }, [axiosPrivate, auth.userId, username, user?.username, setUser]);
 
   const updateNameHandler = useCallback(async () => {
+    if (user?.name === name) {
+      return;
+    }
+
     setIsUpdating(true);
     const updateResult = await updateName(axiosPrivate, auth.userId!, name);
     if (updateResult.ok) {
@@ -223,7 +227,7 @@ export default function SettingsContent() {
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Username must be 2-30 characters, contain only letters, numbers, dots, and cannot start or end with a dot or contain sequences of '..'.
+                    Username must be 2-30 characters, contain only letters, numbers, dots, and cannot start or end with a dot or contain sequences of '..'
                   </div>
                 </div>
               </div>
