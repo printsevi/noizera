@@ -24,9 +24,15 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
     public async Task<Uri> CreateCheckoutSessionAsync([NotNull] User user, [NotNull] Subscription subscription, [NotNull] IConfiguration configuration, CancellationToken cancellationToken)
     {
         var incompleteUserSubscription = user.GetIncompleteSubscriptionOfType(subscription.SubscriptionType);
-        if (incompleteUserSubscription is not null)
+        if (incompleteUserSubscription?.CheckoutSessionId is not null)
         {
-            _ = await stripeService.ExpireSessionAsync(incompleteUserSubscription.CheckoutSessionId!, cancellationToken).ConfigureAwait(false);
+            var session = await stripeService.GetSessionAsync(incompleteUserSubscription.CheckoutSessionId, cancellationToken).ConfigureAwait(false);
+            if (session?.IsPaid ?? false)
+            {
+                throw new InvalidOperationException($"The subscription {subscription.SubscriptionType} is already paid. Please, wait a bit for the activation.");
+            }
+
+            await stripeService.ExpireSessionAsync(incompleteUserSubscription.CheckoutSessionId, cancellationToken).ConfigureAwait(false);
             incompleteUserSubscription.ExpireCheckoutSession();
         }
 

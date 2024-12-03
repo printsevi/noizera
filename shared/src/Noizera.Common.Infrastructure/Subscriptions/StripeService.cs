@@ -96,21 +96,13 @@ public class StripeService(
         return session?.Status;
     }
 
-    public async Task<bool> ExpireSessionAsync(string sessionId, CancellationToken ct)
+    public async Task ExpireSessionAsync(string sessionId, CancellationToken ct)
     {
         var session = await sessionService.GetAsync(sessionId, cancellationToken: ct).ConfigureAwait(false);
-        if (session is null)
+        if (session?.Status == "open")
         {
-            return false;
+            _ = await sessionService.ExpireAsync(sessionId, cancellationToken: ct).ConfigureAwait(false);
         }
-
-        if (session.Status != "open")
-        {
-            return true;
-        }
-
-        session = await sessionService.ExpireAsync(sessionId, cancellationToken: ct).ConfigureAwait(false);
-        return session is not null;
     }
 
     public async Task<Uri?> GetBillingPortalLinkAsync(string customerId, [NotNull] Uri returnUrl, CancellationToken ct)
