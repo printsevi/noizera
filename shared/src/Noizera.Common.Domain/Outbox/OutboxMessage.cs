@@ -54,5 +54,10 @@ public class OutboxMessage : Entity
         Retries++;
     }
 
+    public void Postpone(int seconds)
+    {
+        ProcessAfter = SystemClock.UtcNow.AddSeconds(seconds);
+    }
+
     private OutboxMessage() { }
 }

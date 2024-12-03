@@ -66,9 +66,13 @@ internal abstract class OutboxBackgroundJob<T>(
 
                         message.Process();
                     }
+                    catch (RetryException ex)
+                    {
+                        message.Postpone(ex.DelayInSeconds);
+                    }
                     catch (Exception ex)
                     {
-                        Log.Logger.Error("Message {messageId} is failed with message {errorMessage}. Exception: {errorDetails}", message.Id, ex.Message, ex.ToString());
+                        Log.Logger.Error("Message: {messageId} is failed with error: {errorMessage}. Exception: {errorDetails}", message.Id, ex.Message, ex.ToString());
                         message.Fail(ex.Message);
                     }
                 }

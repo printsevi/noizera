@@ -32,8 +32,7 @@ internal sealed class CheckoutSessionCreatedEventHandler(AppDbContext db, Subscr
                 await subscriptionService.ActivateSubscriptionAsync(subscription.CheckoutSessionId, subscription, cancellationToken).ConfigureAwait(false);
                 break;
             case "open":
-                await Task.Delay(5000, cancellationToken).ConfigureAwait(false); //5 sec
-                throw new InvalidOperationException($"Stripe session is still open {subscription.CheckoutSessionId}");
+                throw new RetryException(delayInSeconds: 10);
             case "expired":
             default:
                 return;
