@@ -9,6 +9,7 @@ using Noizera.Common.Domain.SavedMusicSets;
 using Noizera.Common.Domain.SecretTokens;
 using Noizera.Common.Domain.Songs;
 using Noizera.Common.Domain.Streams;
+using Noizera.Common.Domain.Subscriptions;
 using Noizera.Common.Domain.UserSubscriptions;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -96,13 +97,12 @@ public sealed class User : Entity
             && !x.CheckoutSessionIsProcessed
             && !string.IsNullOrWhiteSpace(x.CheckoutSessionId));
 
-    public short? GetTrialDaysIfEntitled(string subscriptionType)
-    {
-        var previousSubscription = Subscriptions.FirstOrDefault(x =>
-            x.Subscription.SubscriptionType.Equals(subscriptionType, StringComparison.OrdinalIgnoreCase)
-            && x.CheckoutSessionIsProcessed);
-        return previousSubscription?.Subscription.FreeTrialInDays;
-    }
+    public short? GetTrialDaysIfEntitled([NotNull] Subscription subscription)
+        => Subscriptions.Any(x =>
+            x.Subscription.SubscriptionType.Equals(subscription.SubscriptionType, StringComparison.OrdinalIgnoreCase)
+                && x.CheckoutSessionIsProcessed)
+        ? null
+        : subscription.FreeTrialInDays;
 
     public bool VerifyPassword(string passwordToVerify, [NotNull] IPasswordHelper passwordHelper)
     {

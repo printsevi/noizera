@@ -31,16 +31,14 @@ public class StripeService(
                     Quantity = 1,
                 },
             ],
-            Mode = "subscription"
+            Mode = "subscription",
+            SubscriptionData = new SessionSubscriptionDataOptions()
         };
 
-        if (trialPeriodDays > 0)
+        if (trialPeriodDays.HasValue && trialPeriodDays > 0)
         {
-            options.SubscriptionData = new SessionSubscriptionDataOptions
-            {
-                TrialPeriodDays = trialPeriodDays,
-            };
-        };
+            options.SubscriptionData.TrialPeriodDays = trialPeriodDays;
+        }
 
         var session = await sessionService.CreateAsync(options, cancellationToken: ct).ConfigureAwait(false);
 

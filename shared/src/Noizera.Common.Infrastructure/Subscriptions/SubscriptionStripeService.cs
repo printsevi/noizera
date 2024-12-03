@@ -38,7 +38,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
 
         string? frontendUrl = configuration.GetSection("FrontendUrls")?.Get<string[]>()?.FirstOrDefault();
 
-        short? trialPeriodDays = user.GetTrialDaysIfEntitled(subscription.SubscriptionType);
+        short? trialPeriodDays = user.GetTrialDaysIfEntitled(subscription);
 
         var checkoutSession = await stripeService.CreateCheckoutSessionAsync(
             subscription.StripePriceId,

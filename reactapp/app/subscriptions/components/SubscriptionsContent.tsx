@@ -130,10 +130,10 @@ export default function SubscriptionsContent() {
             </CardDescription>
             <CardContent>
               <ul className="mt-7 space-y-2.5 text-sm">
-                <li className="flex space-x-2">
+                {sub.freeTrialInDays && <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Free Trial with No Commitment</span>
-                </li>
+                  <span className="text-muted-foreground">{sub.freeTrialInDays} days FREE</span>
+                </li>}
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
                   <span className="text-muted-foreground">Crystal-Clear FLAC Quality</span>
@@ -152,7 +152,7 @@ export default function SubscriptionsContent() {
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Start Supporting Artists & Labels</span>
+                  <span className="text-muted-foreground">Direct supporting of Artists & Labels</span>
                 </li>
               </ul>
             </CardContent>
