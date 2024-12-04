@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useMediaQuery } from "@custom-react-hooks/use-media-query"
 import {
+  BadgeInfo,
   Cloud,
   CreditCard,
   Disc3Icon,
@@ -127,15 +128,23 @@ export function ProfileMenu() {
             <Disc3Icon className="mr-2 h-4 w-4" />
             <span>Upload music</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push('/subscriptions')}>
-            <Star className="mr-2 h-4 w-4" />
-            <span>Subscriptions</span>
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign out</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => router.push('/subscriptions')}>
+            <Star className="mr-2 h-4 w-4" />
+            <span>Subscriptions</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(`/about`)}>
+            <BadgeInfo className="mr-2 h-4 w-4" />
+            <span>About us</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(`/contact`)}>
+            <Mail className="mr-2 h-4 w-4" />
+            <span>Contact us</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push(`/terms`)}>
             <Shield className="mr-2 h-4 w-4" />
             <span>Terms & privacy policy</span>

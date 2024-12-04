@@ -15,11 +15,25 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import Script from 'next/script';
 import { CookieConsentProvider } from '@/providers/CookieConsentProvider';
 import { CookieConsent } from '@/components/CookieConsent';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Noizera',
-  description:
-    'Noizera - independent music streaming',
+export const metadata: Metadata = {
+  title: {
+    default: 'Noizera',
+    template: '%s | Noizera',
+  },
+  description: 'Discover a music streaming platform for independent artists and labels offering high royalties. Enjoy FLAC-quality songs, curated playlists, and affordable subscriptions.',
+  openGraph: {
+    title: 'Noizera | Independent Music Streaming',
+    description: 'Discover a music streaming platform for independent artists and labels offering high royalties. Enjoy FLAC-quality songs, curated playlists, and affordable subscriptions.',
+    siteName: 'Noizera',
+    type: 'website',
+    images: ['/images/logo.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const revalidate = 0;

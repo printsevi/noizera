@@ -20,7 +20,7 @@ internal sealed class UserSubscriptionActivatedEventHandler(
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.UserSubscriptionId, cancellationToken).ConfigureAwait(false)
             ?? throw new ArgumentException($"UserSubscription {notification.DomainEvent.UserSubscriptionId} is not found.");
 
-        await emailService.SendConfirmationAccountEmailAsync(
+        await emailService.SendLoginConfirmationAsync(
             userSubscription.User.Email,
             userSubscription.User.Email,
             "",

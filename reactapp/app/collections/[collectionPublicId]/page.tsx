@@ -1,4 +1,14 @@
+import { Metadata } from 'next';
 import MusicCollectionContent from './components/MusicCollectionContent';
+
+export const metadata: Metadata = {
+  title: 'Music Collection',
+  description: 'Explore [Album Name] by [Artist Name]. Stream FLAC-quality tracks, discover lyrics, and enjoy music from your favorite independent artists and labels.',
+  openGraph: {
+    title: 'Music Collection | Noizera',
+    description: 'Explore [Album Name] by [Artist Name]. Stream FLAC-quality tracks, discover lyrics, and enjoy music from your favorite independent artists and labels.',
+  },
+};
 
 const MusicCollection = async ({
   params,

@@ -2,4 +2,4 @@
 
 namespace Noizera.Common.Domain.Events;
 
-public sealed record PasswordUpdatedEvent(Guid userId) : DomainEvent;
+public sealed record PasswordUpdatedEvent(Guid UserId) : DomainEvent;

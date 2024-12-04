@@ -3,7 +3,9 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import {
+  BadgeInfo,
   EllipsisVertical,
+  Mail,
   Shield,
   Star
 } from "lucide-react"
@@ -31,6 +33,14 @@ export function SettingsMenu() {
         <DropdownMenuItem onClick={() => router.push(`/subscriptions`)}>
           <Star className="mr-2 h-4 w-4" />
           <span>Get Noizera Premium</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push(`/about`)}>
+          <BadgeInfo className="mr-2 h-4 w-4" />
+          <span>About us</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push(`/contact`)}>
+          <Mail className="mr-2 h-4 w-4" />
+          <span>Contact us</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push(`/terms`)}>
           <Shield className="mr-2 h-4 w-4" />

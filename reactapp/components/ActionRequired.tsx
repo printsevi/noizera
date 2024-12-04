@@ -15,7 +15,7 @@ export default function ActionRequired(props: Props) {
     const router = useRouter();
 
     return (
-        <Card className="w-full">
+        <Card className="max-w-2xl mx-auto">
             <CardHeader className="text-center">
                 <div className="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-4">
                     <Lock className="w-10 h-10" />

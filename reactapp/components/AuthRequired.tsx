@@ -12,7 +12,7 @@ export default function AuthRequired() {
     const signUpModal = useSignUpModal();
 
     return (
-        <Card className="w-full">
+        <Card className="max-w-2xl mx-auto">
             <CardHeader className="text-center">
                 <div className="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-4">
                     <Lock className="w-10 h-10" />

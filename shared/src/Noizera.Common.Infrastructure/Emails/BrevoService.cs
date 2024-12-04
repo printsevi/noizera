@@ -19,7 +19,7 @@ public class BrevoService
         this.httpClient.BaseAddress = new Uri("https://api.brevo.com/v3/");
     }
 
-    public async Task SendConfirmationAccountEmailAsync(string recipientEmail, string recipientName, string code, CancellationToken ct)
+    public async Task SendLoginConfirmationAsync(string recipientEmail, string recipientName, string code, CancellationToken ct)
         => await SendTransactionalEmailAsync(
             recipientEmail,
             recipientName,
@@ -28,7 +28,18 @@ public class BrevoService
             new Dictionary<string, object>() { { "code", code } }
         ).ConfigureAwait(false);
 
-    private async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null)
+    public async Task SendContactFormAsync(string recipientEmail, string recipientName, string topic, string description, CancellationToken ct)
+        => await SendTransactionalEmailAsync(
+            recipientEmail,
+            recipientName,
+            5,
+            ct,
+            new Dictionary<string, object>() { { "description", description } },
+            [("help@noizera.com", "Noizera team")],
+            $"{topic} from {recipientEmail}"
+        ).ConfigureAwait(false);
+
+    private async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null, List<(string Email, string Name)>? cc = null, string? subject = null)
     {
         Dictionary<string, object> baseParameters = new()
         {
@@ -49,6 +60,8 @@ public class BrevoService
             {
                 new { email = recipientEmail, name = recipientName }
             },
+            cc = cc?.Select(c => new { email = c.Email, name = c.Name }).ToArray(),
+            subject,
             templateId,
             @params = baseParameters
         };

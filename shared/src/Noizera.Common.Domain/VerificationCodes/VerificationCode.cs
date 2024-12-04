@@ -33,6 +33,15 @@ public class VerificationCode : Entity
         return result;
     }
 
+    public static VerificationCode SubmitContactForm(string email, string name, string topic, string description)
+    {
+        VerificationCode result = new("ContactFormSubmitted", "", SystemClock.UtcNow);
+
+        result.AddDomainEvent(new ContactFormSubmittedEvent(email, name, topic, description));
+
+        return result;
+    }
+
     public bool VerifyAndInvalidateCode(string code)
     {
         Invalid = true;

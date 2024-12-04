@@ -3,8 +3,18 @@ import { usePageLoading } from '@/hooks/usePageLoading';
 import Loading from '../../loading';
 import dynamic from 'next/dynamic';
 import ResetContent from './components/ResetContent';
+import { Metadata } from 'next';
 
-const Success = async ({
+export const metadata: Metadata = {
+  title: 'Reset password',
+  description: 'Reset your password',
+  robots: {
+    index: false,
+    follow: false,
+  }
+};
+
+const ResetPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ email: string, token: string }>
@@ -17,4 +27,4 @@ const Success = async ({
   );
 };
 
-export default Success;
+export default ResetPage;

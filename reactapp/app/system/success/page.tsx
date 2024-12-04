@@ -1,4 +1,14 @@
+import { Metadata } from 'next';
 import SuccessContent from './components/SuccessContent';
+
+export const metadata: Metadata = {
+  title: 'Subscription activated',
+  description: 'your subscription has been activated.',
+  robots: {
+    index: false,
+    follow: false,
+  }
+};
 
 const Success = async ({
   searchParams,
