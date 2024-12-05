@@ -8,8 +8,10 @@ using Subscription = Noizera.Common.Domain.Subscriptions.Subscription;
 
 namespace Noizera.Common.Infrastructure.Subscriptions;
 
-public class SubscriptionStripeService(AppDbContext db, StripeService stripeService)
+public class SubscriptionStripeService(AppDbContext db, StripeService stripeService, IConfiguration configuration)
 {
+    private readonly string host = configuration.GetSection("FrontendUrls")?.Get<string[]>()?.FirstOrDefault() ?? string.Empty;
+
     public async Task CreateStripeCustomerAsync([NotNull] User user, CancellationToken ct)
     {
         string? customerId = await stripeService.CreateCustomerAsync(user.Email, user.Profile!.Name, ct).ConfigureAwait(false);
@@ -21,7 +23,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
         user.SetCustomerStripeId(customerId);
     }
 
-    public async Task<Uri> CreateCheckoutSessionAsync([NotNull] User user, [NotNull] Subscription subscription, [NotNull] IConfiguration configuration, CancellationToken cancellationToken)
+    public async Task<Uri> CreateCheckoutSessionAsync([NotNull] User user, [NotNull] Subscription subscription, CancellationToken cancellationToken)
     {
         var incompleteUserSubscription = user.GetIncompleteSubscriptionOfType(subscription.SubscriptionType);
         if (incompleteUserSubscription?.CheckoutSessionId is not null)
@@ -36,15 +38,13 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             incompleteUserSubscription.ExpireCheckoutSession();
         }
 
-        string? frontendUrl = configuration.GetSection("FrontendUrls")?.Get<string[]>()?.FirstOrDefault();
-
         short? trialPeriodDays = user.GetTrialDaysIfEntitled(subscription);
 
         var checkoutSession = await stripeService.CreateCheckoutSessionAsync(
             subscription.StripePriceId,
             user.CustomerStripeId!,
-            new Uri($"{frontendUrl}/system/success?session_id={{CHECKOUT_SESSION_ID}}"),
-            new Uri(frontendUrl!),
+            new Uri($"{host}/system/success?session_id={{CHECKOUT_SESSION_ID}}"),
+            new Uri(host),
             trialPeriodDays,
             cancellationToken).ConfigureAwait(false);
 
@@ -71,7 +71,7 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
         return checkoutSession.Value.Url;
     }
 
-    public async Task ActivateSubscriptionAsync(string checkoutSessionId, [NotNull] UserSubscription userSubscription, CancellationToken ct)
+    public async Task TryActivateSubscriptionAsync(string checkoutSessionId, [NotNull] UserSubscription userSubscription, CancellationToken ct)
     {
         var session = await stripeService.GetSessionAsync(checkoutSessionId, ct).ConfigureAwait(false);
         if (session is null
@@ -86,10 +86,9 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
         userSubscription.ActivateSubscription(session.SubscriptionId, session.CurrentPeriodStart.Value, session.CurrentPeriodEnd.Value, session.IsTrial);
     }
 
-    public async Task<Uri?> GetSubscriptionPortalUrlAsync([NotNull] User user, [NotNull] IConfiguration configuration, CancellationToken ct)
+    public async Task<Uri?> GetSubscriptionPortalUrlAsync([NotNull] User user, CancellationToken ct)
     {
-        string? frontendUrl = configuration.GetSection("FrontendUrls")?.Get<string[]>()?.FirstOrDefault();
-        var result = await stripeService.GetBillingPortalLinkAsync(user.CustomerStripeId!, new Uri(frontendUrl!), ct).ConfigureAwait(false);
+        var result = await stripeService.GetBillingPortalLinkAsync(user.CustomerStripeId!, new Uri(host), ct).ConfigureAwait(false);
 
         return result;
     }

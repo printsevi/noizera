@@ -26,6 +26,7 @@ import { useMediaQuery } from "@custom-react-hooks/use-media-query"
 import {
   BadgeInfo,
   Cloud,
+  Coins,
   CreditCard,
   Disc3Icon,
   Github,
@@ -68,7 +69,8 @@ import { ProfileType } from "@/api/common";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { getProfileImageSrc, getURL } from "@/libs/helpers";
 import { useCallback } from "react";
-import getSubscriptionPortal from "@/api/subscriptions/getSubscriptionPortal";
+import getSubscriptionPortal from "@/api/users/getSubscriptionPortal";
+import getOrCreateConnectedAccount from "@/api/users/getOrCreateConnectedAccount";
 
 export function ProfileMenu() {
   const router = useRouter();
@@ -91,6 +93,17 @@ export function ProfileMenu() {
     }
 
     const response = await getSubscriptionPortal(axiosPrivate, auth.userId!);
+    if (response.ok) {
+      document.location.href = response.data!.url;
+    }
+  }, [isReady, axiosPrivate, isAuthenticated, auth.userId]);
+
+  const getAccountLink = useCallback(async () => {
+    if (!isReady || !isAuthenticated) {
+      return;
+    }
+
+    const response = await getOrCreateConnectedAccount(axiosPrivate, auth.userId!);
     if (response.ok) {
       document.location.href = response.data!.url;
     }
@@ -119,6 +132,10 @@ export function ProfileMenu() {
           {user?.activeSubscriptions && user.activeSubscriptions.length > 0 && <DropdownMenuItem onClick={() => openPortal()}>
             <CreditCard className="mr-2 h-4 w-4" />
             <span>Manage subscriptions</span>
+          </DropdownMenuItem>}
+          {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => getAccountLink()}>
+            <Coins className="mr-2 h-4 w-4" />
+            <span>Manage royalties</span>
           </DropdownMenuItem>}
           <DropdownMenuItem onClick={() => router.push(`/settings`)}>
             <Settings className="mr-2 h-4 w-4" />

@@ -2,6 +2,8 @@
 using Noizera.Common.Contracts.Errors;
 using Noizera.Common.Contracts.Repositories;
 using Noizera.Common.Contracts.Security;
+using Noizera.Common.Domain.Users;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Auth.ResetPassword;
@@ -13,7 +15,8 @@ public sealed record ResetPasswordCommand(
     : IRequest<Unit>, ISensitiveRequest
 {
     public sealed class Handler(
-        ISecretTokenRepository secretTokenRepository,
+        AppDbContext db,
+        IPasswordHelper passwordHelper,
         IUserRepository userRepository)
         : IRequestHandler<ResetPasswordCommand, Unit>
     {
@@ -30,7 +33,9 @@ public sealed record ResetPasswordCommand(
 
             resetToken.RevokeToken();
 
-            await secretTokenRepository.UpdateAsync(resetToken, cancellationToken).ConfigureAwait(false);
+            user.UpdatePassword(request.NewPassword, passwordHelper);
+
+            await db.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
 
             return Unit.Value;
         }

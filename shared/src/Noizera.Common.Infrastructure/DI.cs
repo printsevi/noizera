@@ -31,6 +31,9 @@ public static class DI
         _ = services.AddScoped<CustomerService>();
         _ = services.AddScoped<SubscriptionService>();
         _ = services.AddScoped<Stripe.BillingPortal.SessionService>();
+        _ = services.AddScoped<AccountService>();
+        _ = services.AddScoped<AccountLinkService>();
+        _ = services.AddScoped<AccountLoginLinkService>();
         _ = services.AddScoped<StripeService>();
         _ = services.AddScoped<SubscriptionStripeService>();
 

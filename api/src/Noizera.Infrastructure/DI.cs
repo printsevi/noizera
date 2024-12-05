@@ -60,8 +60,6 @@ public static class DI
 
         _ = services.AddScoped<IProfileImageUploader, ProfileImageUploader>();
 
-        _ = services.AddScoped<ISubscriptionService, SubscriptionService>();
-
         _ = services.AddScoped<IAudioFileService, AudioFileService>();
 
         return services;

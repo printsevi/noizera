@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Noizera.Common.Contracts.Errors;
 using Noizera.Common.Contracts.Repositories;
 using Noizera.Common.Contracts.Security;
-using Noizera.Common.Contracts.Services;
+using Noizera.Common.Infrastructure.Subscriptions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Subscriptions.Checkout;
@@ -16,8 +16,7 @@ public sealed record CheckoutCommand(
     public sealed class Handler(
         ISubscriptionRepository subscriptionRepository,
         IUserRepository userRepository,
-        ISubscriptionService subscriptionService,
-        IConfiguration configuration)
+        SubscriptionStripeService subscriptionService)
         : IRequestHandler<CheckoutCommand, CheckoutResponse>
     {
         public async Task<CheckoutResponse> Handle([NotNull] CheckoutCommand request, CancellationToken cancellationToken)
@@ -35,11 +34,11 @@ public sealed record CheckoutCommand(
 
             if (string.IsNullOrWhiteSpace(user.CustomerStripeId))
             {
-                await subscriptionService.InitializeCustomerAsync(user, cancellationToken).ConfigureAwait(false);
+                await subscriptionService.CreateStripeCustomerAsync(user, cancellationToken).ConfigureAwait(false);
                 await userRepository.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
             }
 
-            var result = await subscriptionService.CreateCheckoutSessionAsync(user, subscription, configuration, cancellationToken).ConfigureAwait(false);
+            var result = await subscriptionService.CreateCheckoutSessionAsync(user, subscription, cancellationToken).ConfigureAwait(false);
 
             return new(result);
         }

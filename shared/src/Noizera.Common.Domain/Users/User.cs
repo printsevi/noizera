@@ -20,6 +20,7 @@ public sealed class User : Entity
 {
     public string Email { get; private set; } = null!;
     public string? CustomerStripeId { get; private set; }
+    public string? ConnectedAccountStripeId { get; private set; }
     public string PasswordHash { get; private set; } = null!;
     public byte[] PasswordSalt { get; private set; } = [];
     public string Roles { get; private set; } = null!;
@@ -111,11 +112,9 @@ public sealed class User : Entity
         return result;
     }
 
-    public void SaveMusicSet(MusicSet collection)
+    public void ConnectStripeAccount(string accountId)
     {
-        
-
-        SavedMusicSets.Add(SavedMusicSet.New(this, collection));
+        ConnectedAccountStripeId = accountId;
     }
 
     public void UpdatePassword(string newPassword, [NotNull] IPasswordHelper passwordHelper)

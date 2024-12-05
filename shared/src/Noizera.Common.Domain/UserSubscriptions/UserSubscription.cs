@@ -68,6 +68,33 @@ public sealed class UserSubscription : Entity
         }
     }
 
+    public void DeclareFailedPayment(DateTimeOffset nextCheck)
+    {
+        AddDomainEvent(new SubscriptionPaymentFailedEvent(Id));
+        AddDomainEvent(new SubscriptionRenewalPlannedEvent(Id, nextCheck));
+    }
+
+    public void CancelSubscription()
+    {
+        CancelledOn = SystemClock.UtcNow;
+        IsActive = false;
+        AddDomainEvent(new SubscriptionCancelledEvent(Id));
+    }
+
+    public void RenewSubscription(DateTimeOffset currentPeriodStart, DateTimeOffset currentPeriodEnd)
+    {
+        CurrentPeriodStart = currentPeriodStart;
+        CurrentPeriodEnd = currentPeriodEnd;
+        IsActive = true;
+
+        AddDomainEvent(new SubscriptionRenewalPlannedEvent(Id, currentPeriodEnd));
+
+        if (Subscription.RoyaltyShare > 0)
+        {
+            AddDomainEvent(new RoyaltyPaymentPlannedEvent(UserId, currentPeriodStart, currentPeriodEnd, Subscription.RoyaltyShare, Subscription.Price));
+        }
+    }
+
     public bool CheckoutSessionIsProcessed => CheckoutSessionProcessedOn.HasValue;
 
     private UserSubscription() { }

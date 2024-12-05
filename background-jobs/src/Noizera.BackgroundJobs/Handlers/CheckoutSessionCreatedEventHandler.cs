@@ -29,13 +29,14 @@ internal sealed class CheckoutSessionCreatedEventHandler(AppDbContext db, Subscr
         switch (sessionStatus)
         {
             case "complete":
-                await subscriptionService.ActivateSubscriptionAsync(subscription.CheckoutSessionId, subscription, cancellationToken).ConfigureAwait(false);
+                await subscriptionService.TryActivateSubscriptionAsync(subscription.CheckoutSessionId, subscription, cancellationToken).ConfigureAwait(false);
                 break;
             case "open":
                 throw new RetryException(delayInSeconds: 10);
             case "expired":
-            default:
                 return;
+            default:
+                throw new InvalidOperationException($"Unknown stripe session Status: '{sessionStatus}'. Unable to process.");
         }
     }
 }

@@ -50,6 +50,7 @@ public class OutboxMessage : Entity
     public void Fail(string error)
     {
         FailedOn = SystemClock.UtcNow;
+        ProcessAfter = SystemClock.UtcNow.AddSeconds(5);
         ErrorText = error;
         Retries++;
     }

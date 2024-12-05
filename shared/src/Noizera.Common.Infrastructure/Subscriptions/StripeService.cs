@@ -8,6 +8,9 @@ public class StripeService(
     SessionService sessionService,
     CustomerService customerService,
     Stripe.SubscriptionService subscriptionService,
+    Stripe.AccountService accountService,
+    Stripe.AccountLinkService accountLinkService,
+    AccountLoginLinkService loginLinkService,
     Stripe.BillingPortal.SessionService billingSessionService)
 {
     public async Task<(Uri Url, string SessionId)?> CreateCheckoutSessionAsync(
@@ -90,6 +93,12 @@ public class StripeService(
             subscription?.CurrentPeriodEnd);
     }
 
+    public async Task<Stripe.Subscription?> GetSubscriptionAsync(string subscriptionId, CancellationToken ct)
+    {
+        var subscription = await subscriptionService.GetAsync(subscriptionId, cancellationToken: ct).ConfigureAwait(false);
+        return subscription;
+    }
+
     public async Task<string?> GetCheckoutSessionStatusAsync(string sessionId, CancellationToken ct)
     {
         var session = await sessionService.GetAsync(sessionId, cancellationToken: ct).ConfigureAwait(false);
@@ -116,5 +125,46 @@ public class StripeService(
 
         var billingSession = await billingSessionService.CreateAsync(options, cancellationToken: ct).ConfigureAwait(false);
         return billingSession is null ? null : new Uri(billingSession.Url);
+    }
+
+    public async Task<Account?> CreateConnectedAccountAsync(CancellationToken ct)
+    {
+        AccountCreateOptions accountOptions = new()
+        {
+            Type = "standard",
+        };
+
+        var account = await accountService.CreateAsync(accountOptions, cancellationToken: ct).ConfigureAwait(false);
+
+        return account;
+    }
+
+    public async Task<Account?> GetConnectedAccountAsync(string accountId, CancellationToken ct)
+    {
+        var account = await accountService.GetAsync(accountId, cancellationToken: ct).ConfigureAwait(false);
+
+        return account;
+    }
+
+    public async Task<Uri?> GetOnboardingConnectedAccountLinkAsync(string accountId, [NotNull] Uri refreshUrl, [NotNull] Uri returnUrl, CancellationToken ct)
+    {
+        AccountLinkCreateOptions accountLinkOptions = new()
+        {
+            Account = accountId,
+            RefreshUrl = refreshUrl.ToString(),
+            ReturnUrl = returnUrl.ToString(),
+            Type = "account_onboarding"
+        };
+
+        var accountLink = await accountLinkService.CreateAsync(accountLinkOptions, cancellationToken: ct).ConfigureAwait(false);
+
+        return accountLink?.Url is null ? null : new Uri(accountLink.Url);
+    }
+
+    public async Task<Uri?> GetLoginAccountLinkAsync(string accountId, CancellationToken ct)
+    {
+        AccountLoginLinkCreateOptions loginLinkOptions = new();
+        var loginLink = await loginLinkService.CreateAsync(accountId, loginLinkOptions, cancellationToken: ct).ConfigureAwait(false);
+        return loginLink?.Url is null ? null : new Uri(loginLink.Url);
     }
 }

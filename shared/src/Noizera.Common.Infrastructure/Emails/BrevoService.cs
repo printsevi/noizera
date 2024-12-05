@@ -35,8 +35,8 @@ public class BrevoService
             5,
             ct,
             new Dictionary<string, object>() { { "description", description } },
-            [("help@noizera.com", "Noizera team")],
-            $"{topic} from {recipientEmail}"
+            [("help@noizera.com", "Noizera")],
+            $"Your request has been submitted '{topic}'"
         ).ConfigureAwait(false);
 
     private async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null, List<(string Email, string Name)>? cc = null, string? subject = null)

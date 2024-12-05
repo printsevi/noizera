@@ -1,22 +1,48 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Noizera.BackgroundJobs.Common;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Events;
 using Noizera.Common.Infrastructure.Subscriptions;
+using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal sealed class SubscriptionRenewalPlannedEventHandler(SubscriptionStripeService subscriptionService)
+internal sealed class SubscriptionRenewalPlannedEventHandler(AppDbContext db, StripeService subscriptionService)
     : INotificationHandler<DomainEventNotification<SubscriptionRenewalPlannedEvent>>
 {
-#pragma warning disable IDE0060 // Remove unused parameter
-    public void Handle(DomainEventNotification<SubscriptionRenewalPlannedEvent> notification, CancellationToken cancellationToken)
-#pragma warning restore IDE0060 // Remove unused parameter
+    public async Task Handle(DomainEventNotification<SubscriptionRenewalPlannedEvent> notification, CancellationToken cancellationToken)
     {
-        var a = subscriptionService;
-        throw new NotImplementedException(a.ToString());
-        //Check if the stripe subscription is updated
-        //If updated then create a new userSubscription and set IsActive = false for current one
-    }
+        var subscription = await db.UserSubscriptions
+            .AsTracking()
+            .Include(x => x.Subscription)
+            .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.UserSubscriptionId, cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"User subscription is not found by {notification.DomainEvent.UserSubscriptionId}");
 
-    Task INotificationHandler<DomainEventNotification<SubscriptionRenewalPlannedEvent>>.Handle(DomainEventNotification<SubscriptionRenewalPlannedEvent> notification, CancellationToken cancellationToken) => throw new NotImplementedException();
+        var stripeSubscription = await subscriptionService.GetSubscriptionAsync(subscription.SubscriptionStripeId!, cancellationToken).ConfigureAwait(false)
+            ?? throw new InvalidOperationException($"Stripe subscription is not found by {subscription.SubscriptionStripeId}");
+
+        switch (stripeSubscription.Status)
+        {
+            case "past_due":
+                subscription.DeclareFailedPayment(SystemClock.UtcNow.AddDays(1));
+                break;
+            case "canceled" or "unpaid":
+                subscription.CancelSubscription();
+                break;
+            case "active":
+                if (stripeSubscription.CurrentPeriodEnd > subscription.CurrentPeriodEnd!.Value.AddDays(2).DateTime)
+                {
+                    subscription.RenewSubscription(stripeSubscription.CurrentPeriodStart, stripeSubscription.CurrentPeriodEnd);
+                }
+                else
+                {
+                    throw new RetryException(delayInSeconds: 24 * 60 * 60);
+                }
+
+                break;
+            default:
+                throw new InvalidOperationException($"Unknown stripe status: '{stripeSubscription.Status}'. Unable to process.");
+        }
+    }
 }

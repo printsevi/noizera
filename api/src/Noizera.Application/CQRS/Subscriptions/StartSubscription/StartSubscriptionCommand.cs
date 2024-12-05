@@ -2,7 +2,7 @@
 using Noizera.Common.Contracts.Errors;
 using Noizera.Common.Contracts.Repositories;
 using Noizera.Common.Contracts.Security;
-using Noizera.Common.Contracts.Services;
+using Noizera.Common.Infrastructure.Subscriptions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Subscriptions.StartSubscription;
@@ -14,7 +14,7 @@ public sealed record StartSubscriptionCommand(
 {
     public sealed class Handler(
         IUserSubscriptionRepository userSubscriptionRepository,
-        ISubscriptionService subscriptionService)
+        SubscriptionStripeService subscriptionService)
         : IRequestHandler<StartSubscriptionCommand, StartSubscriptionResponse>
     {
         public async Task<StartSubscriptionResponse> Handle([NotNull] StartSubscriptionCommand request, CancellationToken cancellationToken)
@@ -24,7 +24,7 @@ public sealed record StartSubscriptionCommand(
 
             if (!userSubscription.CheckoutSessionIsProcessed)
             {
-                await subscriptionService.StartSubscriptionAsync(request.CheckoutSessionId, userSubscription, cancellationToken).ConfigureAwait(false);
+                await subscriptionService.TryActivateSubscriptionAsync(request.CheckoutSessionId, userSubscription, cancellationToken).ConfigureAwait(false);
                 await userSubscriptionRepository.UpdateAsync(userSubscription, cancellationToken).ConfigureAwait(false);
             }
 
