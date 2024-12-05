@@ -9,11 +9,10 @@ internal sealed class ListeningHistoryConfiguration : IEntityTypeConfiguration<L
 {
     public void Configure(EntityTypeBuilder<ListeningHistory> builder)
     {
-        ConfigurationHelper.ConfigureBaseEntity(builder);
+        ConfigurationHelper.ConfigureEntity(builder);
 
-        _ = builder.HasKey(e => new { e.ListenerUserId, e.SongId });
-
-        _ = builder.Property(e => e.ListeningTimeInSeconds);
+        _ = builder.HasIndex(e => new { e.ListenerUserId, e.SongId })
+            .IsUnique();
 
         _ = builder
             .HasOne(e => e.Listener)
@@ -26,17 +25,5 @@ internal sealed class ListeningHistoryConfiguration : IEntityTypeConfiguration<L
             .WithMany(e => e.ListeningHistories)
             .HasForeignKey(e => e.SongId)
             .IsRequired(true);
-
-        _ = builder.Property(e => e.StreamCount);
-
-        _ = builder.Property(e => e.FirstStreamed);
-
-        _ = builder.Property(e => e.LastStreamed);
-
-        _ = builder.Property(e => e.SkipCount);
-
-        _ = builder.Property(e => e.FirstSkipped);
-
-        _ = builder.Property(e => e.LastSkipped);
     }
 }

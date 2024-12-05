@@ -1,4 +1,5 @@
 ﻿using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.MusicSets;
 
 namespace Noizera.Common.Domain.Users;
 
@@ -6,5 +7,5 @@ public sealed record UpdateProfileTypeRule(User User) : ISyncDomainRule
 {
     public string ErrorMessage => $"The profile type can't be updated because the user have songs released.";
 
-    public bool Verify() => !User.Songs.Any(x => x.IsPublic);
+    public bool Verify() => !User.Songs.Any(x => x.IsPublic) && !User.MusicSets.Any(x => x is Album album && album.AlbumStatus is AlbumStatus.Submitted);
 }

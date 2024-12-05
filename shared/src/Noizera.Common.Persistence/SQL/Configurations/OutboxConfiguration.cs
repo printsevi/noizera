@@ -11,22 +11,8 @@ internal sealed class OutboxConfiguration : IEntityTypeConfiguration<OutboxMessa
     {
         ConfigurationHelper.ConfigureEntity(builder);
 
-        _ = builder.Property(e => e.Type);
-
-        _ = builder.Property(e => e.Data);
-
-        _ = builder.Property(e => e.OccurredOn);
-
-        _ = builder.Property(e => e.ProcessedOn);
-
-        _ = builder.Property(e => e.ProcessAfter);
-
-        _ = builder.Property(e => e.FailedOn);
-
-        _ = builder.Property(e => e.ErrorText);
-
-        _ = builder.Property(e => e.IsRealTime);
-
-        _ = builder.Property(e => e.Retries);
+        _ = builder
+            .Property(e => e.Type)
+            .HasMaxLength(100);
     }
 }

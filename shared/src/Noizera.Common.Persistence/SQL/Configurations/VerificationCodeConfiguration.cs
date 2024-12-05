@@ -11,14 +11,6 @@ internal sealed class VerificationCodeConfiguration : IEntityTypeConfiguration<V
     {
         ConfigurationHelper.ConfigureEntity(builder);
 
-        _ = builder.Property(e => e.Key);
-
-        _ = builder.Property(e => e.Code);
-
-        _ = builder.Property(e => e.Invalid);
-
-        _ = builder.Property(e => e.Verified);
-
-        _ = builder.Property(e => e.ExpireAt);
+        _ = builder.Property(e => e.Code).HasMaxLength(100);
     }
 }

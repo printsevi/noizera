@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Songs;
 using Noizera.Common.Persistence.SQL.Configurations.Common;
 
@@ -12,23 +13,15 @@ internal sealed class SongConfiguration : IEntityTypeConfiguration<Song>
         ConfigurationHelper.ConfigureEntityExtended(builder);
 
         _ = builder.Property(e => e.Title)
-            .HasMaxLength(500);
+            .HasMaxLength(100);
 
-        _ = builder.Property(e => e.OriginalFileName);
+        _ = builder.Property(e => e.OriginalFileName)
+            .HasMaxLength(Constants.OriginalFileMaxLength);
 
-        _ = builder.Property(e => e.OriginalFileExtension);
+        _ = builder.Property(e => e.OriginalFileExtension)
+            .HasMaxLength(10);
 
-        _ = builder.Property(e => e.Danceability);
-
-        _ = builder.Property(e => e.Energy);
-
-        _ = builder.Property(e => e.Key);
-
-        _ = builder.Property(e => e.Scale);
-
-        _ = builder.Property(e => e.BPM);
-
-        _ = builder.Property(e => e.IsPublic);
+        _ = builder.Property(e => e.Scale).HasMaxLength(30);
 
         _ = builder.HasOne(e => e.Owner)
             .WithMany(e => e.Songs)

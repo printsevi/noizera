@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Subscriptions;
 using Noizera.Common.Persistence.SQL.Configurations.Common;
 
@@ -11,15 +12,10 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
     {
         ConfigurationHelper.ConfigureEntity(builder);
 
-        _ = builder.Property(e => e.Title);
+        _ = builder.Property(e => e.Title).HasMaxLength(100);
 
-        _ = builder.Property(e => e.Price);
-
-        _ = builder.Property(e => e.StripePriceId);
-
-        _ = builder.Property(e => e.IsDisabled);
-
-        _ = builder.Property(e => e.SubscriptionType);
+        _ = builder.Property(e => e.SubscriptionType)
+            .HasMaxLength(Constants.EnumTypeMaxLength);
 
         _ = builder.Ignore(e => e.IsDeleting);
 

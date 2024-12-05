@@ -27,7 +27,10 @@ internal static class ConfigurationHelper
     {
         ConfigureEntity<TEntity>(builder);
 
-        _ = builder.HasIndex(e => e.PublicId).IsUnique();
-        _ = builder.Property(e => e.PublicId).IsRequired(true);
+        _ = builder.HasIndex(e => e.PublicId)
+            .IsUnique();
+        _ = builder.Property(e => e.PublicId)
+            .HasMaxLength(Constants.PublicIdMaxLength)
+            .IsRequired(true);
     }
 }

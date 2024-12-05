@@ -403,9 +403,9 @@ const NewAlbumContent = () => {
               <Input
                 value={albumTitle}
                 onBlur={(e) => updateAlbumTitle(e.target.value)}
-                onChange={(e) => setAlbumTitle(e.target.value.slice(0, 100))}
+                onChange={(e) => setAlbumTitle(e.target.value.slice(0, 150))}
                 placeholder='Type your album title'
-                maxLength={100}
+                maxLength={150}
               />
               <Label>Release date</Label>
               <div className="flex flex-col items-start space-y-4">

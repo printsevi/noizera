@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.SecretTokens;
 using Noizera.Common.Persistence.SQL.Configurations.Common;
 
@@ -14,6 +15,7 @@ internal sealed class SecretTokenConfiguration : IEntityTypeConfiguration<Secret
         _ = builder.Property(e => e.Token);
 
         _ = builder.Property(e => e.TokenType)
+            .HasMaxLength(Constants.EnumTypeMaxLength)
             .HasConversion<string>();
 
         _ = builder.Property(e => e.IsRevoked);
@@ -23,7 +25,5 @@ internal sealed class SecretTokenConfiguration : IEntityTypeConfiguration<Secret
             .WithMany(e => e.SecretTokens)
             .HasForeignKey(e => e.UserId)
             .IsRequired(true);
-
-        _ = builder.Property(e => e.ExpireAt);
     }
 }

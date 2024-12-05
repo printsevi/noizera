@@ -4,7 +4,7 @@ using Noizera.Common.Domain.Users;
 
 namespace Noizera.Common.Domain.ListeningHistories;
 
-public class ListeningHistory : BaseEntity
+public class ListeningHistory : Entity
 {
     public Guid ListenerUserId { get; private set; }
     public User Listener { get; } = null!;

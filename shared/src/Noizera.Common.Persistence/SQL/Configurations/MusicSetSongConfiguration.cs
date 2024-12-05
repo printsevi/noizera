@@ -19,12 +19,6 @@ internal sealed class MusicSetSongConfiguration : IEntityTypeConfiguration<Music
             .WithMany(t => t.MusicSetSongs)
             .HasForeignKey(p => p.MusicSetId);
 
-        _ = builder.Property(e => e.SongId);
-
-        _ = builder.Property(e => e.MusicSetId);
-
-        _ = builder.Property(e => e.Sequence);
-
         _ = builder.HasIndex(x => new { x.MusicSetId, x.SongId }).IsUnique();
     }
 }

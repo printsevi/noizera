@@ -11,6 +11,9 @@ internal sealed class MusicSetConfiguration : IEntityTypeConfiguration<MusicSet>
     {
         ConfigurationHelper.ConfigureEntityExtended(builder);
 
+        _ = builder.Property(e => e.Title)
+            .HasMaxLength(150);
+
         _ = builder
             .HasDiscriminator<string>("CollectionType")
             .HasValue<MusicSet>("collection_base")

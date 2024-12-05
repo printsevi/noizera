@@ -9,9 +9,10 @@ internal sealed class ProfileRelationConfiguration : IEntityTypeConfiguration<Pr
 {
     public void Configure(EntityTypeBuilder<ProfileRelation> builder)
     {
-        ConfigurationHelper.ConfigureBaseEntity(builder);
+        ConfigurationHelper.ConfigureEntity(builder);
 
-        _ = builder.HasKey(pr => new { pr.FollowerProfileId, pr.FollowingProfileId });
+        _ = builder.HasIndex(pr => new { pr.FollowerProfileId, pr.FollowingProfileId })
+            .IsUnique();
 
         _ = builder
             .HasOne(e => e.FollowerProfile)

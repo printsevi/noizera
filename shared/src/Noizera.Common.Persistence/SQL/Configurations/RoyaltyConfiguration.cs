@@ -22,7 +22,5 @@ internal sealed class RoyaltyConfiguration : IEntityTypeConfiguration<Royalty>
             .WithMany(e => e.RoyaltiesSent)
             .HasForeignKey(e => e.PayeeId)
             .IsRequired(true);
-
-        _ = builder.Property(e => e.Amount);
     }
 }

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Common.Domain.ProfileRelations;
 
-public class ProfileRelation : BaseEntity
+public class ProfileRelation : Entity
 {
     public Guid FollowerProfileId { get; private set; }
     public PublicProfile FollowerProfile { get; } = null!;

@@ -10,11 +10,5 @@ internal sealed class UserSubscriptionConfiguration : IEntityTypeConfiguration<U
     public void Configure(EntityTypeBuilder<UserSubscription> builder)
     {
         ConfigurationHelper.ConfigureEntity(builder);
-
-        _ = builder.Property(e => e.CurrentPeriodStart);
-
-        _ = builder.Property(e => e.CurrentPeriodEnd);
-
-        _ = builder.Property(e => e.IsActive);
     }
 }

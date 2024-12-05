@@ -23,6 +23,6 @@ public class ValidFileName
         string validFileName = Regex.Replace(name, invalidRegex, "_");
         string result = Path.GetFileNameWithoutExtension(validFileName);
 
-        return result;
+        return result.Length > Constants.OriginalFileMaxLength ? result[..Constants.OriginalFileMaxLength] : result;
     }
 }

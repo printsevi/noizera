@@ -27,6 +27,7 @@ public sealed record UpdateProfileTypeCommand(
             var user = await db.Users
                 .Include(u => u.Profile)
                 .Include(u => u.Songs)
+                .Include(x => x.MusicSets)
                 .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken).ConfigureAwait(false)
                 ?? throw new AppException($"User not found", ErrorType.NotFound);
 

@@ -17,7 +17,9 @@ public class SecretTokenGenerator(IOptions<SecretTokensSettings> options) : ISec
         using RandomNumberGenerator rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
 
-        return (Convert.ToBase64String(randomNumber), SystemClock.UtcNow.AddHours(settings.RefreshTokenExpirationInHours));
+        string token = Convert.ToBase64String(randomNumber);
+
+        return (token.Length > Constants.TokenMaxLength ? token[..Constants.TokenMaxLength] : token, SystemClock.UtcNow.AddHours(settings.RefreshTokenExpirationInHours));
     }
 
     public (string Token, DateTimeOffset ExpireAt) GenerateResetToken()
@@ -31,6 +33,8 @@ public class SecretTokenGenerator(IOptions<SecretTokensSettings> options) : ISec
             _ = sb.AppendFormat(CultureInfo.InvariantCulture, "{0:x2}", b); // Convert each byte to a hex string
         }
 
-        return (sb.ToString(), SystemClock.UtcNow.AddMinutes(settings.ResetTokenExpirationInMinutes));
+        string token = sb.ToString();
+
+        return (token.Length > Constants.TokenMaxLength ? token[..Constants.TokenMaxLength] : token, SystemClock.UtcNow.AddMinutes(settings.ResetTokenExpirationInMinutes));
     }
 }

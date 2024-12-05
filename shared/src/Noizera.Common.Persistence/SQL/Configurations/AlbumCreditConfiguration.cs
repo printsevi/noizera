@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Noizera.Common.Domain.AlbumCredits;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Persistence.SQL.Configurations.Common;
 
 namespace Noizera.Common.Persistence.SQL.Configurations;
@@ -12,6 +13,7 @@ internal sealed class AlbumCreditConfiguration : IEntityTypeConfiguration<AlbumC
         ConfigurationHelper.ConfigureEntity(builder);
 
         _ = builder.Property(e => e.ProfileType)
+            .HasMaxLength(Constants.EnumTypeMaxLength)
             .HasConversion<string>();
 
         _ = builder

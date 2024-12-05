@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Profiles;
 using Noizera.Common.Persistence.SQL.Configurations.Common;
 
@@ -11,14 +12,21 @@ internal sealed class ProfileConfiguration : IEntityTypeConfiguration<PublicProf
     {
         ConfigurationHelper.ConfigureEntityExtended(builder);
 
-        _ = builder.HasIndex(e => e.Username).IsUnique();
-        _ = builder.Property(e => e.Username).IsRequired(true);
+        _ = builder.HasIndex(e => e.Username)
+            .IsUnique();
+        _ = builder.Property(e => e.Username)
+            .HasMaxLength(Constants.UsernameMaxLength)
+            .IsRequired(true);
 
-        _ = builder.Property(e => e.Name);
+        _ = builder.Property(e => e.Name)
+            .HasMaxLength(Constants.NameMaxLength)
+            .IsRequired(true);
 
         _ = builder.Property(e => e.ProfileType)
+            .HasMaxLength(Constants.EnumTypeMaxLength)
             .HasConversion<string>();
 
-        _ = builder.Property(e => e.Bio);
+        _ = builder.Property(e => e.Bio)
+            .HasMaxLength(Constants.BioMaxLength);
     }
 }

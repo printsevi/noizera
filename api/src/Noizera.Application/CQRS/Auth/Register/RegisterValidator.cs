@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Noizera.Common.Domain.Common;
 
 namespace Noizera.Application.CQRS.Auth.Register;
 
@@ -7,7 +8,7 @@ public sealed class RegisterValidator : AbstractValidator<RegisterCommand>
     public RegisterValidator()
     {
         _ = RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        _ = RuleFor(x => x.ProfileUserName).NotEmpty().MinimumLength(2).MaximumLength(32);
+        _ = RuleFor(x => x.ProfileUserName).NotEmpty().MinimumLength(2).MaximumLength(Constants.UsernameMaxLength);
         _ = RuleFor(x => x.Password)
             .MinimumLength(8)
             .Matches("[A-Z]").WithMessage("'{PropertyName}' must contain one or more capital letters.")

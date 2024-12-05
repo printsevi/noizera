@@ -15,13 +15,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         _ = builder.HasIndex(e => e.Email).IsUnique();
         _ = builder.Property(e => e.Email).IsRequired(true);
 
-        _ = builder.Property(e => e.CustomerStripeId);
-
-        _ = builder.Property(e => e.PasswordHash);
-
-        _ = builder.Property(e => e.PasswordSalt);
-
-        _ = builder.Property(e => e.Roles);
+        _ = builder.Property(e => e.Roles).HasMaxLength(150);
 
         _ = builder.HasOne(e => e.Profile)
             .WithOne(e => e.User)

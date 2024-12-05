@@ -10,9 +10,9 @@ public class SecretToken : Entity
     public string Token { get; private set; } = null!;
     public SecretTokenType TokenType { get; private set; }
     public bool IsRevoked { get; private set; }
+    public DateTimeOffset ExpireAt { get; private set; }
     public Guid UserId { get; private set; }
     public User User { get; } = null!;
-    public DateTimeOffset ExpireAt { get; }
 
     private SecretToken(
         string token,
