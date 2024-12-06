@@ -40,7 +40,7 @@ public class SecretToken : Entity
         var token = tokenGenerator.GenerateResetToken();
         SecretToken result = new(token.Token, user, SecretTokenType.Reset, token.ExpireAt);
 
-        result.AddDomainEvent(new ResetTokenCreatedEvent(user.Email, user.Id, token.Token));
+        result.AddDomainEvent(new ResetTokenCreatedEvent(user.Id, new Uri($"{Constants.Domain}system/reset?token={token.Token}&email={user.Email}")));
 
         return result;
     }

@@ -310,7 +310,7 @@ const NewAlbumContent = () => {
     if (response.ok) {
       setSubmitted(true);
       toast({ title: 'Your album is submitted' });
-      router.push('/');
+      router.push('/dashboard');
     }
   };
 

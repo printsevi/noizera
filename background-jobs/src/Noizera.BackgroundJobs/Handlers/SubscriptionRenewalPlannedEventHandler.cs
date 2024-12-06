@@ -31,15 +31,12 @@ internal sealed class SubscriptionRenewalPlannedEventHandler(AppDbContext db, St
                 subscription.CancelSubscription();
                 break;
             case "active":
-                if (stripeSubscription.CurrentPeriodEnd > subscription.CurrentPeriodEnd!.Value.AddDays(2).DateTime)
-                {
-                    subscription.RenewSubscription(stripeSubscription.CurrentPeriodStart, stripeSubscription.CurrentPeriodEnd);
-                }
-                else
+                if (stripeSubscription.CurrentPeriodEnd <= subscription.CurrentPeriodEnd!.Value.AddDays(2).DateTime)
                 {
                     throw new RetryException(delayInSeconds: 24 * 60 * 60);
                 }
 
+                subscription.RenewSubscription(stripeSubscription.CurrentPeriodStart, stripeSubscription.CurrentPeriodEnd);
                 break;
             default:
                 throw new InvalidOperationException($"Unknown stripe status: '{stripeSubscription.Status}'. Unable to process.");

@@ -9,4 +9,5 @@ public static class Constants
     public const short EnumTypeMaxLength = 30;
     public const short TokenMaxLength = 150;
     public const short OriginalFileMaxLength = 50;
+    public const string Domain = "https://noizera.com/";
 }

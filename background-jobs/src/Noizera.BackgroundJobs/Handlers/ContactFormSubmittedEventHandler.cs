@@ -9,11 +9,13 @@ internal sealed class ContactFormSubmittedEventHandler(BrevoService emailService
     : INotificationHandler<DomainEventNotification<ContactFormSubmittedEvent>>
 {
     public async Task Handle(DomainEventNotification<ContactFormSubmittedEvent> notification, CancellationToken cancellationToken)
-        => await emailService.SendContactFormAsync(
+        => await emailService.SendTransactionalEmailAsync(
             notification.DomainEvent.Email,
             notification.DomainEvent.Name,
-            notification.DomainEvent.Topic,
-            notification.DomainEvent.Description,
-            cancellationToken
+            5,
+            cancellationToken,
+            new Dictionary<string, object>() { { "description", notification.DomainEvent.Description } },
+            [("help@noizera.com", "Noizera")],
+            $"📝 Form Submission Received: {notification.DomainEvent.Topic}"
         ).ConfigureAwait(false);
 }

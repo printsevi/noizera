@@ -1,20 +1,28 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Noizera.BackgroundJobs.Common;
 using Noizera.Common.Domain.Events;
+using Noizera.Common.Infrastructure.Emails;
 using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal sealed class ResetTokenCreatedEventHandler(AppDbContext db)
+internal sealed class ResetTokenCreatedEventHandler(AppDbContext db, BrevoService emailService)
     : INotificationHandler<DomainEventNotification<ResetTokenCreatedEvent>>
 {
-#pragma warning disable IDE0060 // Remove unused parameter
-    public void Handle(DomainEventNotification<ResetTokenCreatedEvent> notification, CancellationToken cancellationToken)
-#pragma warning restore IDE0060 // Remove unused parameter
+    public async Task Handle(DomainEventNotification<ResetTokenCreatedEvent> notification, CancellationToken cancellationToken)
     {
-        string a = db.GetType().ToString();
-        throw new NotImplementedException(a);
-    }
+        var user = await db.Users
+            .Include(a => a.Profile)
+            .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.UserId, cancellationToken: cancellationToken).ConfigureAwait(false)
+            ?? throw new ArgumentException($"User {notification.DomainEvent.UserId} is not found");
 
-    Task INotificationHandler<DomainEventNotification<ResetTokenCreatedEvent>>.Handle(DomainEventNotification<ResetTokenCreatedEvent> notification, CancellationToken cancellationToken) => throw new NotImplementedException();
+        await emailService.SendTransactionalEmailAsync(
+                user.Email,
+                user.Profile.Name,
+                8,
+                cancellationToken,
+                new Dictionary<string, object>() { { "resetLink", notification.DomainEvent.Link } }
+        ).ConfigureAwait(false);
+    }
 }

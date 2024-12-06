@@ -4,6 +4,8 @@ using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.ProfileRelations;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Noizera.Common.Domain.Profiles;
 
@@ -65,9 +67,9 @@ public class PublicProfile : EntityExtended, IDeletable
         Username = username.ToUpperInvariant();
     }
 
-    public void UpdateName(string name) => Name = string.IsNullOrWhiteSpace(name) ? PublicId : name;
+    public void UpdateName(string name) => Name = string.IsNullOrWhiteSpace(name) ? Username : Regex.Replace(name.Trim(), @"\s+", " ");
 
-    public void UpdateBio(string bio) => Bio = bio;
+    public void UpdateBio(string bio) => Bio = string.IsNullOrWhiteSpace(bio) ? string.Empty : Regex.Replace(bio.Trim(), @"\s+", " ");
 
     public void SetProfileType(ProfileType profileType) => ProfileType = profileType;
 

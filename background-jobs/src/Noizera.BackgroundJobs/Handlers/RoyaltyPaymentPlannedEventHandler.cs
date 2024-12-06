@@ -50,8 +50,9 @@ internal sealed class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
             amountLeft -= amount;
 
             Royalty royalty = Royalty.New(notification.DomainEvent.UserId, pair.Key, amount);
-            _ = await db.Royalties.AddAsync(royalty, cancellationToken).ConfigureAwait(false);
-            _ = await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            _ = db.Royalties.Attach(royalty);
+            //_ = await db.Royalties.AsTracking().AddAsync(royalty, cancellationToken).ConfigureAwait(false);
+            //_ = await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -4,6 +4,7 @@ using Noizera.Common.Domain.MusicSetSongs;
 using Noizera.Common.Domain.SavedMusicSets;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace Noizera.Common.Domain.MusicSets;
 
@@ -56,7 +57,7 @@ public class MusicSet : EntityExtended, IDeletable
     {
         ValidateOwner(userId);
 
-        Title = newTitle;
+        Title = string.IsNullOrEmpty(newTitle) ? string.Empty : Regex.Replace(newTitle.Trim(), @"\s+", " ");
     }
 
     public void SetDescription(string newDescription, Guid userId)

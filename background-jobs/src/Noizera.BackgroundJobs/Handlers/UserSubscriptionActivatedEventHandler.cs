@@ -16,14 +16,15 @@ internal sealed class UserSubscriptionActivatedEventHandler(
     {
         var userSubscription = await db.UserSubscriptions
             .Include(x => x.User)
+                .ThenInclude(x => x.Profile)
             .Include(x => x.Subscription)
             .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.UserSubscriptionId, cancellationToken).ConfigureAwait(false)
             ?? throw new ArgumentException($"UserSubscription {notification.DomainEvent.UserSubscriptionId} is not found.");
 
-        await emailService.SendLoginConfirmationAsync(
+        await emailService.SendTransactionalEmailAsync(
             userSubscription.User.Email,
-            userSubscription.User.Email,
-            "",
+            userSubscription.User.Profile.Name,
+            8,
             cancellationToken
         ).ConfigureAwait(false);
     }

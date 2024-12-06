@@ -1,20 +1,27 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Noizera.BackgroundJobs.Common;
 using Noizera.Common.Domain.Events;
+using Noizera.Common.Infrastructure.Emails;
 using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal sealed class PasswordUpdatedEventHandler(AppDbContext db)
+internal sealed class PasswordUpdatedEventHandler(AppDbContext db, BrevoService emailService)
     : INotificationHandler<DomainEventNotification<PasswordUpdatedEvent>>
 {
-#pragma warning disable IDE0060 // Remove unused parameter
-    public void Handle(DomainEventNotification<PasswordUpdatedEvent> notification, CancellationToken cancellationToken)
-#pragma warning restore IDE0060 // Remove unused parameter
+    public async Task Handle(DomainEventNotification<PasswordUpdatedEvent> notification, CancellationToken cancellationToken)
     {
-        int a = 1;
-        throw new NotImplementedException(db.GetType().Name + a);
-    }
+        var user = await db.Users
+            .Include(a => a.Profile)
+            .FirstOrDefaultAsync(x => x.Id == notification.DomainEvent.UserId, cancellationToken: cancellationToken).ConfigureAwait(false)
+            ?? throw new ArgumentException($"User {notification.DomainEvent.UserId} is not found");
 
-    Task INotificationHandler<DomainEventNotification<PasswordUpdatedEvent>>.Handle(DomainEventNotification<PasswordUpdatedEvent> notification, CancellationToken cancellationToken) => throw new NotImplementedException();
+        await emailService.SendTransactionalEmailAsync(
+                user.Email,
+                user.Profile.Name,
+                7,
+                cancellationToken
+        ).ConfigureAwait(false);
+    }
 }

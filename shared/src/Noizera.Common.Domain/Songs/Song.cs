@@ -6,6 +6,7 @@ using Noizera.Common.Domain.Royalties;
 using Noizera.Common.Domain.Streams;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace Noizera.Common.Domain.Songs;
 
@@ -100,7 +101,7 @@ public sealed class Song : EntityExtended
         ValidateOwner(userId);
         EnsureRule(new DraftAlbumRule(album));
 
-        Title = newTitle;
+        Title = string.IsNullOrEmpty(newTitle) ? string.Empty : Regex.Replace(newTitle.Trim(), @"\s+", " ");
     }
 
     public void Release()

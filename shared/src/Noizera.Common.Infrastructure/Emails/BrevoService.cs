@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
 
@@ -19,27 +20,7 @@ public class BrevoService
         this.httpClient.BaseAddress = new Uri("https://api.brevo.com/v3/");
     }
 
-    public async Task SendLoginConfirmationAsync(string recipientEmail, string recipientName, string code, CancellationToken ct)
-        => await SendTransactionalEmailAsync(
-            recipientEmail,
-            recipientName,
-            3,
-            ct,
-            new Dictionary<string, object>() { { "code", code } }
-        ).ConfigureAwait(false);
-
-    public async Task SendContactFormAsync(string recipientEmail, string recipientName, string topic, string description, CancellationToken ct)
-        => await SendTransactionalEmailAsync(
-            recipientEmail,
-            recipientName,
-            5,
-            ct,
-            new Dictionary<string, object>() { { "description", description } },
-            [("help@noizera.com", "Noizera")],
-            $"Your request has been submitted '{topic}'"
-        ).ConfigureAwait(false);
-
-    private async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null, List<(string Email, string Name)>? cc = null, string? subject = null)
+    public async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null, IReadOnlyCollection<(string Email, string Name)>? cc = null, string? subject = null)
     {
         Dictionary<string, object> baseParameters = new()
         {

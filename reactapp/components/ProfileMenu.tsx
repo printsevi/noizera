@@ -31,6 +31,7 @@ import {
   Disc3Icon,
   Github,
   Keyboard,
+  LayoutDashboard,
   LifeBuoy,
   LogOut,
   Mail,
@@ -136,6 +137,10 @@ export function ProfileMenu() {
           {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => getAccountLink()}>
             <Coins className="mr-2 h-4 w-4" />
             <span>Manage royalties</span>
+          </DropdownMenuItem>}
+          {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => () => router.push(`/dashboard`)}>
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <span>Dashboard</span>
           </DropdownMenuItem>}
           <DropdownMenuItem onClick={() => router.push(`/settings`)}>
             <Settings className="mr-2 h-4 w-4" />

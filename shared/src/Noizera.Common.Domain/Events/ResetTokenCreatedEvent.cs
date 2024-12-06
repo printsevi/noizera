@@ -2,4 +2,4 @@
 
 namespace Noizera.Common.Domain.Events;
 
-public sealed record ResetTokenCreatedEvent(string Email, Guid UserId, string Token) : DomainEvent;
+public sealed record ResetTokenCreatedEvent(Guid UserId, Uri Link) : DomainEvent;
