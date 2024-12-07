@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
 };
 
 export const revalidate = 0;
