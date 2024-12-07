@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
 
@@ -20,7 +19,7 @@ public class BrevoService
         this.httpClient.BaseAddress = new Uri("https://api.brevo.com/v3/");
     }
 
-    public async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, long templateId, CancellationToken ct, Dictionary<string, object>? parameters = null, IReadOnlyCollection<(string Email, string Name)>? cc = null, string? subject = null)
+    public async Task SendTransactionalEmailAsync(string recipientEmail, string recipientName, BrevoIds templateId, CancellationToken ct, Dictionary<string, object>? parameters = null, IReadOnlyCollection<(string Email, string Name)>? cc = null, string? subject = null)
     {
         Dictionary<string, object> baseParameters = new()
         {
@@ -55,4 +54,18 @@ public class BrevoService
             throw new InvalidOperationException($"Failed to send email: {error}");
         }
     }
+}
+
+public enum BrevoIds
+{
+    None = 0,
+    EmailConfirmation = 3,
+    ContactFormSubmitted = 5,
+    AlbumReleased = 6,
+    PasswordUpdated = 7,
+    ResetTokenCreated = 8,
+    SubscriptionCancelled = 9,
+    PaymentFailed = 10,
+    UserCreated = 11,
+    SubscriptionActivated = 12
 }

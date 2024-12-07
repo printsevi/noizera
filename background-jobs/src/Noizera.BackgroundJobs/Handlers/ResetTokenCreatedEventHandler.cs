@@ -20,7 +20,7 @@ internal sealed class ResetTokenCreatedEventHandler(AppDbContext db, BrevoServic
         await emailService.SendTransactionalEmailAsync(
                 user.Email,
                 user.Profile.Name,
-                8,
+                BrevoIds.ResetTokenCreated,
                 cancellationToken,
                 new Dictionary<string, object>() { { "resetLink", notification.DomainEvent.Link } }
         ).ConfigureAwait(false);

@@ -24,7 +24,7 @@ internal sealed class UserSubscriptionActivatedEventHandler(
         await emailService.SendTransactionalEmailAsync(
             userSubscription.User.Email,
             userSubscription.User.Profile.Name,
-            8,
+            BrevoIds.SubscriptionActivated,
             cancellationToken
         ).ConfigureAwait(false);
     }

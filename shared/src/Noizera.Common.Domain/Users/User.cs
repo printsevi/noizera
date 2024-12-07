@@ -74,7 +74,7 @@ public sealed class User : Entity
 
         user.MusicSets.Add(favouritesPlaylist);
 
-        user.AddDomainEvent(new UserCreatedEvent(email));
+        user.AddDomainEvent(new UserCreatedEvent(user.Id));
 
         return user;
     }

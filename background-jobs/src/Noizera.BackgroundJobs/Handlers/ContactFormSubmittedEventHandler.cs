@@ -12,7 +12,7 @@ internal sealed class ContactFormSubmittedEventHandler(BrevoService emailService
         => await emailService.SendTransactionalEmailAsync(
             notification.DomainEvent.Email,
             notification.DomainEvent.Name,
-            5,
+            BrevoIds.ContactFormSubmitted,
             cancellationToken,
             new Dictionary<string, object>() { { "description", notification.DomainEvent.Description } },
             [("help@noizera.com", "Noizera")],

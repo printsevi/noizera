@@ -7,10 +7,10 @@ using Noizera.Common.Persistence.SQL;
 
 namespace Noizera.BackgroundJobs.Handlers;
 
-internal sealed class PasswordUpdatedEventHandler(AppDbContext db, BrevoService emailService)
-    : INotificationHandler<DomainEventNotification<PasswordUpdatedEvent>>
+internal sealed class UserCreatedEventHandler(AppDbContext db, BrevoService emailService)
+    : INotificationHandler<DomainEventNotification<UserCreatedEvent>>
 {
-    public async Task Handle(DomainEventNotification<PasswordUpdatedEvent> notification, CancellationToken cancellationToken)
+    public async Task Handle(DomainEventNotification<UserCreatedEvent> notification, CancellationToken cancellationToken)
     {
         var user = await db.Users
             .Include(a => a.Profile)
@@ -20,7 +20,7 @@ internal sealed class PasswordUpdatedEventHandler(AppDbContext db, BrevoService 
         await emailService.SendTransactionalEmailAsync(
                 user.Email,
                 user.Profile.Name,
-                BrevoIds.PasswordUpdated,
+                BrevoIds.UserCreated,
                 cancellationToken
         ).ConfigureAwait(false);
     }

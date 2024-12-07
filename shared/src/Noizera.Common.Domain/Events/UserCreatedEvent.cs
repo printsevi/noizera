@@ -2,4 +2,4 @@
 
 namespace Noizera.Common.Domain.Events;
 
-public sealed record UserCreatedEvent(string UserEmail) : DomainEvent;
+public sealed record UserCreatedEvent(Guid UserId) : DomainEvent;

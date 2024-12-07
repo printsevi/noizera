@@ -12,7 +12,7 @@ internal sealed class VerificationCodeCreatedEventHandler(BrevoService emailServ
         => await emailService.SendTransactionalEmailAsync(
             notification.DomainEvent.Email,
             notification.DomainEvent.Name,
-            3,
+            BrevoIds.EmailConfirmation,
             cancellationToken,
             new Dictionary<string, object>() { { "code", notification.DomainEvent.Code } }
         ).ConfigureAwait(false);

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { ChevronRight, Home } from "lucide-react"
+import { ChevronRight, ExternalLink, Home } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
@@ -36,6 +36,8 @@ import ImageUploader from "@/components/ImageUploader"
 import getAntiforgeryToken from "@/api/auth/getAntiforgeryToken"
 import uploadProfileImage from "@/api/users/uploadProfileImage"
 import deleteProfileImage from "@/api/users/deleteProfileImage"
+import getSubscriptionPortal from "@/api/users/getSubscriptionPortal"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const MAX_BIO_LENGTH = 150
 
@@ -183,9 +185,22 @@ export default function SettingsContent() {
     }
   };
 
+  const openPortal = useCallback(async () => {
+    if (!isReady || !isAuthenticated) {
+      return;
+    }
+
+    const response = await getSubscriptionPortal(axiosPrivate, auth.userId!);
+    if (response.ok) {
+      document.location.href = response.data!.url;
+    }
+  }, [isReady, axiosPrivate, isAuthenticated, auth.userId]);
+
   if (!isAuthenticated || !isReady || !user) {
     return (<></>);
   }
+
+  const hasSubscription = user?.activeSubscriptions && user.activeSubscriptions.length > 0;
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-8">
@@ -193,6 +208,7 @@ export default function SettingsContent() {
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
           </TabsList>
           <TabsContent value="profile" className="mt-6">
             <div className="space-y-6">
@@ -280,6 +296,22 @@ export default function SettingsContent() {
                   onBlur={updateBioHandler}
                   maxLength={150} />
               </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="subscriptions" className="mt-6">
+            <div className="space-y-6">
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Manage Your Subscription</CardTitle>
+                  <CardDescription>{hasSubscription ? "View and manage your subscription details" : "No active subscriptions"}</CardDescription>
+                </CardHeader>
+                {hasSubscription && <CardContent>
+                  <Button className="w-full" size="lg" onClick={() => openPortal()}>
+                    Go to Stripe Portal
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </CardContent>}
+              </Card>
             </div>
           </TabsContent>
         </Tabs>

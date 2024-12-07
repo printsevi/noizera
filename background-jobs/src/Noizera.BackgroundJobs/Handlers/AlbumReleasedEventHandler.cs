@@ -24,7 +24,7 @@ internal sealed class AlbumReleasedEventHandler(
         await emailService.SendTransactionalEmailAsync(
             album.Owner.Email,
             album.Owner.Profile.Name,
-            6,
+            BrevoIds.AlbumReleased,
             cancellationToken,
             new Dictionary<string, object>() {
                 { "albumTitle", album.Title },

@@ -88,17 +88,6 @@ export function ProfileMenu() {
     router.push('/');
   };
 
-  const openPortal = useCallback(async () => {
-    if (!isReady || !isAuthenticated) {
-      return;
-    }
-
-    const response = await getSubscriptionPortal(axiosPrivate, auth.userId!);
-    if (response.ok) {
-      document.location.href = response.data!.url;
-    }
-  }, [isReady, axiosPrivate, isAuthenticated, auth.userId]);
-
   const getAccountLink = useCallback(async () => {
     if (!isReady || !isAuthenticated) {
       return;
@@ -130,17 +119,13 @@ export function ProfileMenu() {
             <User className="mr-2 h-4 w-4" />
             <span>Your profile</span>
           </DropdownMenuItem>
-          {user?.activeSubscriptions && user.activeSubscriptions.length > 0 && <DropdownMenuItem onClick={() => openPortal()}>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>Manage subscriptions</span>
-          </DropdownMenuItem>}
           {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => getAccountLink()}>
             <Coins className="mr-2 h-4 w-4" />
             <span>Manage royalties</span>
           </DropdownMenuItem>}
           {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => () => router.push(`/dashboard`)}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
+            <span>Your releases</span>
           </DropdownMenuItem>}
           <DropdownMenuItem onClick={() => router.push(`/settings`)}>
             <Settings className="mr-2 h-4 w-4" />
