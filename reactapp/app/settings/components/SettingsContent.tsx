@@ -267,6 +267,18 @@ export default function SettingsContent() {
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
+                <Label>Email</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 relative">
+                    <Input
+                      value={auth.email}
+                      disabled={true}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col space-y-2">
                 <Label>Profile Type</Label>
                 <Select
                   value={user?.profileType ?? ""}
