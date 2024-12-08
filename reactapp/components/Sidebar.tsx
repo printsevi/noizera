@@ -56,28 +56,6 @@ const Sidebar = ({ children }: SidebarProps) => {
         overflow-hidden 
         overflow-y-auto"
     >
-      {/* <div
-        className='
-          hidden 
-          md:flex 
-          flex-col 
-          gap-y-2 
-          h-full 
-          w-[230px] 
-          p-2
-        '
-      >
-        <Box>
-          <div className='flex flex-col gap-y-4 px-5 py-4'>
-            {routes.map((item) => (
-              <SidebarItem key={item.label} {...item} />
-            ))}
-          </div>
-        </Box>
-        <Box className='overflow-y-auto h-full'>
-          <Library songs={[]} />
-        </Box>
-      </div> */}
       <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
         <nav className="space-y-2 sticky top-3">
           <h1 className="text-xl font-bold">Noizera</h1>

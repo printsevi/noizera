@@ -33,6 +33,23 @@ const Header: React.FC = () => {
   const [searchResults, setSearchResults] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false)
   const user = useUser();
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -80,7 +97,10 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className="flex items-center justify-between p-6 relative z-10 sticky top-0 bg-background bg-opacity-50">
+    <header className={`flex w-full items-center justify-between p-6 relative z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
+      sm:sticky sm:top-0
+      ${isScrolled ? '-top-32' : 'fixed top-0'}`}
+    >
       <div className="md:hidden block flex items-center space-x-4">
         <Sheet>
           <SheetTrigger asChild>
