@@ -55,7 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='dark' suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`}>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans h-screen flex flex-col overflow-x-hidden overflow-y-auto //dark:bg-black`}>
         <ThemeProvider
           attribute='style'
           themes={['dark', 'system', 'light']}
@@ -64,26 +64,23 @@ export default function RootLayout({
           storageKey="theme"
           disableTransitionOnChange
         >
-          <div className="h-screen flex flex-col h-screen dark:bg-black">
-            <AuthProvider>
-              <UserProvider>
-                <CookieConsentProvider>
-                  <LibraryProvider>
-                    <SongProvider>
-                      <ModalProvider />
-                      <Sidebar>
-                        <Header />
-                        {children}
-                        <AudioPlayer />
-                        <CookieConsent />
-                      </Sidebar>
-                    </SongProvider>
-                  </LibraryProvider>
-                </CookieConsentProvider>
-              </UserProvider>
-            </AuthProvider>
-
-          </div>
+          <AuthProvider>
+            <UserProvider>
+              <CookieConsentProvider>
+                <LibraryProvider>
+                  <SongProvider>
+                    <ModalProvider />
+                    <Sidebar>
+                      <Header />
+                      {children}
+                      <AudioPlayer />
+                      <CookieConsent />
+                    </Sidebar>
+                  </SongProvider>
+                </LibraryProvider>
+              </CookieConsentProvider>
+            </UserProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
       <Script

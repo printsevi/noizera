@@ -7,6 +7,12 @@ body {
   scroll-behavior: smooth !important;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
