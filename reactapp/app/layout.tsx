@@ -15,7 +15,17 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 import Script from 'next/script';
 import { CookieConsentProvider } from '@/providers/CookieConsentProvider';
 import { CookieConsent } from '@/components/CookieConsent';
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
+import Head from 'next/head';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  // Example of an additional property
+  interactiveWidget: 'resizes-visual',
+};
 
 export const metadata: Metadata = {
   title: {
@@ -33,8 +43,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-  },
-  viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+  }
 };
 
 export const revalidate = 0;
