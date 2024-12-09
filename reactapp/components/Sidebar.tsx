@@ -50,6 +50,7 @@ const Sidebar = ({ children }: SidebarProps) => {
       bg-neutral-950        
       flex 
       rounded-lg 
+      relative
       h-full 
       w-full"
     >
@@ -69,10 +70,12 @@ const Sidebar = ({ children }: SidebarProps) => {
           </Box>
         </nav>
       </aside>
-      <main className='flex-1 overflow-y-scroll overflow-x-hidden'>
+      <main className='flex-1 overflow-y-scroll overflow-x-hidden relative h-full'>
+        <Header />
         {children}
+        <Toaster />
       </main>
-      <Toaster />
+
     </div>
   );
 };

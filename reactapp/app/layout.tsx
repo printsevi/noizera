@@ -71,7 +71,6 @@ export default function RootLayout({
                   <SongProvider>
                     <ModalProvider />
                     <Sidebar>
-                      <Header />
                       {children}
                     </Sidebar>
                     <AudioPlayer />
