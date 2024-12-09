@@ -20,6 +20,7 @@ import { SettingsMenu } from './SettingsMenu';
 import fastSearchPublic from '@/api/search/fastSearchPublic';
 import { sendEvent } from '@/libs/helpers';
 import useUser from '@/hooks/useUser';
+import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -35,21 +36,26 @@ const Header: React.FC = () => {
   const user = useUser();
   const [isScrolled, setIsScrolled] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      if (currentScrollY > lastScrollY) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
-      }
-      setLastScrollY(currentScrollY)
-    }
+  // const onScroll = useCallback(() => {
+  //   console.log(isDesktop);
+  //   if (isDesktop) return;
+  //   console.log(window.scrollY);
+  //   const currentScrollY = window.scrollY;
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  //   if (currentScrollY > lastScrollY) {
+  //     setIsScrolled(true)
+  //   } else {
+  //     setIsScrolled(false)
+  //   }
+  //   setLastScrollY(currentScrollY)
+  // }, [setIsScrolled, setLastScrollY, lastScrollY, isDesktop]);
+
+  // useEffect(() => {
+  //   window.addEventListener('scroll', onScroll) //get scrollable container because window returns default
+  //   return () => window.removeEventListener('scroll', onScroll)
+  // }, [onScroll])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -97,9 +103,10 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className={`flex w-full items-center justify-between p-6 relative z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
-      sm:sticky sm:top-0
-      ${isScrolled ? '-top-32' : 'fixed top-0'}`}
+    <header className={`flex w-full items-center justify-between p-6 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
+      sm:sticky sm:top-0 fixed top-0
+      //${isDesktop ? 'sticky top-0' : `fixed ${isScrolled ? '-top-20' : 'top-0'}`}
+    `}
     >
       <div className="md:hidden block flex items-center space-x-4">
         <Sheet>
