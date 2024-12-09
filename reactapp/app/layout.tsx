@@ -17,6 +17,7 @@ import { CookieConsentProvider } from '@/providers/CookieConsentProvider';
 import { CookieConsent } from '@/components/CookieConsent';
 import { Metadata, Viewport } from 'next';
 import Head from 'next/head';
+import { Toaster } from '@/components/ui/toaster';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -73,6 +74,7 @@ export default function RootLayout({
                     <Sidebar>
                       {children}
                     </Sidebar>
+                    <Toaster />
                     <AudioPlayer />
                     <CookieConsent />
                   </SongProvider>

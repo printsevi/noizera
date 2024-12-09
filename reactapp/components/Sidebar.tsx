@@ -73,7 +73,6 @@ const Sidebar = ({ children }: SidebarProps) => {
       <main className='flex-1 overflow-y-scroll overflow-x-hidden relative h-full'>
         <Header />
         {children}
-        <Toaster />
       </main>
 
     </div>
