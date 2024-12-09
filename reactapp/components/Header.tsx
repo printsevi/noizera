@@ -58,18 +58,31 @@ const Header: React.FC = () => {
   // }, [onScroll])
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   useEffect(() => {
-    // Determine if the current device is mobile
+    // Function to check if the device is mobile
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth <= 768); // Tailwind's `md` breakpoint
     };
 
+    const handleFocusIn = () => {
+      setIsInputFocused(true);
+    };
+
+    const handleFocusOut = () => {
+      setIsInputFocused(false);
+    };
+
     checkIfMobile(); // Initial check
     window.addEventListener("resize", checkIfMobile); // Listen for resize events
+    document.addEventListener("focusin", handleFocusIn); // Listen for input focus
+    document.addEventListener("focusout", handleFocusOut); // Listen for input blur
 
     return () => {
       window.removeEventListener("resize", checkIfMobile);
+      document.removeEventListener("focusin", handleFocusIn);
+      document.removeEventListener("focusout", handleFocusOut);
     };
   }, []);
 
@@ -120,8 +133,7 @@ const Header: React.FC = () => {
 
   return (
     <header className={`flex w-full items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
-      md:sticky fixed top-0
-      ${isMobile ? "!fixed" : "!sticky"}
+      ${isMobile && isInputFocused ? "fixed" : isMobile ? "fixed" : "sticky"} top-0
     `}
     >
       <div className="md:hidden block flex items-center space-x-4">
