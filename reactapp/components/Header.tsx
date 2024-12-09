@@ -57,6 +57,22 @@ const Header: React.FC = () => {
   //   return () => window.removeEventListener('scroll', onScroll)
   // }, [onScroll])
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Determine if the current device is mobile
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // Tailwind's `md` breakpoint
+    };
+
+    checkIfMobile(); // Initial check
+    window.addEventListener("resize", checkIfMobile); // Listen for resize events
+
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchQuery(value)
@@ -104,7 +120,8 @@ const Header: React.FC = () => {
 
   return (
     <header className={`flex w-full items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
-      sm:sticky fixed top-0
+      md:sticky fixed top-0
+      ${isMobile ? "!fixed" : "!sticky"}
     `}
     >
       <div className="md:hidden block flex items-center space-x-4">
@@ -114,7 +131,7 @@ const Header: React.FC = () => {
               <AlignJustify className="h-6 w-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+          <SheetContent side="left" className="w-[300px] md:w-[400px]">
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
               <SheetDescription>
