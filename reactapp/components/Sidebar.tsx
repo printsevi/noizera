@@ -69,7 +69,7 @@ const Sidebar = ({ children }: SidebarProps) => {
           </Box>
         </nav>
       </aside>
-      <main className='flex-1 overflow-y-scroll overflow-x-hidden mt-16 pb-24 md:mt-0'>
+      <main className='flex-1 overflow-y-scroll overflow-x-hidden'>
         {children}
       </main>
       <Toaster />
