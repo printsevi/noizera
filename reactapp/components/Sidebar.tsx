@@ -47,14 +47,11 @@ const Sidebar = ({ children }: SidebarProps) => {
   return (
     <div
       className="
-        bg-neutral-950        
-        flex 
-        flex-1
-        rounded-lg 
-        h-full 
-        w-full 
-        overflow-hidden 
-        overflow-y-auto"
+      bg-neutral-950        
+      flex 
+      rounded-lg 
+      h-full 
+      w-full"
     >
       <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
         <nav className="space-y-2 sticky top-3">
@@ -72,7 +69,7 @@ const Sidebar = ({ children }: SidebarProps) => {
           </Box>
         </nav>
       </aside>
-      <main className='flex-1 overflow-y-auto overflow-x-hidden mt-24 sm:mt-0'>
+      <main className='flex-1 overflow-y-scroll overflow-x-hidden mt-16 pb-24 sm:mt-0'>
         {children}
       </main>
       <Toaster />

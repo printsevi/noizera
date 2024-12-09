@@ -55,7 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='dark' suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans h-screen flex flex-col overflow-x-hidden overflow-y-auto //dark:bg-black`}>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans h-screen min-h-screen //dark:bg-black`}>
         <ThemeProvider
           attribute='style'
           themes={['dark', 'system', 'light']}
@@ -73,9 +73,9 @@ export default function RootLayout({
                     <Sidebar>
                       <Header />
                       {children}
-                      <AudioPlayer />
-                      <CookieConsent />
                     </Sidebar>
+                    <AudioPlayer />
+                    <CookieConsent />
                   </SongProvider>
                 </LibraryProvider>
               </CookieConsentProvider>

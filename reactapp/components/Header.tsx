@@ -103,7 +103,7 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className={`flex w-full items-center justify-between p-6 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
+    <header className={`flex w-full items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
       sm:sticky sm:top-0 fixed top-0
       //${isDesktop ? 'sticky top-0' : `fixed ${isScrolled ? '-top-20' : 'top-0'}`}
     `}
