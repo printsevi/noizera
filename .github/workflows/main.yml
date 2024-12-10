@@ -131,12 +131,14 @@ jobs:
             docker compose pull
             echo "Restarting services..."
             docker pull jrottenberg/ffmpeg:latest
+            docker tag jrottenberg/ffmpeg:latest jrottenberg/ffmpeg:keep-ffmpeg
             docker compose down
             docker compose up -d
             echo "Remove old containers that are not running (this will preserve active ones)"
             docker container prune -f
             echo "Remove unused images that are not referenced by any container"
-            docker image prune -af --filter "label!=ffmpeg"
+            docker image prune -af --filter "label!=keep-ffmpeg"
             echo "Optionally, remove unused volumes"
             docker volume prune -f
+            docker tag jrottenberg/ffmpeg:keep-ffmpeg jrottenberg/ffmpeg:latest
             echo "Deployment completed!"

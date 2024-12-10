@@ -34,7 +34,6 @@ services:
       - /home/printsev/noizera-data:/noizera-data
     depends_on:
       - api
-      - ffmpeg
 
   seq:
     container_name: seq
