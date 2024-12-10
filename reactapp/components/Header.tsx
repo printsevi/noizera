@@ -127,7 +127,7 @@ const Header: React.FC = () => {
     <header className={`fixed top-0 left-0 right-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300`}
     >
       <div className="flex items-center justify-between p-2.5">
-        <div className="md:hidden block flex items-center space-x-4">
+        {/* <div className="md:hidden block flex items-center space-x-4">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -152,7 +152,7 @@ const Header: React.FC = () => {
               </nav>
             </SheetContent>
           </Sheet>
-        </div>
+        </div> */}
         <div className={cn("md:flex-1 md:max-w-xl md:relative md:p-0 flex items-center p-4 ", showMobileSearch ? "bg-background inset-0 absolute" : "")}>
           <Input
             type="search"
