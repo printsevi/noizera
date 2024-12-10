@@ -60,23 +60,23 @@ const Header: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
 
-  useEffect(() => {
-    const handleFocusIn = () => {
-      setIsInputFocused(true);
-    };
+  // useEffect(() => {
+  //   const handleFocusIn = () => {
+  //     setIsInputFocused(true);
+  //   };
 
-    const handleFocusOut = () => {
-      setIsInputFocused(false);
-    };
+  //   const handleFocusOut = () => {
+  //     setIsInputFocused(false);
+  //   };
 
-    document.addEventListener("focusin", handleFocusIn);
-    document.addEventListener("focusout", handleFocusOut);
+  //   document.addEventListener("focusin", handleFocusIn);
+  //   document.addEventListener("focusout", handleFocusOut);
 
-    return () => {
-      document.removeEventListener("focusin", handleFocusIn);
-      document.removeEventListener("focusout", handleFocusOut);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("focusin", handleFocusIn);
+  //     document.removeEventListener("focusout", handleFocusOut);
+  //   };
+  // }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -124,8 +124,8 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className={`flex w-full sticky top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
-    ${isInputFocused ? "pt-12" : ""}`}
+    <header className={`flex w-full relative md:sticky md:top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
+    `}
     >
       <div className="md:hidden block flex items-center space-x-4">
         <Sheet>
