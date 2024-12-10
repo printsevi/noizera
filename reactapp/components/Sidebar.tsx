@@ -51,7 +51,6 @@ const Sidebar = ({ children }: SidebarProps) => {
       flex 
       rounded-lg 
       relative
-      h-full 
       w-full"
     >
       <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
@@ -70,7 +69,7 @@ const Sidebar = ({ children }: SidebarProps) => {
           </Box>
         </nav>
       </aside>
-      <main className='flex-1 overflow-y-scroll overflow-x-hidden relative h-full'>
+      <main className='flex-1 overflow-y-scroll overflow-x-hidden relative h-screen'>
         <Header />
         {children}
       </main>

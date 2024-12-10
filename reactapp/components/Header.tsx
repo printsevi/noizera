@@ -61,11 +61,6 @@ const Header: React.FC = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
 
   useEffect(() => {
-    // Function to check if the device is mobile
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768); // Tailwind's `md` breakpoint
-    };
-
     const handleFocusIn = () => {
       setIsInputFocused(true);
     };
@@ -74,13 +69,10 @@ const Header: React.FC = () => {
       setIsInputFocused(false);
     };
 
-    checkIfMobile(); // Initial check
-    window.addEventListener("resize", checkIfMobile); // Listen for resize events
-    document.addEventListener("focusin", handleFocusIn); // Listen for input focus
-    document.addEventListener("focusout", handleFocusOut); // Listen for input blur
+    document.addEventListener("focusin", handleFocusIn);
+    document.addEventListener("focusout", handleFocusOut);
 
     return () => {
-      window.removeEventListener("resize", checkIfMobile);
       document.removeEventListener("focusin", handleFocusIn);
       document.removeEventListener("focusout", handleFocusOut);
     };
@@ -132,8 +124,8 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className={`flex w-full relative md:sticky md:top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
-    `}
+    <header className={`flex w-full sticky top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
+    ${isInputFocused ? "pt-12" : ""}`}
     >
       <div className="md:hidden block flex items-center space-x-4">
         <Sheet>

@@ -56,7 +56,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='dark' suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans h-screen min-h-screen`}>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`}>
         <ThemeProvider
           attribute='style'
           themes={['dark', 'system', 'light']}
