@@ -198,5 +198,3 @@ INSERT INTO public."Subscriptions" (
     0.7, -- Replace with the royalty share percentage
     'PremiumListeningWithFreeTrial' -- Replace with the type of subscription
 );
-
-

@@ -132,4 +132,10 @@ jobs:
             echo "Restarting services..."
             docker compose down
             docker compose up -d
+            echo "Remove old containers that are not running (this will preserve active ones)"
+            docker container prune -f
+            echo "Remove unused images that are not referenced by any container"
+            docker image prune -af
+            echo "Optionally, remove unused volumes"
+            docker volume prune -f
             echo "Deployment completed!"
