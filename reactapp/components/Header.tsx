@@ -124,7 +124,7 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className={`pt-safe flex w-full md:sticky md:top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
+    <header className={`flex w-full md:sticky md:top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
     `}
     >
       <div className="md:hidden block flex items-center space-x-4">

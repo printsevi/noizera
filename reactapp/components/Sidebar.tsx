@@ -50,7 +50,8 @@ const Sidebar = ({ children }: SidebarProps) => {
       bg-neutral-950        
       flex 
       rounded-lg 
-      w-full"
+      w-full
+      h-screen"
     >
       <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
         <nav className="space-y-2 sticky top-3">
@@ -68,7 +69,11 @@ const Sidebar = ({ children }: SidebarProps) => {
           </Box>
         </nav>
       </aside>
-      <main className='pb-safe flex-1 overflow-visible overflow-x-hidden h-screen pb-44 md:pb-20'>
+      <main
+        className='py-safe flex-1 overflow-visible overflow-x-hidden h-screen pb-44 md:pb-20'
+        style={{
+          paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)",
+        }}>
         <Header />
         {children}
       </main>
