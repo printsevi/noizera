@@ -26,6 +26,7 @@ export const viewport: Viewport = {
   userScalable: false,
   // Example of an additional property
   interactiveWidget: 'resizes-visual',
+  viewportFit: 'cover'
 };
 
 export const metadata: Metadata = {
