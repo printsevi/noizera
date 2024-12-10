@@ -124,120 +124,121 @@ const Header: React.FC = () => {
   }, [searchQuery, onSearch])
 
   return (
-    <header className={`flex w-full md:sticky md:top-0 items-center justify-between p-2.5 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300
-    `}
+    <header className={`sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300`}
     >
-      <div className="md:hidden block flex items-center space-x-4">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <AlignJustify className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] md:w-[400px]">
-            <SheetHeader>
-              <SheetTitle>Menu</SheetTitle>
-              <SheetDescription>
-              </SheetDescription>
-            </SheetHeader>
-            <nav className="flex flex-col space-y-4">
-              <Button variant="ghost" className="justify-start" onClick={() => router.push(`/`)}>
-                <Home className="mr-2 h-4 w-4" />
-                Home
+      <div className="flex items-center justify-between p-2.5">
+        <div className="md:hidden block flex items-center space-x-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <AlignJustify className="h-6 w-6" />
               </Button>
-              <Button variant="ghost" className="justify-start" onClick={() => router.push(`/library`)}>
-                <Library className="mr-2 h-4 w-4" />
-                Library
-              </Button>
-            </nav>
-          </SheetContent>
-        </Sheet>
-      </div>
-      <div className={cn("md:flex-1 md:max-w-xl md:relative md:p-0 flex items-center p-4 ", showMobileSearch ? "bg-background inset-0 absolute" : "")}>
-        <Input
-          type="search"
-          placeholder="Search songs, albums, artists, labels"
-          className={cn("w-full md:block", showMobileSearch ? "z-50" : "hidden")}
-          value={searchQuery}
-          onChange={handleSearchChange}
-          onBlur={handleSearchBlur}
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn("ml-2 md:hidden", showMobileSearch ? "" : "hidden")}
-          onClick={() => {
-            setShowMobileSearch(false);
-            setSearchQuery("");
-            setIsSearching(false);
-          }}
-        >
-          <X className="h-4 w-4" />
-        </Button>
-        {isSearching && searchResults.length > 0 && (
-          <div className="absolute md:top-full md:left-0 md:right-0 top-16 left-3.5 right-16 bg-popover border rounded-md mt-1 shadow-lg z-10">
-            <ScrollArea className="h-[300px]">
-              {searchResults.map((result, index) => (
-                <Button key={index} variant="ghost" onClick={() => onFullSearch(result)} className="items-center flex w-full justify-start px-4 py-2">
-                  <Search className="h-4 w-4 mr-2" />
-                  <span>{result}</span>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] md:w-[400px]">
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>
+                </SheetDescription>
+              </SheetHeader>
+              <nav className="flex flex-col space-y-4">
+                <Button variant="ghost" className="justify-start" onClick={() => router.push(`/`)}>
+                  <Home className="mr-2 h-4 w-4" />
+                  Home
                 </Button>
-              ))}
-            </ScrollArea>
-          </div>
-        )}
-      </div>
-      <div className="flex items-center space-x-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          onClick={() => setShowMobileSearch(true)}
-        >
-          <Search className="h-6 w-6" />
-        </Button>
-        {isClient && isReady && isAuthenticated && (
-          <>
-            {!user.user?.activeSubscriptions || user.user.activeSubscriptions.length === 0 && <div>
-              <PurpleButton onClick={() => router.push('/subscriptions')} className='px-6 py-2'>
-                Start free trial
-              </PurpleButton>
-            </div>}
-            <div className={cn('md:block', showMobileSearch ? "hidden" : "")}>
-              <ProfileMenu />
+                <Button variant="ghost" className="justify-start" onClick={() => router.push(`/library`)}>
+                  <Library className="mr-2 h-4 w-4" />
+                  Library
+                </Button>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+        <div className={cn("md:flex-1 md:max-w-xl md:relative md:p-0 flex items-center p-4 ", showMobileSearch ? "bg-background inset-0 absolute" : "")}>
+          <Input
+            type="search"
+            placeholder="Search songs, albums, artists, labels"
+            className={cn("w-full md:block", showMobileSearch ? "z-50" : "hidden")}
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onBlur={handleSearchBlur}
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn("ml-2 md:hidden", showMobileSearch ? "" : "hidden")}
+            onClick={() => {
+              setShowMobileSearch(false);
+              setSearchQuery("");
+              setIsSearching(false);
+            }}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          {isSearching && searchResults.length > 0 && (
+            <div className="absolute md:top-full md:left-0 md:right-0 top-16 left-3.5 right-16 bg-popover border rounded-md mt-1 shadow-lg z-10">
+              <ScrollArea className="h-[300px]">
+                {searchResults.map((result, index) => (
+                  <Button key={index} variant="ghost" onClick={() => onFullSearch(result)} className="items-center flex w-full justify-start px-4 py-2">
+                    <Search className="h-4 w-4 mr-2" />
+                    <span>{result}</span>
+                  </Button>
+                ))}
+              </ScrollArea>
             </div>
-          </>
-        )}
-        {isClient && isReady && !isAuthenticated && (
-          <>
-            <div>
-              <Button
-                onClick={(e) => {
-                  signUpModal.onOpen();
-                }}
-                variant='ghost'
-                className='
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setShowMobileSearch(true)}
+          >
+            <Search className="h-6 w-6" />
+          </Button>
+          {isClient && isReady && isAuthenticated && (
+            <>
+              {!user.user?.activeSubscriptions || user.user.activeSubscriptions.length === 0 && <div>
+                <PurpleButton onClick={() => router.push('/subscriptions')} className='px-6 py-2'>
+                  Start free trial
+                </PurpleButton>
+              </div>}
+              <div className={cn('md:block', showMobileSearch ? "hidden" : "")}>
+                <ProfileMenu />
+              </div>
+            </>
+          )}
+          {isClient && isReady && !isAuthenticated && (
+            <>
+              <div>
+                <Button
+                  onClick={(e) => {
+                    signUpModal.onOpen();
+                  }}
+                  variant='ghost'
+                  className='
                     rounded-full
                     hidden
                     md:block
                   '
-              >
-                Sign up
-              </Button>
-            </div>
-            <div>
-              <PurpleButton
-                onClick={signInModal.onOpen}
-                className='px-6 py-2'
-              >
-                Sign in
-              </PurpleButton>
-            </div>
-            <div className={cn('md:block', showMobileSearch ? "hidden" : "")}>
-              <SettingsMenu />
-            </div>
-          </>
-        )}
+                >
+                  Sign up
+                </Button>
+              </div>
+              <div>
+                <PurpleButton
+                  onClick={signInModal.onOpen}
+                  className='px-6 py-2'
+                >
+                  Sign in
+                </PurpleButton>
+              </div>
+              <div className={cn('md:block', showMobileSearch ? "hidden" : "")}>
+                <SettingsMenu />
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

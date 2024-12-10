@@ -57,7 +57,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='dark' suppressHydrationWarning>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute='style'
           themes={['dark', 'system', 'light']}
@@ -72,11 +74,19 @@ export default function RootLayout({
                 <LibraryProvider>
                   <SongProvider>
                     <ModalProvider />
-                    <Sidebar>
-                      {children}
-                    </Sidebar>
+                    <div className="flex h-screen flex-col">
+                      <Header />
+                      <div className='flex flex-1 overflow-hidden'>
+                        <Sidebar />
+                        <main
+                          className="flex-1 overflow-y-auto"
+                        >
+                          {children}
+                        </main>
+                      </div>
+                      <AudioPlayer />
+                    </div>
                     <Toaster />
-                    <AudioPlayer />
                     <CookieConsent />
                   </SongProvider>
                 </LibraryProvider>

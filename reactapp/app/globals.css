@@ -4,16 +4,16 @@
 
 html,
 body {
-  scroll-behavior: smooth !important;
-  overflow: hidden;
-  height: 100%;
+  /* scroll-behavior: smooth !important; */
+  /* overflow: hidden;
+  height: 100%; */
 }
 
-*,
+/* *,
 *::before,
 *::after {
   box-sizing: border-box;
-}
+} */
 
 @layer base {
   :root {

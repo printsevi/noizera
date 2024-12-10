@@ -17,11 +17,7 @@ import { Home, HouseIcon, LibraryBigIcon, LibraryIcon, Search } from 'lucide-rea
 import Header from './Header';
 import { Button } from './ui/button';
 
-interface SidebarProps {
-  children: React.ReactNode;
-}
-
-const Sidebar = ({ children }: SidebarProps) => {
+const Sidebar = () => {
   const pathname = usePathname();
   const player = usePlayer();
   const router = useRouter();
@@ -45,40 +41,24 @@ const Sidebar = ({ children }: SidebarProps) => {
   );
 
   return (
-    <div
-      className="
-      bg-neutral-950        
-      flex 
-      rounded-lg 
-      w-full
-      h-screen"
-    >
-      <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
-        <nav className="space-y-2 sticky top-3">
-          <h1 className="text-xl font-bold">Noizera</h1>
-          <Button variant="ghost" className="w-full justify-start" onClick={() => router.push(`/`)}>
+    <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
+      <div className="p-4">
+        <h1 className="text-xl font-bold mb-4">Noizera</h1>
+        <nav className="space-y-2">
+          <Button variant="ghost" className="w-full justify-start" onClick={() => router.push('/')}>
             <Home className="mr-2 h-4 w-4" />
             <span className="hidden md:inline">Home</span>
           </Button>
-          <Button variant="ghost" className="w-full justify-start" onClick={() => router.push(`/library`)}>
+          <Button variant="ghost" className="w-full justify-start" onClick={() => router.push('/library')}>
             <LibraryIcon className="mr-2 h-4 w-4" />
             <span className="hidden md:inline">Library</span>
           </Button>
-          <Box className='overflow-y-auto h-full'>
-            <Library songs={[]} />
-          </Box>
         </nav>
-      </aside>
-      <div className='flex-1 h-screen flex flex-col'>
-        <Header />
-        <main
-          className='overflow-y-auto overflow-x-hidden flex-1 pb-44 md:pb-20'>
-          {children}
-        </main>
       </div>
-
-
-    </div>
+      <Box className='overflow-y-auto h-full'>
+        <Library songs={[]} />
+      </Box>
+    </aside>
   );
 };
 
