@@ -70,9 +70,10 @@ const Sidebar = ({ children }: SidebarProps) => {
         </nav>
       </aside>
       <main
-        className='py-safe flex-1 overflow-visible overflow-x-hidden h-screen pb-44 md:pb-20'
+        className='flex-1 overflow-visible overflow-x-hidden h-screen pb-44 md:pb-20'
         style={{
           paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)",
+          paddingTop: "calc(env(safe-area-inset-bottom) + 3rem)"
         }}>
         <Header />
         {children}
