@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import useRegistrationModal from '@/hooks/useRegistrationModal';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '../ui/input-otp';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { cn } from '@/lib/utils';
 
 const EmailVerificationModal = () => {
   const router = useRouter();
@@ -68,10 +69,12 @@ const EmailVerificationModal = () => {
         onChange={onPinChange}
         value={otp}>
         <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-          <InputOTPSlot index={3} />
+          {Array.from({ length: 4 }).map((_, index) => (
+            <InputOTPSlot
+              key={index}
+              index={index}
+            />
+          ))}
         </InputOTPGroup>
       </InputOTP>
     </Modal>

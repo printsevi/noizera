@@ -38,6 +38,7 @@ import uploadProfileImage from "@/api/users/uploadProfileImage"
 import deleteProfileImage from "@/api/users/deleteProfileImage"
 import getSubscriptionPortal from "@/api/users/getSubscriptionPortal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import useSWR from "swr"
 
 const MAX_BIO_LENGTH = 150
 
@@ -45,6 +46,11 @@ export default function SettingsContent() {
   const { axiosPrivate, isReady } = useAxiosPrivate();
   const { isAuthenticated, auth } = useAuth();
   const { user, setUser } = useUser();
+  // const { data, isLoading } = useSWR(isReady && isAuthenticated && (user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) ? getOrCreateAlbumDraft.name : null, () => getOrCreateAlbumDraft(axiosPrivate, auth.userId!), {
+  //   revalidateIfStale: true,
+  //   revalidateOnFocus: false,
+  //   revalidateOnReconnect: false
+  // });
   const [username, setUsername] = useState(user?.username.toLowerCase() ?? "");
   const [name, setName] = useState(user?.name ?? "");
   const [settings, setSettings] = useState<SettingsResponse>();
@@ -62,6 +68,7 @@ export default function SettingsContent() {
       const settingsResult = await getSettings(axiosPrivate, auth.userId);
       if (settingsResult.ok) {
         setSettings(settingsResult.data);
+        setBio(settingsResult.data?.bio ?? "");
       }
     }
   }, [isReady, isAuthenticated, axiosPrivate, auth.userId]);
@@ -302,7 +309,7 @@ export default function SettingsContent() {
                 <span className="text-foreground">Bio</span>
                 <Textarea
                   disabled={isUpdating}
-                  value={settings?.bio ?? ""}
+                  value={bio}
                   onChange={(e) => setBio(e.target.value.slice(0, MAX_BIO_LENGTH))}
                   placeholder="Type your bio here"
                   onBlur={updateBioHandler}
