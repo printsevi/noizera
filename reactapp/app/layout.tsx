@@ -74,17 +74,17 @@ export default function RootLayout({
                 <LibraryProvider>
                   <SongProvider>
                     <ModalProvider />
-                    <div className="flex h-screen flex-col">
-                      <Header />
+                    <div className="flex h-full flex-col">
                       <div className='flex flex-1 overflow-hidden'>
                         <Sidebar />
-                        <main
-                          className="flex-1 overflow-y-auto overflow-x-hidden pt-safe"
-                        >
-                          <div className="min-h-[calc(100vh-theme(spacing.16))]">
+                        <div className="flex flex-col flex-1 overflow-hidden">
+                          <Header />
+                          <main
+                            className="flex-1 overflow-y-auto overflow-x-hidden pt-safe pb-24"
+                          >
                             {children}
-                          </div>
-                        </main>
+                          </main>
+                        </div>
                       </div>
                       <AudioPlayer />
                     </div>

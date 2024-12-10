@@ -4,16 +4,27 @@
 
 html,
 body {
-  /* scroll-behavior: smooth !important; */
-  /* overflow: hidden;
-  height: 100%; */
+  scroll-behavior: smooth !important;
+  height: 100%;
 }
 
-/* *,
+body {
+  overflow: hidden;
+}
+
+*,
 *::before,
 *::after {
   box-sizing: border-box;
-} */
+}
+
+@supports (-webkit-touch-callout: none) {
+
+  html,
+  body {
+    height: -webkit-fill-available;
+  }
+}
 
 @layer base {
   :root {
@@ -69,12 +80,6 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-  }
-
-  html,
-  body,
-  main {
-    height: -webkit-fill-available;
   }
 }
 
