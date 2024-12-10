@@ -39,7 +39,7 @@ export function CookieConsent() {
   }
 
   return (
-    <Card className={`${hidden ? "hidden" : "block"} fixed bottom-0 left-0 right-0 z-50 max-w-7xl mx-auto w-full border-t`}>
+    <Card className={`${hidden ? "hidden" : "block"} pb-safe fixed bottom-0 left-0 right-0 z-50 max-w-7xl mx-auto w-full border-t`}>
       <CardHeader>
         <CardTitle>Cookie Preferences</CardTitle>
       </CardHeader>

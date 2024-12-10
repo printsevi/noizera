@@ -41,7 +41,7 @@ const Sidebar = () => {
   );
 
   return (
-    <aside className="w-[72px] md:w-[230px]  border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
+    <aside className="w-[72px] md:w-[230px] h-full border-r p-4 hidden md:block transition-all duration-300 ease-in-out">
       <div className="p-4">
         <h1 className="text-xl font-bold mb-4">Noizera</h1>
         <nav className="space-y-2">

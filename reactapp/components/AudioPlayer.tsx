@@ -145,7 +145,7 @@ export default function AudioPlayer() {
 
   return (
     <div className="
-      sticky bottom-0 bg-background border-t p-2 sm:p-4
+      sticky bottom-0 bg-background border-t p-2 sm:p-4 pb-safe
     ">
       {currentSong?.song.songPublicId && (
         <audio

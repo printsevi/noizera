@@ -46,6 +46,7 @@ services:
     ports:
       - 5341:5341
       - 8081:80
+    restart: unless-stopped
 
   reactapp:
     container_name: reactapp
@@ -68,9 +69,10 @@ services:
   #   depends_on:
   #     - api
 
-  ffmpeg:
-    container_name: ffmpeg
-    image: jrottenberg/ffmpeg:latest
+  # ffmpeg:
+  #   container_name: ffmpeg
+  #   image: jrottenberg/ffmpeg:latest
+  #   restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4
@@ -83,3 +85,4 @@ services:
       - PGADMIN_LISTEN_PORT=5050
     volumes:
       - ./data/pgadmin:/var/lib/pgadmin
+    restart: unless-stopped
