@@ -73,7 +73,7 @@ const RegistrationModal = () => {
     }
 
     const registerResponse = await register(email, data.username, data.password);
-    if (!registerResponse) {
+    if (!registerResponse.ok) {
       setIsLoading(false);
       return;
     }

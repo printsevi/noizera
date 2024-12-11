@@ -6,7 +6,6 @@ import { email_validation } from '@/libs/inputValidation';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FieldValues, FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import PurpleButton from '../Button';
 import { InputFormField } from '../InputFormField';
 import Modal from './Modal';

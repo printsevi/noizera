@@ -59,8 +59,7 @@ export function MusicArtwork({
 
   const copyCollectionUrl = async () => {
     try {
-      const domain = window.location.origin;
-      const urlToCopy = `${domain}/collections/${publicId.toLowerCase()}`;
+      const urlToCopy = `https://noizera.com/collections/${publicId.toLowerCase()}`;
       await navigator.clipboard.writeText(urlToCopy);
       toast({
         title: "The URL copied to clipboard!"
@@ -169,16 +168,23 @@ export function MusicArtwork({
             </Card>
           </div>
         </ContextMenuTrigger>
-        {isAuthenticated && <ContextMenuContent className="w-40">
-          <ContextMenuItem>
-            <CopyPlus className="mr-2 h-4 w-4" />
-            <span>Save to library</span>
-          </ContextMenuItem>
-          <ContextMenuItem>
+        <ContextMenuContent className="w-40">
+          {isAuthenticated && <ContextMenuItem
+            onClick={(e: { stopPropagation: () => void; }) => {
+              e.stopPropagation();
+              onSaveDeleteToggle();
+            }}>
+            {collectionIsSaved ? <CopyMinus className="mr-2 h-4 w-4" /> : <CopyPlus className="mr-2 h-4 w-4" />}
+            <span>{collectionIsSaved ? "Remove from library" : "Save to library"}</span>
+          </ContextMenuItem>}
+          <ContextMenuItem onClick={(e: { stopPropagation: () => void; }) => {
+            e.stopPropagation();
+            copyCollectionUrl();
+          }}>
             <Forward className="mr-2 h-4 w-4" />
             <span>Share</span>
           </ContextMenuItem>
-        </ContextMenuContent>}
+        </ContextMenuContent>
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="mt-2 text-sm font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>

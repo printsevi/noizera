@@ -150,8 +150,7 @@ export default function MusicCollectionContent(props: Props) {
 
   const copyCollectionUrl = async () => {
     try {
-      const domain = window.location.origin;
-      const urlToCopy = `${domain}/collections/${props.collectionPublicId.toLowerCase()}`;
+      const urlToCopy = `https://noizera.com/collections/${props.collectionPublicId.toLowerCase()}`;
       await navigator.clipboard.writeText(urlToCopy);
       toast({
         title: "The URL copied to clipboard!"

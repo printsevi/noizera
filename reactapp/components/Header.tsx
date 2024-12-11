@@ -21,6 +21,7 @@ import fastSearchPublic from '@/api/search/fastSearchPublic';
 import { sendEvent } from '@/libs/helpers';
 import useUser from '@/hooks/useUser';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
+import { SidebarTrigger } from './ui/sidebar';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -127,32 +128,7 @@ const Header: React.FC = () => {
     <header className={`pt-safe z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300`}
     >
       <div className="flex items-center justify-between p-2.5">
-        <div className="md:hidden block flex items-center space-x-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <AlignJustify className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] md:w-[400px]">
-              <SheetHeader>
-                <SheetTitle>Menu</SheetTitle>
-                <SheetDescription>
-                </SheetDescription>
-              </SheetHeader>
-              <nav className="flex flex-col space-y-4">
-                <Button variant="ghost" className="justify-start" onClick={() => router.push(`/`)}>
-                  <Home className="mr-2 h-4 w-4" />
-                  Home
-                </Button>
-                <Button variant="ghost" className="justify-start" onClick={() => router.push(`/library`)}>
-                  <Library className="mr-2 h-4 w-4" />
-                  Library
-                </Button>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
+        <SidebarTrigger className="space-x-4 mr-3" />
         <div className={cn("md:flex-1 md:max-w-xl md:relative md:p-0 flex items-center p-4 ", showMobileSearch ? "bg-background inset-0 absolute" : "")}>
           <Input
             type="search"

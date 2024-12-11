@@ -1,10 +1,7 @@
 'use client';
 
-import getNewAccessToken from "@/api/auth/getNewAccessToken";
-import { ErrorCodes } from "@/api/common";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { decodeJwtToken, getURL } from "@/libs/helpers";
-import axios, { AxiosInstance } from "axios";
 import { useRouter } from "next/navigation";
 import { ReactNode, createContext, useEffect, useState } from "react";
 
@@ -40,12 +37,6 @@ const AuthContextProvider = ({ children }: Props) => {
     const [auth, setAuth] = useState<IAuthModel>(session);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
-
-    const privateAxios = axios.create({
-        baseURL: `${getURL()}api`,
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
-    });
 
     const signOut = () => {
         setAuth({});

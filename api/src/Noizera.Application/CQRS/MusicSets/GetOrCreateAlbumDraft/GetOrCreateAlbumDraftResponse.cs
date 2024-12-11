@@ -4,7 +4,6 @@ public sealed record GetOrCreateAlbumDraftResponse(
     Guid AlbumId,
     string AlbumPublicId,
     string Title,
-    string? Description,
     DateOnly? ReleaseDate,
     string? CoverImageS3Folder,
     string? CoverImageOriginalName,

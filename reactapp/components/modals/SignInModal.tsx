@@ -84,8 +84,6 @@ const SignInModal = () => {
 
     setIsLoading(false);
 
-    toast({ title: "Verification code has been sent to your email" });
-
     form.reset();
     onClose();
     authenticationModal.onOpen();

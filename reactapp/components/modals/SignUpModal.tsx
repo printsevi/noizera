@@ -70,7 +70,6 @@ const SignUpModal = () => {
     emailVerificationModal.setEmail(data.email);
 
     setIsLoading(false);
-    toast({ title: "Verification code has been sent to your email" });
     form.reset();
     onClose();
     emailVerificationModal.onOpen();

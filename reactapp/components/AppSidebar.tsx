@@ -16,29 +16,50 @@ import { Toaster } from './ui/toaster';
 import { Home, HouseIcon, LibraryBigIcon, LibraryIcon, Search } from 'lucide-react';
 import Header from './Header';
 import { Button } from './ui/button';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+import Link from 'next/link';
 
-const Sidebar = () => {
+const items = [
+  {
+    title: "Home",
+    url: "/",
+    icon: Home,
+  },
+  {
+    title: "Library",
+    url: "/library",
+    icon: LibraryIcon,
+  }
+]
+
+const AppSidebar = () => {
   const pathname = usePathname();
   const player = usePlayer();
   const router = useRouter();
 
-  const routes = useMemo(
-    () => [
-      {
-        icon: HouseIcon,
-        label: 'Home',
-        active: pathname !== '/library',
-        href: '/',
-      },
-      {
-        icon: LibraryBigIcon,
-        label: 'Library',
-        href: '/library',
-        active: pathname === '/library',
-      },
-    ],
-    [pathname]
-  );
+  return (<Sidebar>
+    <SidebarHeader />
+    <SidebarContent>
+      <SidebarGroup>
+        {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {items.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild>
+                  <Link href={item.url}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    </SidebarContent>
+    <SidebarFooter />
+  </Sidebar>);
 
   return (
     <aside className="md:flex w-[230px] h-full border-r p-4 hidden flex-col flex-shrink-0 transition-all duration-300 ease-in-out">
@@ -62,4 +83,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default AppSidebar;

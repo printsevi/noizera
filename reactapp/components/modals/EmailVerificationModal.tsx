@@ -6,7 +6,6 @@ import Modal from './Modal';
 import useAuth from '@/hooks/useAuth';
 import useEmailVerificationModal from '@/hooks/useEmailVerificationModal';
 import verifyEmail from '@/api/auth/verifyEmail';
-import toast from 'react-hot-toast';
 import useRegistrationModal from '@/hooks/useRegistrationModal';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '../ui/input-otp';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
@@ -40,14 +39,13 @@ const EmailVerificationModal = () => {
     setIsLoading(true);
 
     const response = await verifyEmail(email, pin);
-    if (!response) {
+    if (!response.ok) {
       setIsLoading(false);
       return;
     }
 
     setIsLoading(false);
     setSucceed(true);
-    toast.success('Your email is verified');
     setOtp("");
     onClose();
     setEmail("");

@@ -11,7 +11,6 @@ namespace Noizera.Common.Domain.MusicSets;
 public class MusicSet : EntityExtended, IDeletable
 {
     public string Title { get; protected set; } = string.Empty;
-    public string? Description { get; private set; }
     public string? CoverImageS3Folder { get; private set; }
     public long? CoverImageContentLength { get; private set; }
     public string? CoverImageOriginalName { get; private set; }
@@ -58,13 +57,6 @@ public class MusicSet : EntityExtended, IDeletable
         ValidateOwner(userId);
 
         Title = string.IsNullOrEmpty(newTitle) ? string.Empty : Regex.Replace(newTitle.Trim(), @"\s+", " ");
-    }
-
-    public void SetDescription(string newDescription, Guid userId)
-    {
-        ValidateOwner(userId);
-
-        Description = newDescription;
     }
 
     public void FixSongSequences()

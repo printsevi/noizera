@@ -1,5 +1,5 @@
 import getSongsByUserId from '@/api/getSongsByUserId';
-import Sidebar from '@/components/Sidebar';
+import AppSidebar from '@/components/AppSidebar';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -18,6 +18,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { Metadata, Viewport } from 'next';
 import Head from 'next/head';
 import { Toaster } from '@/components/ui/toaster';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -74,9 +75,9 @@ export default function RootLayout({
                 <LibraryProvider>
                   <SongProvider>
                     <ModalProvider />
-                    <div className="flex h-full flex-col">
+                    <SidebarProvider>
                       <div className='flex flex-1 overflow-hidden'>
-                        <Sidebar />
+                        <AppSidebar />
                         <div className="flex flex-col flex-1 overflow-hidden">
                           <Header />
                           <main className="flex-1 overflow-y-auto overflow-x-hidden pt-safe pb-24">
@@ -85,7 +86,7 @@ export default function RootLayout({
                         </div>
                       </div>
                       <AudioPlayer />
-                    </div>
+                    </SidebarProvider>
                     <Toaster />
                     <CookieConsent />
                   </SongProvider>

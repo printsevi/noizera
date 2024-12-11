@@ -81,7 +81,8 @@ export function ProfileMenu() {
   const { user } = useUser();
 
   const handleLogout = async () => {
-    if (await signOut(axiosPrivate, auth.userId!)) {
+    const response = await signOut(axiosPrivate, auth.userId!);
+    if (response.ok) {
       logOut();
     }
     //player.reset();

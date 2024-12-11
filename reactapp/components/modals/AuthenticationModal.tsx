@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from './Modal';
 import useAuth from '@/hooks/useAuth';
-import toast from 'react-hot-toast';
 import useAuthenticationModal from '@/hooks/useAuthenticationModal';
 import authenticate from '@/api/auth/authenticate';
 import { decodeJwtToken } from '@/libs/helpers';
@@ -39,16 +38,15 @@ const AuthenticationModal = () => {
     setIsLoading(true);
 
     const authenticateResponse = await authenticate(emailOrUsername, pin);
-    if (!authenticateResponse){
+    if (!authenticateResponse.ok) {
       setIsLoading(false);
       return;
     }
 
-    signIn(authenticateResponse.accessToken, authenticateResponse.refreshToken);
-    
+    signIn(authenticateResponse.data!.accessToken, authenticateResponse.data!.refreshToken);
+
     setSucceed(true);
     setIsLoading(false);
-    toast.success('Your email is verified');
     onClose();
     setEmailOrUsername("");
   }
@@ -60,10 +58,10 @@ const AuthenticationModal = () => {
       isOpen={isOpen}
       onChange={onChange}
     >
-      <InputOTP 
+      <InputOTP
         disabled={isLoading}
-        maxLength={4} 
-        pattern={REGEXP_ONLY_DIGITS} 
+        maxLength={4}
+        pattern={REGEXP_ONLY_DIGITS}
         onChange={onPinChange}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />

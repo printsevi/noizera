@@ -1,30 +1,19 @@
 import { axiosPublic } from '@/libs/axios';
 import axios from 'axios';
-import toast from 'react-hot-toast';
+import { ApiResponse, handleErrorAndReturnProblem } from '../common';
 
-const verifyEmail = async (email: string, code: string): Promise<boolean | null> => {
+const verifyEmail = async (email: string, code: string): Promise<ApiResponse<void>> => {
+  const result: ApiResponse<void> = { ok: true };
   try {
     await axiosPublic.post('/auth/verify-email',
       JSON.stringify({ email, code })
     );
-    return true;
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-        if (!err?.response) {
-            toast.error('No server Response');
-        } else if (err.response?.status === 400) {
-            toast.error('Missing Email or Password');
-        } else if (err.response?.status === 401) {
-            toast.error('Unauthorized');
-        } else {
-            toast.error('Email Verification Failed');
-        }
-    } else {
-        toast.error('Something went wrong');
-    }
+    result.ok = false;
+    result.problem = handleErrorAndReturnProblem(err);
   }
 
-  return null;
+  return result;
 };
 
 export default verifyEmail;
