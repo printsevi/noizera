@@ -68,7 +68,7 @@ export function MusicArtwork({
       toast({
         variant: "destructive",
         title: "Oops... something went wrong",
-        description: "Please try again in a while",
+        description: error as string,
       });
     }
   };

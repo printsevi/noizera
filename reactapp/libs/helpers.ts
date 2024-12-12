@@ -1,5 +1,6 @@
 import { DecodedToken, Price, UserDetails } from '@/types';
 import { jwtDecode } from "jwt-decode";
+import { ImageLoaderProps } from 'next/image';
 
 export const getURL = () => {
   let url =
@@ -11,6 +12,12 @@ export const getURL = () => {
   url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
   return url;
 };
+
+export const imageLoader = (fallbackSrc: string) => {
+  return ({ src, width, quality }: ImageLoaderProps): string => {
+    return `${src}?w=${width}&q=${quality || 75}`
+  }
+}
 
 export const USERNAME_REGEX = /^(?!\.)(?!.*\.$)(?!.*\.\.)[a-zA-Z0-9.]{2,30}$/;
 export const INPUT_REGEX = /^[a-zA-Z0-9\s\p{P}\p{S}]*$/u;

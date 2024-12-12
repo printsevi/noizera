@@ -26,7 +26,6 @@ public sealed class MusicSetRepository(AppDbContext db)
             SELECT 
                 mc."Title" as Title,
                 mc."CollectionType" as CollectionType,
-                mc."Description" as Description,
                 mc."AlbumReleaseDate" as ReleaseDate,
                 p."Username" as OwnerUsername,
                 p."Name" as OwnerName,

@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import { getCoverImageSrc, getProfileImageSrc } from '@/libs/helpers';
 import { cn } from '@/lib/utils';
+import ImageWithFallback from '@/components/ImageWithFallback';
 
 interface Props {
   query: string;
@@ -61,9 +62,10 @@ const SearchContent: React.FC<Props> = ({ query }) => {
                   href={`/${isProfile ? 'profiles' : 'collections'}/${item.publicId.toLowerCase()}`}
                   className={`relative ${isProfile ? 'w-20 h-20 rounded-full' : 'w-20 h-20 rounded-lg'} overflow-hidden group`}
                 >
-                  <Image
+                  <ImageWithFallback
                     src={isProfile ? getProfileImageSrc(item.imageId) : getCoverImageSrc(item.imageId)}
                     alt={item.title}
+                    fallbackSrc="/images/user.png"
                     width={80}
                     height={80}
                     className={`object-cover ${isProfile ? 'rounded-full' : 'rounded-lg'} transition-opacity group-hover:opacity-80`}
