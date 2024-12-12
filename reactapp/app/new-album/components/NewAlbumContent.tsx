@@ -150,10 +150,10 @@ const NewAlbumContent = () => {
 
   const itemIds = useMemo(() => songs?.map((x) => x.key) ?? [], [songs]);
 
-  const toggleSongAccordionItem = (key: any) => {
+  const toggleSongAccordionItem = (key: any, forceClose?: boolean) => {
     const updatedSongs = songs.map((songItem) => {
       if (songItem.key === key) {
-        return { ...songItem, isOpen: !songItem.isOpen };
+        return { ...songItem, isOpen: forceClose ? false : !songItem.isOpen };
       }
       return { ...songItem, isOpen: false };
     });
@@ -360,6 +360,10 @@ const NewAlbumContent = () => {
     }
   }
 
+  const handleSongDragStart = async (event: any) => {
+    toggleSongAccordionItem(event.active.id);
+  }
+
   if (!isReady || !user) {
     return <></>;
   }
@@ -527,6 +531,8 @@ const NewAlbumContent = () => {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleSongDragEnd}
+
+              onDragStart={handleSongDragStart}
             >
               <SortableContext
                 items={itemIds}
