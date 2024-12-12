@@ -27,9 +27,9 @@ export default function AboutContent() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         <FeatureItem
-          icon={<Music2 className="h-8 w-8 text-purple-500" />}
-          title="Curated Editorial Playlists"
-          description="Discover expertly curated playlists that showcase standout tracks across diverse genres. We focus on delivering quality music that resonates with every listener."
+          icon={<Zap className="h-8 w-8 text-purple-500" />}
+          title="Support Artists & Labels"
+          description="Empowering artists and labels with fair, play-based royalties. Your subscription directly supports the creators behind the music you love."
         />
         <FeatureItem
           icon={<Headphones className="h-8 w-8 text-purple-500" />}
@@ -37,9 +37,9 @@ export default function AboutContent() {
           description="Immerse yourself in premium sound with FLAC-quality audio. Enjoy the ultimate listening experience that brings every note and detail to life."
         />
         <FeatureItem
-          icon={<Zap className="h-8 w-8 text-purple-500" />}
-          title="Support Artists & Labels"
-          description="Empowering artists and labels with fair, play-based royalties. Your subscription directly supports the creators behind the music you love."
+          icon={<Music2 className="h-8 w-8 text-purple-500" />}
+          title="Curated Editorial Playlists"
+          description="Discover expertly curated playlists that showcase standout tracks across diverse genres. We focus on delivering quality music that resonates with every listener."
         />
       </div>
 

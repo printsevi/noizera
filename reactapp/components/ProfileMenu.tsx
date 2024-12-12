@@ -76,18 +76,18 @@ export function ProfileMenu() {
             <User className="mr-2 h-4 w-4" />
             <span>Your page</span>
           </DropdownMenuItem>
-          {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => router.push(`/dashboard`)}>
-            <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Your releases</span>
-          </DropdownMenuItem>}
           <DropdownMenuItem onClick={() => router.push(`/settings`)}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Account Center</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/new-album')}>
             <Disc3Icon className="mr-2 h-4 w-4" />
-            <span>Upload music</span>
+            <span>Release your music</span>
           </DropdownMenuItem>
+          {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => router.push(`/dashboard`)}>
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <span>Your releases</span>
+          </DropdownMenuItem>}
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign out</span>

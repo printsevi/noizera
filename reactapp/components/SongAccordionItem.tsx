@@ -75,7 +75,7 @@ export const SongAccordionItem = (props: Props) => {
         <div
             ref={setNodeRef}
             style={style}
-            className="border rounded-md mb-1 ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
+            className="border rounded-md mb-3 ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
         >
             <div
                 {...attributes}
@@ -83,32 +83,37 @@ export const SongAccordionItem = (props: Props) => {
                 className="w-full p-2 text-left transition duration-300 select-none"
                 onClick={props.toggleAccordion}
             >
-                <span className='flex flex-row h-auto items-center w-full gap-x-4 justify-between'>
-                    <span className='flex w-full flex-1 items-center'>
-                        <span className={`transform ${props.isOpen ?
-                            'rotate-180' : 'rotate-0'}  
-                                        transition-transform duration-300`}>
-                            <ChevronDown size={20} />
+                <div className='flex flex-row items-center w-full justify-between'>
+                    <div className='flex items-center'>
+                        <Grip size={20} className="mr-2 flex-shrink-0" />
+                    </div>
+                    <div className='flex-grow text-center truncate px-2'>
+                        <span className='truncate inline-block max-w-full align-middle'>
+                            <span className='text-sm'>{user?.name ?? user?.username}</span> - <span className='font-medium'>{songTitle ? songTitle : 'Track ID'}</span>
                         </span>
-                        <span className='truncate flex'>
-                            <span className='truncate flex-1 basis-2/5'>{user?.name ?? user?.username}</span><span className='truncate flex-auto'> - {songTitle ? songTitle : `Track ID`}</span>
-                        </span>
-                        <span className='flex items-center justify-end'>
-                            <Grip size={20} />
-                            <Button variant='ghost' className="rounded-full items-center" size="icon"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    props.onSongDelete();
-                                }} >
-                                <Trash2 size={20} />
-                            </Button>
-                        </span>
-                    </span>
-                </span>
+                    </div>
+                    <div className='flex items-center'>
+                        <Button
+                            variant='ghost'
+                            className="rounded-full items-center mr-2"
+                            size="icon"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                props.onSongDelete();
+                            }}
+                        >
+                            <Trash2 size={20} />
+                        </Button>
+                        <ChevronDown
+                            size={20}
+                            className={`transform transition-transform duration-300 ${props.isOpen ? 'rotate-180' : 'rotate-0'}`}
+                        />
+                    </div>
+                </div>
             </div>
             {props.isOpen && (
-                <div className="p-4">
-                    <Label>Song title</Label>
+                <div className="p-4 pt-1">
+                    <Label className='block mb-1'>Song title</Label>
                     <Input
                         value={songTitle}
                         onBlur={(value) => updateTitle(value.target.value)}
@@ -116,7 +121,7 @@ export const SongAccordionItem = (props: Props) => {
                         placeholder='type your song title'
                         maxLength={100}
                     />
-                    <Label>Audio</Label>
+                    <Label className='block mb-1 mt-2.5'>Audio</Label>
                     <AudioUploader
                         uploadTime='00/00/0000'
                         existingFileName={props.audioFileName ?? ""}

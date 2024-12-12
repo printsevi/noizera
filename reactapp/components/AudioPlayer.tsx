@@ -23,10 +23,12 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 import useUser from '@/hooks/useUser';
+import useAuth from '@/hooks/useAuth';
 
 export default function AudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const { isAuthenticated } = useAuth();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -139,13 +141,13 @@ export default function AudioPlayer() {
     setVolume(volumeValue);
   };
 
-  if (!queue.length || !currentSong?.song) {
+  if (!isAuthenticated || !queue.length || !currentSong?.song) {
     return <></>;
   }
 
   return (
     <div className="
-      sticky bottom-0 bg-background border-t p-2 sm:p-4 pb-safe
+      sticky bottom-0 bg-background border-t p-2 sm:p-4 pb-safe z-10
     ">
       {currentSong?.song.songPublicId && (
         <audio

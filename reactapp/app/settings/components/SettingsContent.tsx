@@ -230,10 +230,10 @@ export default function SettingsContent() {
     <div className="min-h-screen bg-background p-4 sm:p-8">
       <div className="max-w-3xl mx-auto">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className={`grid w-full ${isArtistOrLabel ? "grid-cols-3" : "grid-cols-2"}`}>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
-            <TabsTrigger value="royalties">Payouts</TabsTrigger>
+            {isArtistOrLabel && <TabsTrigger value="royalties">Payouts</TabsTrigger>}
           </TabsList>
           <TabsContent value="profile" className="mt-6">
             <div className="space-y-4">
