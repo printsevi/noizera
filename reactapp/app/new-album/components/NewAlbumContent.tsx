@@ -96,6 +96,22 @@ const NewAlbumContent = () => {
 
   const [date, setDate] = useState(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined)
   const [isUploading, setIsUploading] = useState(false)
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Reduced from 10 to make it slightly more sensitive
+      }
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150, // Reduced from 250 to make it more responsive
+        tolerance: 8, // Increased from 5 to allow for more finger movement
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleDateSelect = async (selectedDate: Date | undefined) => {
     setIsUploading(true);
@@ -327,23 +343,6 @@ const NewAlbumContent = () => {
     }
   };
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 10,
-      }
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
   const handleSongDragEnd = async (event: any) => {
     const { active, over } = event;
     if (active.id !== over.id) {
@@ -383,187 +382,183 @@ const NewAlbumContent = () => {
     return <ActionRequired buttonText='Update profile' link='/settings' description='To upload your music please update your profile type to the Artist or Label' />
   }
 
-  return (<div className="min-h-screen bg-background p-4 sm:p-8">
-    <div className="max-w-3xl mx-auto">
-      <Tabs defaultValue="album-details" className='w-full'>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="album-details">Album details</TabsTrigger>
-          <TabsTrigger value="song-details">Songs</TabsTrigger>
-        </TabsList>
-        <TabsContent value="album-details">
-          <Card>
-            <CardHeader>
-              <CardTitle>Album details</CardTitle>
-              <CardDescription>
-                Make changes to your album.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Label className='mt-2.5 mb-1 block'>Album name</Label>
-              <Input
-                value={albumTitle}
-                onBlur={(e) => updateAlbumTitle(e.target.value)}
-                onChange={(e) => setAlbumTitle(e.target.value.slice(0, 150))}
-                placeholder='Type your album title'
-                maxLength={150}
-              />
-              <Label className='mt-2.5 mb-1 block'>Release date</Label>
-              <div className="flex flex-col items-start space-y-4">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal ",
-                        !date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={handleDateSelect}
-                      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <Label className='mt-2.5 mb-1 block'>Cover image</Label>
-              <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
-              <Label className='mt-2.5 block'>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
-              <div className="space-y-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                  {featuredArtists.map(artist => (
-                    <div
-                      key={artist.id}
-                      className="border px-1 py-1 rounded-full text-sm flex items-center justify-between w-full"
-                    >
-                      {artist.profileId && (
-                        <Avatar className="h-7 w-7 mr-2">
-                          <AvatarImage src={getProfileImageSrc(artist?.profilePublicId)} alt={artist.profileName} />
-                          <AvatarFallback>{artist.profileName.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                      )}
-                      {artist.profilePublicId && (
-                        <Link
-                          className="hover:underline"
-                          href={`/profiles/${artist.profileUsername!.toLowerCase()}`}
-                          key={`/profiles/${artist.profileUsername!.toLowerCase()}`}
-                          title={`View ${artist.profileName}'s profile`}
-                        >
-                          {artist.profileName}
-                        </Link>
-                      )}
-                      {!artist.profilePublicId && (
-                        <UserPlus className="h-4 w-4" />
-                      )}
-                      {!artist.profilePublicId && (
-                        <span className='truncate'>{artist.profileName}</span>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className='rounded-full'
-                        onClick={() => removeArtist(artist.id)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-                <div className="relative">
-                  <Input
-                    placeholder="Search or add new artist"
-                    value={artistInput}
-                    onChange={(e) => setArtistInput(e.target.value.slice(0, 50))}
-                    maxLength={50}
+  return (<div className="p-4 sm:p-8">
+    <Tabs defaultValue="album-details" className='w-full'>
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="album-details">Album details</TabsTrigger>
+        <TabsTrigger value="song-details">Songs</TabsTrigger>
+      </TabsList>
+      <TabsContent value="album-details">
+        <Card>
+          <CardHeader>
+            <CardTitle>Album details</CardTitle>
+            <CardDescription>
+              Make changes to your album.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Label className='mt-2.5 mb-1 block'>Album name</Label>
+            <Input
+              value={albumTitle}
+              onBlur={(e) => updateAlbumTitle(e.target.value)}
+              onChange={(e) => setAlbumTitle(e.target.value.slice(0, 150))}
+              placeholder='Type your album title'
+              maxLength={150}
+            />
+            <Label className='mt-2.5 mb-1 block'>Release date</Label>
+            <div className="flex flex-col items-start space-y-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal ",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateSelect}
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    initialFocus
                   />
-                  {(searchResults.length > 0 || artistInput.trim()) && (
-                    <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md">
-                      {artistInput.trim() && !featuredArtists.some(artist =>
-                        artist.profileName.toLowerCase() === artistInput.trim().toLowerCase()
-                      ) && (
-                          <div
-                            className="p-2 hover:bg-accent cursor-pointer flex items-center justify-between"
-                            onClick={addNewArtist}
-                          >
-                            <span>Add "{artistInput}" as new artist</span>
-                            <Plus className="h-4 w-4" />
-                          </div>
-                        )}
-                      {searchResults.map(artist => (
-                        <div
-                          key={artist.artistId}
-                          className="p-2 hover:bg-accent cursor-pointer flex items-center"
-                          onClick={() => addArtist(artist)}
-                        >
-                          <Avatar className="h-7 w-7 mr-2">
-                            <AvatarImage src={getProfileImageSrc(artist.publicId)} alt={artist.name} />
-                            <AvatarFallback>{artist.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          {artist.name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <Label className='mt-2.5 mb-1 block'>Cover image</Label>
+            <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
+            <Label className='mt-2.5 block'>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
+            <div className="space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                {featuredArtists.map(artist => (
+                  <div
+                    key={artist.id}
+                    className="border px-1 py-1 rounded-full text-sm flex items-center justify-between w-full"
+                  >
+                    {artist.profileId && (
+                      <Avatar className="h-7 w-7 mr-2">
+                        <AvatarImage src={getProfileImageSrc(artist?.profilePublicId)} alt={artist.profileName} />
+                        <AvatarFallback>{artist.profileName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                    )}
+                    {artist.profilePublicId && (
+                      <Link
+                        className="hover:underline"
+                        href={`/profiles/${artist.profileUsername!.toLowerCase()}`}
+                        key={`/profiles/${artist.profileUsername!.toLowerCase()}`}
+                        title={`View ${artist.profileName}'s profile`}
+                      >
+                        {artist.profileName}
+                      </Link>
+                    )}
+                    {!artist.profilePublicId && (
+                      <UserPlus className="h-4 w-4" />
+                    )}
+                    {!artist.profilePublicId && (
+                      <span className='truncate'>{artist.profileName}</span>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className='rounded-full'
+                      onClick={() => removeArtist(artist.id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="song-details">
-          <Card>
-            <CardHeader>
-              <CardTitle>Songs</CardTitle>
-              <CardDescription>
-                Add, sort and edit your songs here.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleSongDragEnd}
-              >
-                <SortableContext
-                  items={itemIds}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div>
-                    {songs.map((songItem, index) => (
-                      <SongAccordionItem
-                        id={songItem.key}
-                        key={songItem.key}
-                        isOpen={songItem.isOpen}
-                        toggleAccordion={() => toggleSongAccordionItem(songItem.key)}
-                        title={songItem.title}
-                        onTitleUpdate={(newTitle) => updateSongTitle(songItem.key, newTitle)}
-                        onAudioUpload={(file) => uploadAudio(songItem.key, file)}
-                        songPublicId={songItem.songPublicId}
-                        audioFileName={songItem.audioFileName}
-                        contentLength={songItem.contentLength}
-                        contentType={songItem.contentType}
-                        onSongDelete={() => onSongDelete(songItem.key)}
-                        onAudioDelete={() => onAudioDelete(songItem.key)}
-                      />
+              <div className="relative">
+                <Input
+                  placeholder="Search or add new artist"
+                  value={artistInput}
+                  onChange={(e) => setArtistInput(e.target.value.slice(0, 50))}
+                  maxLength={50}
+                />
+                {(searchResults.length > 0 || artistInput.trim()) && (
+                  <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md">
+                    {artistInput.trim() && !featuredArtists.some(artist =>
+                      artist.profileName.toLowerCase() === artistInput.trim().toLowerCase()
+                    ) && (
+                        <div
+                          className="p-2 hover:bg-accent cursor-pointer flex items-center justify-between"
+                          onClick={addNewArtist}
+                        >
+                          <span>Add "{artistInput}" as new artist</span>
+                          <Plus className="h-4 w-4" />
+                        </div>
+                      )}
+                    {searchResults.map(artist => (
+                      <div
+                        key={artist.artistId}
+                        className="p-2 hover:bg-accent cursor-pointer flex items-center"
+                        onClick={() => addArtist(artist)}
+                      >
+                        <Avatar className="h-7 w-7 mr-2">
+                          <AvatarImage src={getProfileImageSrc(artist.publicId)} alt={artist.name} />
+                          <AvatarFallback>{artist.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        {artist.name}
+                      </div>
                     ))}
                   </div>
-                </SortableContext>
-              </DndContext>
-              <Button onClick={onAddNewSong} variant='ghost' className="w-full">
-                <Plus size={18} />
-                <span>Add song</span>
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+      <TabsContent value="song-details">
+        <Card>
+          <CardHeader>
+            <CardTitle>Songs</CardTitle>
+            <CardDescription>
+              Add, sort and edit your songs here.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleSongDragEnd}
+            >
+              <SortableContext
+                items={itemIds}
+                strategy={verticalListSortingStrategy}
+              >
+                {songs.map((songItem, index) => (
+                  <SongAccordionItem
+                    id={songItem.key}
+                    key={songItem.key}
+                    isOpen={songItem.isOpen}
+                    toggleAccordion={() => toggleSongAccordionItem(songItem.key)}
+                    title={songItem.title}
+                    onTitleUpdate={(newTitle) => updateSongTitle(songItem.key, newTitle)}
+                    onAudioUpload={(file) => uploadAudio(songItem.key, file)}
+                    songPublicId={songItem.songPublicId}
+                    audioFileName={songItem.audioFileName}
+                    contentLength={songItem.contentLength}
+                    contentType={songItem.contentType}
+                    onSongDelete={() => onSongDelete(songItem.key)}
+                    onAudioDelete={() => onAudioDelete(songItem.key)}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+            <Button onClick={onAddNewSong} variant='ghost' className="w-full">
+              <Plus size={18} />
+              <span>Add song</span>
+            </Button>
+          </CardContent>
+        </Card>
+      </TabsContent>
+    </Tabs>
     <AlertDialog>
       <AlertDialogTrigger asChild>
         {/* {submitted && <Button disabled={submitted} variant="outline">Edit</Button>} */}

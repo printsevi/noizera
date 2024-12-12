@@ -78,18 +78,18 @@ export const SongAccordionItem = (props: Props) => {
             className="border rounded-md mb-3 ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
         >
             <div
-                {...attributes}
-                {...listeners}
                 className="w-full p-2 text-left transition duration-300 select-none"
                 onClick={props.toggleAccordion}
             >
                 <div className='flex flex-row items-center w-full justify-between'>
-                    <div className='flex items-center'>
-                        <Grip size={20} className="mr-2 flex-shrink-0" />
+                    <div className='flex items-center p-2.5'
+                        {...attributes}
+                        {...listeners}>
+                        <Grip size={20} className="flex-shrink-0" />
                     </div>
                     <div className='flex-grow text-center truncate px-2'>
                         <span className='truncate inline-block max-w-full align-middle'>
-                            <span className='text-sm'>{user?.name ?? user?.username}</span> - <span className='font-medium'>{songTitle ? songTitle : 'Track ID'}</span>
+                            <span className='text-xs'>{user?.name ?? user?.username}</span> - <span className='text-sm font-medium'>{songTitle ? songTitle : 'Track ID'}</span>
                         </span>
                     </div>
                     <div className='flex items-center'>
