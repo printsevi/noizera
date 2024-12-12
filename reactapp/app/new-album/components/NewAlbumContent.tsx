@@ -361,7 +361,7 @@ const NewAlbumContent = () => {
   }
 
   const handleSongDragStart = async (event: any) => {
-    toggleSongAccordionItem(event.active.id);
+    toggleSongAccordionItem(event.active.id, true);
   }
 
   if (!isReady || !user) {
@@ -531,7 +531,6 @@ const NewAlbumContent = () => {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleSongDragEnd}
-
               onDragStart={handleSongDragStart}
             >
               <SortableContext
