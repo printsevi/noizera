@@ -79,7 +79,10 @@ public sealed record GetSavedMusicSetsQuery(
                 )
                 SELECT *
                 FROM Results
-                ORDER BY IsSaved DESC, PublicId DESC
+                ORDER BY 
+                    CASE WHEN CollectionType = 'collection_playlist' THEN 1 ELSE 2 END ASC, 
+                    IsSaved DESC, 
+                    PublicId DESC
                 LIMIT 200
             """;
 
