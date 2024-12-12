@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { ChevronRight, ExternalLink, Home } from "lucide-react"
+import { ChevronRight, ExternalLink, Home, Loader2 } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
@@ -39,6 +39,7 @@ import deleteProfileImage from "@/api/users/deleteProfileImage"
 import getSubscriptionPortal from "@/api/users/getSubscriptionPortal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import useSWR from "swr"
+import getOrCreateConnectedAccount from "@/api/users/getOrCreateConnectedAccount"
 
 const MAX_BIO_LENGTH = 150
 
@@ -62,6 +63,7 @@ export default function SettingsContent() {
   const [autoplay, setAutoplay] = useState(true)
   const [profileType, setProfileType] = useState(user?.profileType ?? "")
   const [coverImageSrc, setCoverImageSrc] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchSettings = useCallback(async () => {
     if (isReady && isAuthenticated && auth.userId) {
@@ -196,18 +198,33 @@ export default function SettingsContent() {
     if (!isReady || !isAuthenticated) {
       return;
     }
-
+    setIsLoading(true);
     const response = await getSubscriptionPortal(axiosPrivate, auth.userId!);
+    setIsLoading(false);
     if (response.ok) {
       document.location.href = response.data!.url;
     }
   }, [isReady, axiosPrivate, isAuthenticated, auth.userId]);
+
+  const getAccountLink = useCallback(async () => {
+    if (!isReady || !isAuthenticated) {
+      return;
+    }
+
+    setIsLoading(true);
+    const response = await getOrCreateConnectedAccount(axiosPrivate, auth.userId!);
+    setIsLoading(false);
+    if (response.ok) {
+      document.location.href = response.data!.url;
+    }
+  }, [isReady, axiosPrivate, isAuthenticated, auth.userId, setIsLoading]);
 
   if (!isAuthenticated || !isReady || !user) {
     return (<></>);
   }
 
   const hasSubscription = user?.activeSubscriptions && user.activeSubscriptions.length > 0;
+  const isArtistOrLabel = user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label;
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-8">
@@ -216,9 +233,10 @@ export default function SettingsContent() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
+            <TabsTrigger value="royalties">Payouts</TabsTrigger>
           </TabsList>
           <TabsContent value="profile" className="mt-6">
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="flex flex-col space-y-2">
                 <Label>Username</Label>
                 <div className="space-y-2">
@@ -313,7 +331,8 @@ export default function SettingsContent() {
                   onChange={(e) => setBio(e.target.value.slice(0, MAX_BIO_LENGTH))}
                   placeholder="Type your bio here"
                   onBlur={updateBioHandler}
-                  maxLength={150} />
+                  maxLength={150}
+                  className="resize-none" />
               </div>
             </div>
           </TabsContent>
@@ -325,14 +344,32 @@ export default function SettingsContent() {
                   <CardDescription>{hasSubscription ? "View and manage your subscription details" : "No active subscriptions"}</CardDescription>
                 </CardHeader>
                 {hasSubscription && <CardContent>
-                  <Button className="w-full" size="lg" onClick={() => openPortal()}>
-                    Go to Stripe Portal
+                  <Button disabled={isLoading} className="w-full" size="lg" onClick={() => openPortal()}>
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {!isLoading ? 'Go to Stripe Portal' : 'Redirecting to Stripe'}
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>}
               </Card>
             </div>
           </TabsContent>
+          {isArtistOrLabel && <TabsContent value="royalties" className="mt-6">
+            <div className="space-y-6">
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Manage Your Payouts</CardTitle>
+                  <CardDescription>{isArtistOrLabel ? "View and manage your payout details" : "To "}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button disabled={isLoading} className="w-full" size="lg" onClick={() => getAccountLink()}>
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {!isLoading ? 'Go to Stripe Portal' : 'Redirecting to Stripe'}
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>}
         </Tabs>
       </div>
     </div>

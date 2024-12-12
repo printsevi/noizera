@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const ContactPage = async () => {
   return (
-    <div className='my-0 mx-auto max-w-2xl min-h-full relative'>
+    <div className='my-0 mx-auto max-w-2xl min-h-full px-3'>
       <ContactContent />
     </div>
   );

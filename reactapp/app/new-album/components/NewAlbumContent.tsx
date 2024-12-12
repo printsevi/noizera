@@ -398,8 +398,8 @@ const NewAlbumContent = () => {
                 Make changes to your album.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <Label>Album name</Label>
+            <CardContent>
+              <Label className='mt-2.5 mb-1 block'>Album name</Label>
               <Input
                 value={albumTitle}
                 onBlur={(e) => updateAlbumTitle(e.target.value)}
@@ -407,14 +407,14 @@ const NewAlbumContent = () => {
                 placeholder='Type your album title'
                 maxLength={150}
               />
-              <Label>Release date</Label>
+              <Label className='mt-2.5 mb-1 block'>Release date</Label>
               <div className="flex flex-col items-start space-y-4">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal ",
                         !date && "text-muted-foreground"
                       )}
                     >
@@ -433,10 +433,10 @@ const NewAlbumContent = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <Label>Cover image</Label>
+              <Label className='mt-2.5 mb-1 block'>Cover image</Label>
               <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
-              <Label>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
-              <div className="space-y-2">
+              <Label className='mt-2.5 block'>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
+              <div className="space-y-1">
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {featuredArtists.map(artist => (
                     <div

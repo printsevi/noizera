@@ -5,6 +5,7 @@ import getFollowersCount from "@/api/profiles/getFollowersCount";
 import getProfile from "@/api/profiles/getProfile";
 import getProfileMusicSets from "@/api/profiles/getProfileMusicSets";
 import getProfileMusicSetsPublic from "@/api/profiles/getProfileMusicSetsPublic";
+import ImageWithFallback from "@/components/ImageWithFallback";
 import { MusicArtwork } from "@/components/MusicArtwork";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +53,14 @@ export default function ProfileContent(props: Props) {
       <div className="flex flex-col md:flex-row items-center md:items-start mb-8">
         <Avatar className="w-32 h-32 md:w-48 md:h-48 mb-4 md:mb-0 md:mr-8">
           <AvatarImage src={getProfileImageSrc(data.data?.publicId)} alt={data.data?.name} />
-          <AvatarFallback>{data.data!.name!.slice(0, 2).toUpperCase()}</AvatarFallback>
+          <AvatarFallback><ImageWithFallback
+            src="/images/user.png"
+            alt="default image"
+            fallbackSrc="/images/user.png"
+            width={80}
+            height={80}
+            className="w-full"
+          /></AvatarFallback>
         </Avatar>
         <div className="text-center md:text-left flex-grow">
           <h1 className="text-2xl font-bold mb-2 truncate max-w-xs">{data.data?.name}</h1>

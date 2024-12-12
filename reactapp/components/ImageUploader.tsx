@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Cropper from 'react-easy-crop';
 import imageCompression from 'browser-image-compression';
 import axios from 'axios';
@@ -31,8 +31,6 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [uploading, setUploading] = useState(false);
-  const { axiosPrivate, isReady } = useAxiosPrivate();
-  const { auth } = useAuth();
 
   useEffect(() => {
     if (imageSrc) {
@@ -47,6 +45,10 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
   const onCropperChange = (open: boolean) => {
     setIsCropperOpen(open);
   };
+
+  const handleZoomChange = useCallback((newZoom: number) => {
+    setZoom(newZoom);
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -155,8 +157,10 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
               zoom={zoom}
               aspect={1}
               onCropChange={setCrop}
-              onZoomChange={setZoom}
+              onZoomChange={handleZoomChange}
               onCropComplete={onCropComplete}
+              minZoom={0.5}
+              maxZoom={3}
             />
             <Slider
               defaultValue={[1]}
@@ -164,7 +168,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
               max={3}
               step={0.1}
               value={[zoom]}
-              onValueChange={(e: React.SetStateAction<number>[]) => setZoom(e[0])}
+              onValueChange={(e) => handleZoomChange(e[0])}
             />
           </div>
           <DialogFooter>

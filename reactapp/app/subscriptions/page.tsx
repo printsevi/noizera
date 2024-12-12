@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const Subscriptions = async () => {
-  return (<div className='min-h-full my-0 mx-auto max-w-xl'>
+  return (<div className='min-h-full my-0 mx-auto max-w-xl px-3'>
     <SubscriptionsContent />
   </div>)
 };

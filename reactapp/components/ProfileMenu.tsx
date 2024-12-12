@@ -2,43 +2,13 @@
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { useMediaQuery } from "@custom-react-hooks/use-media-query"
 import {
   BadgeInfo,
-  Cloud,
-  Coins,
-  CreditCard,
   Disc3Icon,
-  Github,
-  Keyboard,
   LayoutDashboard,
-  LifeBuoy,
   LogOut,
   Mail,
-  MessageSquare,
-  Music,
-  Plus,
-  PlusCircle,
   Settings,
   Shield,
   Star,
@@ -69,9 +39,6 @@ import useUser from "@/hooks/useUser";
 import { ProfileType } from "@/api/common";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { getProfileImageSrc, getURL } from "@/libs/helpers";
-import { useCallback } from "react";
-import getSubscriptionPortal from "@/api/users/getSubscriptionPortal";
-import getOrCreateConnectedAccount from "@/api/users/getOrCreateConnectedAccount";
 
 export function ProfileMenu() {
   const router = useRouter();
@@ -88,17 +55,6 @@ export function ProfileMenu() {
     //player.reset();
     router.push('/');
   };
-
-  const getAccountLink = useCallback(async () => {
-    if (!isReady || !isAuthenticated) {
-      return;
-    }
-
-    const response = await getOrCreateConnectedAccount(axiosPrivate, auth.userId!);
-    if (response.ok) {
-      document.location.href = response.data!.url;
-    }
-  }, [isReady, axiosPrivate, isAuthenticated, auth.userId]);
 
   if (!isAuthenticated || !isReady) {
     return <></>;
@@ -118,19 +74,15 @@ export function ProfileMenu() {
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => router.push(`/profiles/${user?.username.toLowerCase()}`)}>
             <User className="mr-2 h-4 w-4" />
-            <span>Your profile</span>
+            <span>Your page</span>
           </DropdownMenuItem>
-          {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => getAccountLink()}>
-            <Coins className="mr-2 h-4 w-4" />
-            <span>Manage royalties</span>
-          </DropdownMenuItem>}
           {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => router.push(`/dashboard`)}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Your releases</span>
           </DropdownMenuItem>}
           <DropdownMenuItem onClick={() => router.push(`/settings`)}>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span>Account Center</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/new-album')}>
             <Disc3Icon className="mr-2 h-4 w-4" />

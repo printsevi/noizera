@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import SettingsContent from './components/SettingsContent';
 
 export const metadata: Metadata = {
-  title: 'Account settings',
+  title: 'Account center',
   description: 'Manage your account settings and preferences.',
   robots: {
     index: false,  // Do not index this page
