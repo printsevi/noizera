@@ -531,7 +531,7 @@ const NewAlbumContent = () => {
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleSongDragEnd}
-              onDragStart={handleSongDragStart}
+            //onDragStart={handleSongDragStart}
             >
               <SortableContext
                 items={itemIds}
