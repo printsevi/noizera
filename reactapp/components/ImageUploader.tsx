@@ -14,7 +14,7 @@ import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
-import { FileImage, Trash2 } from 'lucide-react';
+import { FileImage, Trash2, Upload } from 'lucide-react';
 
 interface ImageUploadProps {
   uploadedImageUrl?: string;
@@ -91,55 +91,54 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
   }, [croppedArea, imageSrc]);
 
   return (
-    <div className="flex flex-col w-56">
-      {!uploadedImageUrl ? (
-        <div className="relative flex-1 w-full">
-          <Input
-            id="image-file"
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="sr-only"
-          />
-          <label
-            htmlFor="image-file"
-            className="flex items-center justify-between w-full py-2 h-10 px-3 text-sm border rounded-md cursor-pointer transition-colors ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
-          >
-            <span>Choose file</span>
-            <FileImage size={20} />
-          </label>
-        </div>)
-        : (
-          <div>
-            <div className={`bg-muted ${cropShape === "round" ? "rounded-full overflow-hidden" : ""}`}>
-              <Image
-                src={uploadedImageUrl ?? ""}
-                width={500}
-                height={500}
-                alt="Uploaded cover image"
-                className="rounded-md object-cover max-w-full h-auto block"
-              />
-            </div>
-            <div className="border rounded-md mb-1 py-2 px-3 rounded-md flex flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
-              <div className="flex items-center space-x-2">
-                <div>
-                  <p className="font-medium">Cover image</p>
-                  <p className="text-sm text-muted-foreground">Uploaded</p>
-                </div>
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={onDelete}
-                className="rounded-full"
-              >
-                <Trash2 size={20} />
-                <span className="sr-only">Delete file</span>
-              </Button>
-            </div>
+    <div className="flex flex-col w-full max-w-xs">
+      <AspectRatio ratio={1} className="mb-4">
+        {!uploadedImageUrl ? (
+          <div className={`relative flex items-center justify-center w-full h-full bg-muted ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
+            <Input
+              id="image-file"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="sr-only"
+            />
+            <Label
+              htmlFor="image-file"
+              className="flex flex-col items-center justify-center w-full h-full cursor-pointer transition-colors hover:bg-muted-foreground/10"
+            >
+              <Upload size={48} className="mb-2 text-muted-foreground" />
+              <span className="text-sm font-medium text-muted-foreground">Upload image</span>
+            </Label>
+          </div>
+        ) : (
+          <div className={`relative w-full h-full ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
+            <Image
+              src={uploadedImageUrl}
+              alt="Uploaded cover image"
+              fill
+              className="object-cover"
+            />
           </div>
         )}
+      </AspectRatio>
+      {uploadedImageUrl && (
+        <div className="flex items-center justify-between p-2 bg-muted rounded-md">
+          <div>
+            <p className="font-medium">Cover image</p>
+            <p className="text-sm text-muted-foreground">Uploaded</p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onDelete}
+            className="rounded-full"
+          >
+            <Trash2 size={20} />
+            <span className="sr-only">Delete file</span>
+          </Button>
+        </div>
+      )}
       <Dialog open={isCropperOpen} defaultOpen={isCropperOpen} onOpenChange={onCropperChange}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
