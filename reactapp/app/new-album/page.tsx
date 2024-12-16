@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const NewAlbum = async () => {
   return (
-    <div className='mx-auto max-w-3xl min-h-full'>
+    <div className='mx-auto max-w-2xl min-h-full p-3'>
       <NewAlbumContent />
     </div>
   );

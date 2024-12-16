@@ -111,34 +111,28 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
             </Label>
           </div>
         ) : (
-          <div className={`relative w-full h-full ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
+          <div className={`group relative w-full h-full ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
             <Image
               src={uploadedImageUrl}
               alt="Uploaded cover image"
               fill
               className="object-cover"
             />
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onDelete}
+                className="rounded-full hover:text-red-500 transition-colors"
+              >
+                <Trash2 size={24} />
+                <span className="sr-only">Delete image</span>
+              </Button>
+            </div>
           </div>
         )}
       </AspectRatio>
-      {uploadedImageUrl && (
-        <div className="flex items-center justify-between p-2 bg-muted rounded-md">
-          <div>
-            <p className="font-medium">Cover image</p>
-            <p className="text-sm text-muted-foreground">Uploaded</p>
-          </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onDelete}
-            className="rounded-full"
-          >
-            <Trash2 size={20} />
-            <span className="sr-only">Delete file</span>
-          </Button>
-        </div>
-      )}
       <Dialog open={isCropperOpen} defaultOpen={isCropperOpen} onOpenChange={onCropperChange}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
