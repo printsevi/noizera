@@ -22,6 +22,7 @@ import { sendEvent } from '@/libs/helpers';
 import useUser from '@/hooks/useUser';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 import { SidebarTrigger } from './ui/sidebar';
+import Image from "next/image"
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -128,7 +129,17 @@ const Header: React.FC = () => {
     <header className={`pt-safe z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300`}
     >
       <div className="flex items-center justify-between p-2.5">
-        <SidebarTrigger className="space-x-4 mr-3" />
+        <div className='flex'>
+          <SidebarTrigger className="space-x-4 mr-3 items-center" />
+          <Image
+            src="/images/logo.png"
+            alt="logo.png"
+            width={40}
+            height={40}
+            className={`mr-3 object-cover rounded-full transition-opacity group-hover:opacity-80`}
+          />
+        </div>
+
         <div className={cn("md:flex-1 md:max-w-xl md:relative md:p-0 flex items-center p-4 ", showMobileSearch ? "bg-background inset-0 absolute" : "")}>
           <Input
             type="search"
