@@ -20,7 +20,7 @@ import { toast } from "@/hooks/use-toast"
 import useLibrary from "@/hooks/useLibrary"
 import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection"
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection"
-import { CollectionType } from "@/api/common"
+import { CollectionType, ProfileType } from "@/api/common"
 import addSongToFavourites from "@/api/songs/addSongToFavourites"
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
 import removeSongFromFavourites from "@/api/songs/removeSongFromFavourites"
@@ -184,18 +184,26 @@ export default function MusicCollectionContent(props: Props) {
           </h1>
           <div className="text-muted-foreground mb-4 text-center lg:text-left w-full">
             <p className="mb-1">{musicCollection.releaseDate} • {trackCount} songs</p>
-            <div className="flex flex-wrap">
+            {credits.length > 0 && <div className="flex flex-wrap justify-center mb-1">
+              {musicCollection.ownerProfileType === ProfileType.Artist && credits.length > 0 && <React.Fragment>
+                <Link href={`/profiles/${musicCollection.ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
+                  {musicCollection.ownerName}
+                </Link>
+              </React.Fragment>}
+              {credits.map((credit, index) => (
+                <React.Fragment key={credit.username}>
+                  <span>&nbsp;•&nbsp;</span>
+                  {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline truncate max-w-full">{credit.name}</Link> : <span className="truncate max-w-full">{credit.profileName}</span>}
+                </React.Fragment>
+              ))}
+            </div>}
+            <div className="flex flex-wrap justify-center">
               <React.Fragment>
+                by&nbsp;
                 <Link href={`/profiles/${musicCollection.ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
                   {musicCollection.ownerName}
                 </Link>
               </React.Fragment>
-              {credits.map((credit, index) => (
-                <React.Fragment key={credit.username}>
-                  <span>&nbsp;•&nbsp;</span>
-                  <Link href={credit.username ? `/profiles/${credit.username.toLowerCase()}` : ""} className="hover:underline truncate max-w-full">{credit.name ?? credit.profileName}</Link>
-                </React.Fragment>
-              ))}
             </div>
           </div>
           <div className="flex items-center space-x-4 mb-4">

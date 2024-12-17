@@ -20,6 +20,7 @@ public sealed record GetProfileQuery(string Username)
                 SELECT 
                     p."Name" as Name,
                     p."PublicId" as PublicId,
+                    p."ProfileType" as ProfileType,
                     p."Bio" as Bio,
                     (
                         SELECT

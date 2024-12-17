@@ -3,6 +3,7 @@
 public record ProfileQueryResult(
     string PublicId,
     string Name,
+    string ProfileType,
     //bool? IsFollowing,
     string? Bio,
     int FollowersCount,

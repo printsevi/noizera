@@ -198,3 +198,9 @@ INSERT INTO public."Subscriptions" (
     0.7, -- Replace with the royalty share percentage
     'PremiumListeningWithFreeTrial' -- Replace with the type of subscription
 );
+
+21. Terms
+
+INSERT INTO public."Terms" ("Id", "EffectiveDate", "Content")
+VALUES 
+    (gen_random_uuid(), '2024-12-16', 'Terms and conditions for December 2024.');

@@ -1,10 +1,11 @@
 // 'use server'
 
-import { ApiResponse, handleErrorAndReturnProblem } from '../common';
+import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
 
 export interface GetProfileResponse {
   publicId: string,
+  profileType: ProfileType,
   name: string,
   isFollowing: boolean,
   bio: string,

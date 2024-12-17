@@ -5,7 +5,6 @@ using Noizera.Common.Domain.ProfileRelations;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace Noizera.Common.Domain.Profiles;
 

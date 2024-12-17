@@ -188,7 +188,7 @@ export function MusicArtwork({
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="mt-2 text-sm font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount} songs • <Link href={`/profiles/${ownerUsername.toLowerCase()}`} key={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
+        <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount} songs • by&nbsp;<Link href={`/profiles/${ownerUsername.toLowerCase()}`} key={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
       </div>
     </div>
   )
