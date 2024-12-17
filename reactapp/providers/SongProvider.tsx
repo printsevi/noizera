@@ -137,7 +137,13 @@ const SongContextProvider = ({ children }: Props) => {
                     clearInterval(intervalId);
                 }
 
-                const id = setInterval(async () => await addStream(axiosPrivate, auth.userId!, currentSong.song.songPublicId, STREAM_IN_SECONDS), STREAM_IN_SECONDS * 1000); // call API every 15 seconds
+                const id = setInterval(async () => {
+                    const response = await addStream(axiosPrivate, auth.userId!, currentSong.song.songPublicId, STREAM_IN_SECONDS);
+                    if (!response.ok) {
+                        clearInterval(id);
+                        setIntervalId(undefined);
+                    }
+                }, STREAM_IN_SECONDS * 1000); //every 15 sec
                 setIntervalId(id);
             } else {
                 if (intervalId) {
