@@ -111,7 +111,7 @@ export const SongAccordionItem = (props: Props) => {
                     </div>
                 </div>
             </div>
-            <div className={`p-4 pt-1 ${props.isOpen ? '' : 'invisible'}`}>
+            <div className={`p-4 pt-1 ${props.isOpen ? '' : 'hidden'}`}>
                 <Label className='block mb-1'>Song title</Label>
                 <Input
                     value={songTitle}
