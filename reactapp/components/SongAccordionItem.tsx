@@ -111,27 +111,25 @@ export const SongAccordionItem = (props: Props) => {
                     </div>
                 </div>
             </div>
-            {props.isOpen && (
-                <div className="p-4 pt-1">
-                    <Label className='block mb-1'>Song title</Label>
-                    <Input
-                        value={songTitle}
-                        onBlur={(value) => updateTitle(value.target.value)}
-                        onChange={(value) => setSongTitle(value.target.value.slice(0, 100))}
-                        placeholder='type your song title'
-                        maxLength={100}
-                    />
-                    <Label className='block mb-1 mt-2.5'>Audio</Label>
-                    <AudioUploader
-                        uploadTime='00/00/0000'
-                        existingFileName={props.audioFileName ?? ""}
-                        onFileUpload={props.onAudioUpload}
-                        onFileDelete={deleteAudioHandler}
-                        audioSrc={audioSrc}
-                        contentType={props.contentType}
-                    />
-                </div>
-            )}
+            <div className={`p-4 pt-1 ${props.isOpen ? '' : 'invisible'}`}>
+                <Label className='block mb-1'>Song title</Label>
+                <Input
+                    value={songTitle}
+                    onBlur={(value) => updateTitle(value.target.value)}
+                    onChange={(value) => setSongTitle(value.target.value.slice(0, 100))}
+                    placeholder='type your song title'
+                    maxLength={100}
+                />
+                <Label className='block mb-1 mt-2.5'>Audio</Label>
+                <AudioUploader
+                    uploadTime='00/00/0000'
+                    existingFileName={props.audioFileName ?? ""}
+                    onFileUpload={props.onAudioUpload}
+                    onFileDelete={deleteAudioHandler}
+                    audioSrc={audioSrc}
+                    contentType={props.contentType}
+                />
+            </div>
         </div>
     );
 }; 

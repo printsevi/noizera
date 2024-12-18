@@ -39,10 +39,10 @@ public sealed record AlbumSubmissionRule(Album Album) : ISyncDomainRule
             return false;
         }
 
-        if (Album.Owner.Profile.ProfileType == ProfileType.Artist
-            || Album.AlbumCredits.Any(x => x.ProfileType == ProfileType.Artist))
+        if (Album.Owner.Profile.ProfileType != ProfileType.Artist
+            && !Album.AlbumCredits.Any(x => x.ProfileType == ProfileType.Artist))
         {
-            ErrorMessage = "The album should have at least one artist assigned";
+            ErrorMessage = "The album must have at least one artist assigned";
             return false;
         }
 

@@ -1,7 +1,6 @@
 ﻿using Noizera.Common.Domain.AlbumCredits;
 using Noizera.Common.Domain.Common;
 using Noizera.Common.Domain.Events;
-using Noizera.Common.Domain.MusicSetSongs;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
 
