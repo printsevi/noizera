@@ -82,7 +82,7 @@ export function ProfileMenu() {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push('/new-album')}>
             <Disc3Icon className="mr-2 h-4 w-4" />
-            <span>Release your music</span>
+            <span>Release Music</span>
           </DropdownMenuItem>
           {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => router.push(`/dashboard`)}>
             <LayoutDashboard className="mr-2 h-4 w-4" />

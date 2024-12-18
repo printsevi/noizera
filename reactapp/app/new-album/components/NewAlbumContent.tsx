@@ -64,6 +64,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import addNewAlbumCredit from '@/api/musicCollections/addNewAlbumCredit';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface SongItem {
   key: string;
@@ -95,6 +96,9 @@ const NewAlbumContent = () => {
   const [searchResults, setSearchResults] = useState<GetArtistResponse[]>([])
 
   const [date, setDate] = useState(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined)
+  const [month, setMonth] = React.useState(data?.data?.releaseDate ? new Date(data?.data?.releaseDate).getMonth() : new Date().getMonth());
+  const [year, setYear] = React.useState(data?.data?.releaseDate ? new Date(data?.data?.releaseDate).getFullYear() : new Date().getFullYear());
+
   const [isUploading, setIsUploading] = useState(false)
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -118,10 +122,22 @@ const NewAlbumContent = () => {
     const response = await updateAlbumReleaseDate(axiosPrivate, auth.userId!, data?.data?.albumId!, selectedDate ? format(selectedDate, "yyyy-MM-dd") : "");
     if (response.ok) {
       setDate(selectedDate);
+      setMonth(selectedDate!.getMonth())
+      setYear(selectedDate!.getFullYear())
     } else {
       setDate(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined);
+      setMonth(data?.data?.releaseDate ? new Date(data.data.releaseDate).getMonth() : new Date().getMonth());
+      setYear(data?.data?.releaseDate ? new Date(data.data.releaseDate).getFullYear() : new Date().getFullYear());
     }
     setIsUploading(false);
+  }
+
+  const handleMonthChange = (value: string) => {
+    setMonth(parseInt(value))
+  }
+
+  const handleYearChange = (value: string) => {
+    setYear(parseInt(value))
   }
 
   useEffect(() => {
@@ -129,6 +145,8 @@ const NewAlbumContent = () => {
       setAlbumTitleDb(data.data?.title ?? "");
       setAlbumTitle(data.data?.title ?? "");
       setDate(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined);
+      setMonth(data?.data?.releaseDate ? new Date(data?.data?.releaseDate).getMonth() : new Date().getMonth());
+      setYear(data?.data?.releaseDate ? new Date(data?.data?.releaseDate).getFullYear() : new Date().getFullYear());
       setSongs(data.data?.songs.sort(x => x.sequence).map(x => ({
         key: x.key,
         title: x.title,
@@ -409,7 +427,7 @@ const NewAlbumContent = () => {
             <Button
               variant={"outline"}
               className={cn(
-                "w-full justify-start text-left font-normal ",
+                "w-[280px] justify-start text-left font-normal",
                 !date && "text-muted-foreground"
               )}
             >
@@ -417,12 +435,45 @@ const NewAlbumContent = () => {
               {date ? format(date, "PPP") : <span>Pick a date</span>}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto p-0" align="start">
+            <div className="flex justify-between p-3">
+              <Select value={month.toString()} onValueChange={handleMonthChange}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Month" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <SelectItem key={i} value={i.toString()}>
+                      {format(new Date(0, i), "MMMM")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={year.toString()} onValueChange={handleYearChange}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Year" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 121 }, (_, i) => (
+                    <SelectItem key={i} value={(year - 60 + i).toString()}>
+                      {year - 60 + i}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Calendar
               mode="single"
               selected={date}
               onSelect={handleDateSelect}
-              disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+              month={new Date(year, month)}
+              onMonthChange={(newMonth) => {
+                setMonth(newMonth.getMonth())
+                setYear(newMonth.getFullYear())
+              }}
+              disabled={(date) =>
+                date > new Date() || date < new Date("1900-01-01")
+              }
               initialFocus
             />
           </PopoverContent>
