@@ -106,10 +106,10 @@ public class AudioService(
         string inputAiffFile = $"{fileId}.aiff";
         string inputAiffFilePath = $"{dataStructureProvider.AudioPath}/{inputAiffFile}";
 
-        string outputFlacFile = $"output-flac-{fileId}";
+        string outputFlacFile = $"output-flac-{fileId}.flac";
         string outputFlacFilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
 
-        string outputMp3File = $"output-mp3-{fileId}";
+        string outputMp3File = $"output-mp3-{fileId}.mp3";
         string outputMp3FilePath = $"{dataStructureProvider.AudioPath}/{outputMp3File}";
 
         File.Delete(outputFlacFilePath);

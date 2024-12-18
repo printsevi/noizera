@@ -12,6 +12,7 @@ internal sealed class RateLimitingMiddleware(RequestDelegate next, IMemoryCache 
     public async Task InvokeAsync([NotNull] HttpContext context)
     {
         string? ipAddress = context.Connection.RemoteIpAddress?.ToString();
+
         if (!string.IsNullOrEmpty(ipAddress) && !context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
         {
             int requestCount = await cache.GetOrCreateAsync(ipAddress, entry =>

@@ -27,7 +27,7 @@ builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigi
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>(); //Always FIRST
 app.UseCors(MyAllowSpecificOrigins);
-app.UseMiddleware<RateLimitingMiddleware>();
+//app.UseMiddleware<RateLimitingMiddleware>();
 app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
