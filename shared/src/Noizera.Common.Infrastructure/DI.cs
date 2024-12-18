@@ -17,11 +17,11 @@ namespace Noizera.Common.Infrastructure;
 
 public static class DI
 {
-    public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, [NotNull] WebApplicationBuilder builder)
+    public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, [NotNull] WebApplicationBuilder builder, bool efTrackingDisabled = true)
     {
         var configuration = builder.Configuration;
 
-        services.AddSharedPersistence(configuration);
+        _ = services.AddSharedPersistence(configuration, efTrackingDisabled);
 
         _ = services.Configure<DataDirectoryStructure>(configuration.GetSection("DataDirectoryStructure"));
         _ = services.AddSingleton<DataStructureProvider>();

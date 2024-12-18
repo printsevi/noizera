@@ -12,22 +12,23 @@ public static class DI
 {
     public static IServiceCollection AddSharedPersistence(
         this IServiceCollection services,
-        [NotNull] IConfiguration configuration)
+        [NotNull] IConfiguration configuration,
+        bool efTrackingDisabled = true)
     {
         services
-            .AddSqlDb(configuration)
+            .AddSqlDb(configuration, efTrackingDisabled)
             .AddS3(configuration)
             .AddSharedHealthChecks(configuration);
 
         return services;
     }
 
-    private static IServiceCollection AddSqlDb(this IServiceCollection services, [NotNull] IConfiguration configuration)
+    private static IServiceCollection AddSqlDb(this IServiceCollection services, [NotNull] IConfiguration configuration, bool trackingDisabled = true)
     {
         _ = services.AddDbContext<AppDbContext>(opts =>
         {
             _ = opts.UseNpgsql(configuration.GetConnectionString("PostgresConnection"));
-            _ = opts.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            _ = opts.UseQueryTrackingBehavior(trackingDisabled ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
         });
 
         return services;

@@ -4,7 +4,7 @@ using Noizera.Common.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddSharedInfrastructure(builder)
+    .AddSharedInfrastructure(builder, efTrackingDisabled: false)
     .AddServices(builder.Configuration);
 
 var app = builder.Build();
