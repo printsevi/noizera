@@ -42,7 +42,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ImageUploader from '@/components/ImageUploader';
 import uploadAlbumCoverImage from '@/api/musicCollections/uploadAlbumCoverImage';
-import { getProfileImageSrc, getURL } from '@/libs/helpers';
+import { getCoverImageSrc, getProfileImageSrc, getURL } from '@/libs/helpers';
 import PurpleButton from '@/components/Button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -138,8 +138,8 @@ const NewAlbumContent = () => {
         contentType: x.contentType,
         isOpen: false
       })) ?? []);
-      if (data.data?.coverImageS3Folder) {
-        setCoverImageSrc(`${getURL()}api/music-collections/${data?.data?.albumPublicId!}/cover-image`);
+      if (data.data!.coverImageS3Folder) {
+        setCoverImageSrc(getCoverImageSrc(data!.data!.albumPublicId, true));
       }
       const firstSong = data.data?.songs[0];
       if (firstSong) {
@@ -221,7 +221,7 @@ const NewAlbumContent = () => {
       return false;
     }
 
-    setCoverImageSrc(`${getURL()}api/music-collections/${data?.data?.albumPublicId!}/cover-image?${Date.now()}`);
+    setCoverImageSrc(getCoverImageSrc(data?.data?.albumPublicId, true));
 
     return true;
   };
