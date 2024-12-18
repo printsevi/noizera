@@ -25,10 +25,10 @@ public sealed record GetAlbumCreditsQuery(
                     ac."ProfileName" as ProfileName
                 FROM 
                     public."MusicSets" mc
-                LEFT JOIN 
+                JOIN 
                     public."AlbumCredits" ac
                         ON ac."AlbumId" = mc."Id"
-                LEFT JOIN 
+                JOIN 
                     public."Profiles" p
                         ON p."Id" = ac."ProfileId"
                 WHERE 
@@ -36,7 +36,6 @@ public sealed record GetAlbumCreditsQuery(
                         AND mc."CollectionType" = 'collection_album' 
                         AND mc."AlbumStatus" = 'Released'
                         AND mc."IsDeleted" = FALSE
-                LIMIT 1 
              """;
 
             var result = await db.Database
