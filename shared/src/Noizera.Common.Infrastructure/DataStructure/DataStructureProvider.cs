@@ -11,6 +11,8 @@ public class DataStructureProvider(IConfiguration configuration, IOptions<DataDi
 
     public string RootDataPath => isDebug ? dataFolderPath : $"/{dataStructure.Root}";
 
+    public string HostAudioPath => $"{dataFolderPath}/{dataStructure.Audio}";
+
     public string AudioPath => $"{RootDataPath}/{dataStructure.Audio}";
 
     public string DockerAudioPath => $"/{dataStructure.Root}/{dataStructure.Audio}";

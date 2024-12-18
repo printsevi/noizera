@@ -32,7 +32,7 @@ public class AudioService(
                 settings.BitDepth);
 
         await ffmpegDockerService.ProcessAsync(
-            dataStructureProvider.AudioPath,
+            dataStructureProvider.HostAudioPath,
             dataStructureProvider.DockerAudioPath,
             flacCommand,
             ct).ConfigureAwait(false);
@@ -63,7 +63,7 @@ public class AudioService(
             settings.TruePeakInNegative);
 
         await ffmpegDockerService.ProcessAsync(
-            dataStructureProvider.AudioPath,
+            dataStructureProvider.HostAudioPath,
             dataStructureProvider.DockerAudioPath,
             mp3Command,
             ct).ConfigureAwait(false);
