@@ -13,6 +13,8 @@ public static class AudioHelper
         int bitDepth)
     {
         List<string> result = [
+            "-loglevel",
+            "debug",
             "-i",
             $"{inputFilePath}",
             "-compression_level",
@@ -38,6 +40,8 @@ public static class AudioHelper
         int truePeak)
     {
         List<string> result = [
+            "-loglevel",
+            "debug",
             "-i",
             $"{inputFilePath}",
             "-f",
