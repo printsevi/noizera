@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using NAudio.Wave;
 using Noizera.Common.Infrastructure.DataStructure;
 using Noizera.Common.Persistence.S3;
 
@@ -90,10 +89,10 @@ public class AudioService(
 
     public double GetMp3DurationInSecondsAsync(string fileId)
     {
-        string outputMp3File = $"output-mp3-{fileId}.mp3";
-        Mp3FileReader reader = new($"{dataStructureProvider.AudioPath}/{outputMp3File}");
+        using TagLib.File file = TagLib.File.Create($"{dataStructureProvider.AudioPath}/output-mp3-{fileId}.mp3");
+        double result = file.Properties.Duration.TotalSeconds;
 
-        return reader.TotalTime.TotalSeconds;
+        return result;
     }
 
     public void DeleteAudioFiles(string fileId)

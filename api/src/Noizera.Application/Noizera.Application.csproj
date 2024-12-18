@@ -13,10 +13,8 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
-    <PackageReference Include="SerilogTracing" Version="2.2.0" />
-    <PackageReference Include="SerilogTracing.Expressions" Version="2.2.0" />
-    <PackageReference Include="SerilogTracing.Instrumentation.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="SerilogTracing.Expressions" Version="2.3.0" />
+    <PackageReference Include="SerilogTracing.Instrumentation.AspNetCore" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
