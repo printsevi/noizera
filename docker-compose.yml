@@ -16,6 +16,7 @@ services:
       - JwtSettings__Audience
     volumes:
       - /home/printsev/noizera-data:/noizera-data
+      - /var/run/docker.sock:/var/run/docker.sock
 
   jobs:
     container_name: jobs
@@ -32,6 +33,7 @@ services:
       - BrevoApiKey
     volumes:
       - /home/printsev/noizera-data:/noizera-data
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - api
 
