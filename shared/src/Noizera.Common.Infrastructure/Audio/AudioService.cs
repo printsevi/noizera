@@ -97,8 +97,14 @@ public class AudioService(
 
     public void DeleteAudioFiles(string fileId)
     {
-        string inputFile = $"{fileId}";
-        string inputFilePath = $"{dataStructureProvider.AudioPath}/{inputFile}";
+        string inputWavFile = $"{fileId}.wav";
+        string inputWavFilePath = $"{dataStructureProvider.AudioPath}/{inputWavFile}";
+
+        string inputAifFile = $"{fileId}.aif";
+        string inputAifFilePath = $"{dataStructureProvider.AudioPath}/{inputAifFile}";
+
+        string inputAiffFile = $"{fileId}.aiff";
+        string inputAiffFilePath = $"{dataStructureProvider.AudioPath}/{inputAiffFile}";
 
         string outputFlacFile = $"output-flac-{fileId}";
         string outputFlacFilePath = $"{dataStructureProvider.AudioPath}/{outputFlacFile}";
@@ -108,6 +114,8 @@ public class AudioService(
 
         File.Delete(outputFlacFilePath);
         File.Delete(outputMp3FilePath);
-        File.Delete(inputFilePath);
+        File.Delete(inputWavFilePath);
+        File.Delete(inputAifFilePath);
+        File.Delete(inputAiffFilePath);
     }
 }

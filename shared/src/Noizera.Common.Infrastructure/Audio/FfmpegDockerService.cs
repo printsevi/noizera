@@ -12,17 +12,17 @@ public class FfmpegDockerService(IDockerClient dockerClient)
         IList<string> cmd,
         CancellationToken ct)
     {
-        CreateContainerResponse? container = null;
+        //CreateContainerResponse? container = null;
         try
         {
             string volumeBind = $"{dataFolderPath}:{dockerFilesPath}";
-            container = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
+            var container = await dockerClient.Containers.CreateContainerAsync(new CreateContainerParameters
             {
                 Image = "jrottenberg/ffmpeg",
                 HostConfig = new HostConfig
                 {
                     Binds = [volumeBind],
-                    //AutoRemove = true
+                    AutoRemove = true
                 },
                 Cmd = cmd
             }, ct).ConfigureAwait(false);
@@ -44,13 +44,13 @@ public class FfmpegDockerService(IDockerClient dockerClient)
         {
             throw new InvalidOperationException("An error occurred while processing the container.", ex);
         }
-        finally
-        {
-            if (container != null)
-            {
-                await dockerClient.Containers.RemoveContainerAsync(container.ID, new ContainerRemoveParameters { Force = true }, ct).ConfigureAwait(false);
-            }
-        }
+        //finally
+        //{
+        //    if (container != null)
+        //    {
+        //        await dockerClient.Containers.RemoveContainerAsync(container.ID, new ContainerRemoveParameters { Force = true }, ct).ConfigureAwait(false);
+        //    }
+        //}
     }
 
     private async Task<(string stdout, string stderr)> GetContainerLogsAsync(string containerId, CancellationToken cancellationToken)

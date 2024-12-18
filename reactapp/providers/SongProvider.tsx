@@ -115,11 +115,15 @@ const SongContextProvider = ({ children }: Props) => {
 
     const next = () => {
         const currentIndex = songs.findIndex(x => x.song.songPublicId === currentSong?.song.songPublicId);
-        if (currentIndex === -1 || currentIndex === songs.length - 1) {
+        if (currentIndex === -1) {
             //get next bunch of recommended songs
             return;
         }
-        setCurrentSong(songs[currentIndex + 1]);
+        if (currentIndex === songs.length - 1) {
+            setCurrentSong(songs[0]);
+        } else {
+            setCurrentSong(songs[currentIndex + 1]);
+        }
     };
 
     const prev = () => {
