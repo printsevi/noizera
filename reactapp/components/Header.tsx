@@ -129,7 +129,7 @@ const Header: React.FC = () => {
     <header className={`pt-safe z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300`}
     >
       <div className="flex items-center justify-between p-2.5">
-        <div className='flex'>
+        <div className='flex items-center '>
           <SidebarTrigger className="space-x-4 mr-3 items-center" />
           <Image
             src="/images/logo.png"

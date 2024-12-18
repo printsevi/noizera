@@ -15,8 +15,8 @@ internal sealed class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
         var streams = await db.Streams
             .Include(x => x.Song)
             .Where(x => x.UserId == notification.DomainEvent.UserId
-                && DateOnly.FromDateTime(x.CreatedAt.Date) <= DateOnly.FromDateTime(notification.DomainEvent.EndDate.Date)
-                && DateOnly.FromDateTime(x.CreatedAt.Date) > DateOnly.FromDateTime(notification.DomainEvent.EffectiveDate.Date))
+                && DateOnly.FromDateTime(x.StreamedAt.Date) <= DateOnly.FromDateTime(notification.DomainEvent.EndDate.Date)
+                && DateOnly.FromDateTime(x.StreamedAt.Date) > DateOnly.FromDateTime(notification.DomainEvent.EffectiveDate.Date))
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         Dictionary<Guid, int> dict = [];
