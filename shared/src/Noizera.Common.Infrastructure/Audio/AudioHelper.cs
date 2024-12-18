@@ -13,6 +13,7 @@ public static class AudioHelper
         int bitDepth)
     {
         List<string> result = [
+            "-y",
             "-loglevel",
             "debug",
             "-i",
@@ -40,6 +41,7 @@ public static class AudioHelper
         int truePeak)
     {
         List<string> result = [
+            "-y",
             "-loglevel",
             "debug",
             "-i",
