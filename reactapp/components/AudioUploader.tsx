@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
@@ -17,6 +17,13 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isIos, setIsIos] = useState(false);
+
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+    const isIosDevice = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    setIsIos(isIosDevice);
+  }, []);
 
   const MAX_FILE_SIZE = 300 * 1024 * 1024; // 310MB
   const MIN_FILE_SIZE = 15 * 1024 * 1024; // 15MB
@@ -80,7 +87,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
             <div>
               <p className="font-medium">{uploadedFileName}</p>
               <p className="text-sm text-muted-foreground">Uploaded</p>
-              {contentType === 'audio/wav' && audioSrc && contentType && <div>
+              {contentType === 'audio/wav' && audioSrc && contentType && !isIos && <div>
                 <audio controls>
                   <source src={audioSrc} type={contentType} />
                   Your browser does not support the audio tag.

@@ -153,7 +153,6 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
               onCropComplete={onCropComplete}
               minZoom={1}
               maxZoom={5}
-              objectFit="cover"
             />
             <Slider
               defaultValue={[1]}

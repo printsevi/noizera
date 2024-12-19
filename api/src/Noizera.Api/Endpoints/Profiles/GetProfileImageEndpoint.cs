@@ -19,6 +19,6 @@ internal sealed class GetProfileImageEndpoint : IEndpoint
         GetProfileImageQuery query = new(profilePublicId);
         var result = await sender.Send(query, ct).ConfigureAwait(false);
 
-        return Results.File(result.Stream, result.ContentType, enableRangeProcessing: false);
+        return result.HasValue ? Results.File(result.Value.Stream, result.Value.ContentType, enableRangeProcessing: false) : Results.NoContent();
     }
 }

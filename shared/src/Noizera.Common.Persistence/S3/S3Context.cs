@@ -68,9 +68,10 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         => await DeleteFileAsync(originalAudioFolder, key, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetCoverImageAsync([NotNull] string key, CancellationToken ct)
-        => await GetFileAsync(coverImagesFolder, key, ct).ConfigureAwait(false);
+        => await GetFileAsync(coverImagesFolder, key, ct).ConfigureAwait(false)
+            ?? throw new AmazonS3Exception($"File with Id {key} has not been found in folder {coverImagesFolder}.");
 
-    public async Task<(Stream Stream, string ContentType)> GetProfileImageAsync([NotNull] string key, CancellationToken ct)
+    public async Task<(Stream Stream, string ContentType)?> GetProfileImageAsync([NotNull] string key, CancellationToken ct)
         => await GetFileAsync(profileImagesFolder, key, ct).ConfigureAwait(false);
 
     public async Task<(Stream Stream, string ContentType)> GetOriginalAudioAsync([NotNull] string key, long start, long end, CancellationToken ct)
@@ -153,7 +154,7 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         _ = await s3.DeleteObjectAsync(deleteObjectRequest, ct).ConfigureAwait(false);
     }
 
-    private async Task<(Stream Stream, string ContentType)> GetFileAsync(string folderName, [NotNull] string key, CancellationToken ct)
+    private async Task<(Stream Stream, string ContentType)?> GetFileAsync(string folderName, [NotNull] string key, CancellationToken ct)
     {
         GetObjectRequest request = new()
         {
@@ -161,10 +162,8 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
             Key = $"{folderName}/{key.ToUpperInvariant()}",
         };
 
-        var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false)
-            ?? throw new AmazonS3Exception($"File with Id {key} has not been found in folder {folderName}.");
-
-        return (result.ResponseStream, result.Headers["Content-Type"]);
+        var result = await s3.GetObjectAsync(request, ct).ConfigureAwait(false);
+        return result is null ? null : (result.ResponseStream, result.Headers["Content-Type"]);
     }
 
     private async Task<(Stream Stream, string ContentType)> GetFilePartAsync(string folderName, [NotNull] string key, long start, long end, CancellationToken ct)
