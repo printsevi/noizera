@@ -28,7 +28,7 @@ public sealed record GetAlbumCreditsQuery(
                 JOIN 
                     public."AlbumCredits" ac
                         ON ac."AlbumId" = mc."Id"
-                JOIN 
+                LEFT JOIN 
                     public."Profiles" p
                         ON p."Id" = ac."ProfileId"
                 WHERE 

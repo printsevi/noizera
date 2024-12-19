@@ -23,8 +23,4 @@
     <ProjectReference Include="..\..\..\shared\src\Noizera.Common.Persistence\Noizera.Common.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CQRS\MusicSets\GetMusicSetSongs\" />
-  </ItemGroup>
-
 </Project>
