@@ -21,8 +21,9 @@ public sealed class UploadAudioFileValidator : AbstractValidator<UploadAudioFile
 
         _ = RuleFor(x => x.File.ContentType).Must(x
             => x.StartsWith("audio/wav", StringComparison.InvariantCultureIgnoreCase)
-            || x.StartsWith("audio/aif", StringComparison.InvariantCultureIgnoreCase)
-            || x.StartsWith("audio/aiff", StringComparison.InvariantCultureIgnoreCase))
+            //|| x.StartsWith("audio/aif", StringComparison.InvariantCultureIgnoreCase)
+            //|| x.StartsWith("audio/aiff", StringComparison.InvariantCultureIgnoreCase)
+            )
             .WithMessage("File type is incorrect");
     }
 }

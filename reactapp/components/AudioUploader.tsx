@@ -32,10 +32,10 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
         setError('File size less than the 15MB limit.');
         setFile(null);
       } else if (!selectedFile.type.startsWith('audio/wav')
-        && !selectedFile.type.startsWith('audio/aif')
-        && !selectedFile.type.startsWith('audio/aiff')
+        // && !selectedFile.type.startsWith('audio/aif')
+        // && !selectedFile.type.startsWith('audio/aiff')
       ) {
-        setError('Please upload .wav or .aif/aiff');
+        setError('Please upload .wav file');
         setFile(null);
       } else {
         setError('');
@@ -55,7 +55,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
           <Input
             id="audio-file"
             type="file"
-            accept="audio/wav,.aif,audio/aiff"
+            accept="audio/wav"//"audio/wav,.aif,audio/aiff"
             onChange={handleFileChange}
             className="sr-only"
             disabled={isUploading}
@@ -65,7 +65,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
             className="flex items-center justify-between w-full py-2 h-10 px-3 text-sm border rounded-md cursor-pointer transition-colors ring-offset-background hover:outline-none hover:ring-2 hover:ring-ring hover:ring-offset-2"
           >
             <span>
-              {file ? file.name : "Choose audio file (wav or aif/aiff)"}
+              {file ? file.name : "Choose .wav audio file"}
             </span>
             {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {!isUploading && <FileAudio size={20} />}
