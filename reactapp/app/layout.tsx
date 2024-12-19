@@ -2,7 +2,7 @@ import getSongsByUserId from '@/api/getSongsByUserId';
 import AppSidebar from '@/components/AppSidebar';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css';
-import AudioPlayer from '@/components/AudioPlayer';
+import MyAudioPlayer from '@/components/AudioPlayer';
 import { AuthProvider } from '@/providers/AuthProvider';
 import ModalProvider from '@/providers/ModalProvider';
 import Header from '@/components/Header';
@@ -85,7 +85,7 @@ export default function RootLayout({
                           </main>
                         </div>
                       </div>
-                      <AudioPlayer />
+                      <MyAudioPlayer />
                     </SidebarProvider>
                     <Toaster />
                     <CookieConsent />
