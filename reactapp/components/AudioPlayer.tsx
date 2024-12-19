@@ -1,19 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import {
-  MdPlayArrow,
-  MdPause,
-  MdSkipNext,
-  MdSkipPrevious,
-  MdVolumeUp,
-  MdVolumeOff,
-} from 'react-icons/md';
 import Image from "next/image"
-import { CgSpinner } from 'react-icons/cg';
 import AudioProgressBar from './AudioProgressBar';
-import IconButton from './IconButton';
-import VolumeInput from './VolumeInput';
 import useSong from '@/hooks/useSong';
 import { useEffect, useRef, useState } from 'react';
 import { formatDurationDisplay, getCoverImageSrc, getURL } from '@/libs/helpers';
@@ -22,7 +11,6 @@ import { Slider } from './ui/slider';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
-import useUser from '@/hooks/useUser';
 import useAuth from '@/hooks/useAuth';
 
 export default function AudioPlayer() {
@@ -34,13 +22,13 @@ export default function AudioPlayer() {
 
   const [isReady, setIsReady] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [currrentProgress, setCurrrentProgress] = useState(0);
+  const [currentProgress, setCurrentProgress] = useState(0);
   const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(isDesktop ? 0.2 : 1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 
   const durationDisplay = formatDurationDisplay(duration);
-  const elapsedDisplay = formatDurationDisplay(currrentProgress);
+  const elapsedDisplay = formatDurationDisplay(currentProgress);
 
   const handleNext = () => {
     changeAudioProgress(0);
@@ -109,9 +97,7 @@ export default function AudioPlayer() {
     if (dur > 0) {
       for (let i = 0; i < audio.buffered.length; i++) {
         if (audio.buffered.start(audio.buffered.length - 1 - i) < audio.currentTime) {
-          const bufferedLength = audio.buffered.end(
-            audio.buffered.length - 1 - i
-          );
+          const bufferedLength = audio.buffered.end(audio.buffered.length - 1 - i);
           setBuffered(bufferedLength);
           break;
         }
@@ -122,7 +108,7 @@ export default function AudioPlayer() {
   const changeAudioProgress = (value: number) => {
     if (!audioRef.current) return;
     audioRef.current.currentTime = value;
-    setCurrrentProgress(value);
+    setCurrentProgress(value);
   };
 
   const handleMuteUnmute = () => {
@@ -146,9 +132,15 @@ export default function AudioPlayer() {
   }
 
   return (
-    <div className="
-      sticky bottom-0 bg-background border-t p-2 sm:p-4 pb-safe z-10
-    ">
+    <div className="sticky bottom-0 bg-background border-t pb-2 sm:pb-4 z-10">
+      <div className="h-1">
+        <AudioProgressBar
+          duration={duration}
+          currentProgress={currentProgress}
+          buffered={buffered}
+          onValueChange={changeAudioProgress}
+        />
+      </div>
       {currentSong?.song.songPublicId && (
         <audio
           ref={audioRef}
@@ -161,26 +153,22 @@ export default function AudioPlayer() {
             setIsReady(true);
           }}
           onTimeUpdate={(e) => {
-            setCurrrentProgress(e.currentTarget.currentTime);
+            setCurrentProgress(e.currentTarget.currentTime);
             handleBufferProgress(e);
           }}
           onProgress={handleBufferProgress}
           onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
         >
-          <source src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`} type={currentSong.contentType} />
+          <source
+            src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
+            type={currentSong.contentType}
+          />
         </audio>
       )}
-      <AudioProgressBar
-        duration={duration}
-        currentProgress={currrentProgress}
-        buffered={buffered}
-        onValueChange={changeAudioProgress}
-      />
-
-      <div className="flex justify-between"
+      <div className="flex justify-between items-center mt-3 mb-3"
         onMouseEnter={() => setShowVolumeSlider(true)}
         onMouseLeave={() => setShowVolumeSlider(false)}>
-        <div className="flex flex-1 items-center gap-2 justify-self-center">
+        <div className="flex items-center gap-2 flex-1 mr-3">
           <Button onClick={handlePrev} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <SkipBack className="h-6 w-6" />
           </Button>
@@ -192,7 +180,6 @@ export default function AudioPlayer() {
             ) : (
               <Play className="h-10 w-10" />
             )}
-
           </Button>
           <Button onClick={handleNext} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
             <SkipForward className="h-6 w-6" />
@@ -201,43 +188,46 @@ export default function AudioPlayer() {
             {elapsedDisplay}&nbsp;/&nbsp;{durationDisplay}
           </span>
         </div>
-        <div className="flex items-center justify-center flex-1">
-          <Image
-            src={getCoverImageSrc(currentSong.song.albumPublicId)}
-            alt="Cover"
-            width={500}
-            height={500}
-            className="w-10 h-10 aspect-square object-cover rounded-md flex-col" />
-          <div className="flex flex-col ml-1">
+        <div className="flex items-center justify-center flex-1 max-w-[40%]">
+          <div className="relative w-10 h-10 mr-2 flex-shrink-0">
+            <Image
+              src={getCoverImageSrc(currentSong.song.albumPublicId)}
+              alt="Cover"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-md"
+            />
+          </div>
+          <div className="flex flex-col overflow-hidden">
             <h3 className="font-medium text-sm truncate">{currentSong?.song.title ?? 'Track ID'}</h3>
-            <p className="text-xs text-muted-foreground truncate"><Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline">{currentSong?.song.ownerName}</Link></p>
+            <p className="text-xs text-muted-foreground truncate">
+              <Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline">
+                {currentSong?.song.ownerName}
+              </Link>
+            </p>
           </div>
         </div>
         <div className="flex items-center justify-end space-x-2 flex-1">
-          {isDesktop && showVolumeSlider && <Slider
-            defaultValue={[0.2]}
-            min={0}
-            max={1}
-            step={0.01}
-            value={[volume]}
-            onValueChange={(e: any) => handleVolumeChange(e[0])}
-            className='max-w-28 hidden sm:inline-flex'
-          />}
-        </div>
-        <div className="flex items-center justify-end space-x-2 flex-1">
-          {isDesktop && <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
-            {volume === 0 ? (
-              <VolumeX className="h-6 w-6" />
-            ) : (
-              <Volume2 className="h-6 w-6" />
-            )}
-          </Button>}
-          {/* <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
-            <Shuffle className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
-            <Repeat className="h-6 w-6" />
-          </Button> */}
+          {isDesktop && showVolumeSlider && (
+            <Slider
+              defaultValue={[0.2]}
+              min={0}
+              max={1}
+              step={0.01}
+              value={[volume]}
+              onValueChange={(e) => handleVolumeChange(e[0])}
+              className='max-w-28 hidden sm:inline-flex'
+            />
+          )}
+          {isDesktop && (
+            <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
+              {volume === 0 ? (
+                <VolumeX className="h-6 w-6" />
+              ) : (
+                <Volume2 className="h-6 w-6" />
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>

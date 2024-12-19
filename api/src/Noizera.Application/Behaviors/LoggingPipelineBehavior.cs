@@ -38,6 +38,12 @@ public sealed class LoggingPipelineBehavior<TRequest, TResponse>()
 
             activity.Complete();
         }
+        catch (OperationCanceledException)
+        {
+            Log.Logger.Information("OperationCanceledException");
+            activity.Complete();
+            throw;
+        }
         catch (Exception exception)
         {
             activity.Complete(LogEventLevel.Error, exception);

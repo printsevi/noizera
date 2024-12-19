@@ -24,6 +24,10 @@ public sealed class ExceptionPipelineBehavior<TRequest, TResponse>
         {
             throw;
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (DomainRuleException ex)
         {
             throw new AppException(ex.Message, ErrorType.BusinessRule);
