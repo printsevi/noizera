@@ -14,6 +14,7 @@ import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 import useAuth from '@/hooks/useAuth';
 import AudioPlayer, { RHAP_UI } from 'react-h5-audio-player'
 import 'react-h5-audio-player/lib/styles.css'
+import { toast } from '@/hooks/use-toast';
 
 export default function MyAudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
@@ -28,9 +29,41 @@ export default function MyAudioPlayer() {
   const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(isDesktop ? 0.2 : 1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
 
   const durationDisplay = formatDurationDisplay(duration);
   const elapsedDisplay = formatDurationDisplay(currentProgress);
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const updateTime = () => setCurrentTime(audio.currentTime)
+    const updateDuration = () => setDuration(audio.duration)
+
+    const handleError = (e: ErrorEvent) => {
+      toast({
+        title: "Error",
+        description: "Failed to load audio. Please try again.",
+        variant: "destructive",
+      })
+    }
+
+    audio.addEventListener('timeupdate', updateTime)
+    audio.addEventListener('loadedmetadata', updateDuration)
+    audio.addEventListener('ended', handleNext)
+    audio.addEventListener('error', handleError)
+
+    // Try to load the audio
+    audio.load()
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime)
+      audio.removeEventListener('loadedmetadata', updateDuration)
+      audio.removeEventListener('ended', handleNext)
+      audio.removeEventListener('error', handleError)
+    }
+  }, [currentSong?.song.songPublicId])
 
   const handleNext = () => {
     changeAudioProgress(0);
@@ -113,6 +146,14 @@ export default function MyAudioPlayer() {
     setCurrentProgress(value);
   };
 
+  const handleProgressChange = (values: number[]) => {
+    const audio = audioRef.current
+    if (audio) {
+      audio.currentTime = values[0]
+      setCurrentTime(values[0])
+    }
+  }
+
   const handleMuteUnmute = () => {
     if (!audioRef.current) return;
 
@@ -133,163 +174,170 @@ export default function MyAudioPlayer() {
     return <></>;
   }
 
+  // return (
+  //   <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg">
+  //     <AudioPlayer
+  //       src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
+  //       showSkipControls={true}
+  //       showJumpControls={false}
+  //       preload='none'
+  //       layout="stacked-reverse"
+  //       customProgressBarSection={[RHAP_UI.PROGRESS_BAR]}
+  //       customControlsSection={[
+  //         RHAP_UI.ADDITIONAL_CONTROLS,
+  //         RHAP_UI.MAIN_CONTROLS,
+  //         RHAP_UI.VOLUME_CONTROLS,
+  //       ]}
+  //       customAdditionalControls={[]}
+  //       customVolumeControls={[
+  //         <Slider
+  //           key="volume-slider"
+  //           className="w-[100px] hidden md:flex"
+  //           defaultValue={[100]}
+  //           max={100}
+  //           step={1}
+  //         />,
+  //       ]}
+  //       className="bg-transparent"
+  //       autoPlayAfterSrcChange={true}
+  //       onClickPrevious={handlePrev}
+  //       onClickNext={handleNext}
+  //       onEnded={handleNext}
+  //       customIcons={{
+  //         play: <Play className="w-6 h-6" />,
+  //         pause: <Pause className="w-6 h-6" />,
+  //         previous: <SkipBack className="w-6 h-6" />,
+  //         next: <SkipForward className="w-6 h-6" />,
+  //         volume: <VolumeIcon className="w-6 h-6 hidden md:block" />,
+  //       }}
+  //     >
+  //       <div className="flex items-center space-x-4 px-4 py-2">
+  //         <Image
+  //           src={getCoverImageSrc(currentSong.song.albumPublicId)}
+  //           alt={`${currentSong.song.title} cover art`}
+  //           width={48}
+  //           height={48}
+  //           className="rounded-md"
+  //         />
+  //         <div className="flex-grow min-w-0">
+  //           <Link href="#" className="text-foreground font-medium truncate block">
+  //             {currentSong.song.title}
+  //           </Link>
+  //           <Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline text-muted-foreground text-sm truncate block">
+  //             {currentSong?.song.ownerName}
+  //           </Link>
+  //         </div>
+  //       </div>
+  //     </AudioPlayer>
+  //   </div>
+  // )
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg">
-      <AudioPlayer
-        src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
-        showSkipControls={true}
-        showJumpControls={false}
-        preload='none'
-        layout="stacked-reverse"
-        customProgressBarSection={[RHAP_UI.PROGRESS_BAR]}
-        customControlsSection={[
-          RHAP_UI.ADDITIONAL_CONTROLS,
-          RHAP_UI.MAIN_CONTROLS,
-          RHAP_UI.VOLUME_CONTROLS,
-        ]}
-        customAdditionalControls={[]}
-        customVolumeControls={[
-          <Slider
-            key="volume-slider"
-            className="w-[100px] hidden md:flex"
-            defaultValue={[100]}
-            max={100}
-            step={1}
-          />,
-        ]}
-        className="bg-transparent"
-        autoPlayAfterSrcChange={true}
-        onClickPrevious={handlePrev}
-        onClickNext={handleNext}
-        onEnded={handleNext}
-        customIcons={{
-          play: <Play className="w-6 h-6" />,
-          pause: <Pause className="w-6 h-6" />,
-          previous: <SkipBack className="w-6 h-6" />,
-          next: <SkipForward className="w-6 h-6" />,
-          volume: <VolumeIcon className="w-6 h-6 hidden md:block" />,
-        }}
-      >
-        <div className="flex items-center space-x-4 px-4 py-2">
-          <Image
-            src={getCoverImageSrc(currentSong.song.albumPublicId)}
-            alt={`${currentSong.song.title} cover art`}
-            width={48}
-            height={48}
-            className="rounded-md"
+    <div className="sticky bottom-0 bg-background border-t pb-2 sm:pb-4 z-10">
+      {/* <div className="h-1">
+        <AudioProgressBar
+          duration={duration}
+          currentProgress={currentProgress}
+          buffered={buffered}
+          onValueChange={changeAudioProgress}
+        />
+      </div> */}
+      <Slider
+        value={[currentTime]}
+        max={duration || 100}
+        step={0.05}
+        onValueChange={handleProgressChange}
+        className="w-full"
+      />
+      {currentSong?.song.songPublicId && (
+        <audio
+          ref={audioRef}
+          key={currentSong?.song.songPublicId}
+          preload="metadata"
+          onDurationChange={(e) => setDuration(e.currentTarget.duration)}
+          onEnded={handleEnded}
+          onCanPlay={(e) => {
+            e.currentTarget.volume = volume;
+            setIsReady(true);
+          }}
+          onTimeUpdate={(e) => {
+            setCurrentProgress(e.currentTarget.currentTime);
+            handleBufferProgress(e);
+          }}
+          onProgress={handleBufferProgress}
+          onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
+        >
+          <source
+            src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
+            type={currentSong.contentType}
           />
-          <div className="flex-grow min-w-0">
-            <Link href="#" className="text-foreground font-medium truncate block">
-              {currentSong.song.title}
-            </Link>
-            <Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline text-muted-foreground text-sm truncate block">
-              {currentSong?.song.ownerName}
-            </Link>
+        </audio>
+      )}
+      <div className="flex justify-between items-center mt-3 mb-3"
+        onMouseEnter={() => setShowVolumeSlider(true)}
+        onMouseLeave={() => setShowVolumeSlider(false)}>
+        <div className="flex items-center gap-2 flex-1 mr-3">
+          <Button onClick={handlePrev} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
+            <SkipBack className="h-6 w-6" />
+          </Button>
+          <Button disabled={!isReady} variant="ghost" onClick={togglePlayPause} size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
+            {!isReady && currentSong ? (
+              <Loader2 className="h-10 w-10 animate-spin" />
+            ) : isPlaying ? (
+              <Pause className="h-10 w-10" />
+            ) : (
+              <Play className="h-10 w-10" />
+            )}
+          </Button>
+          <Button onClick={handleNext} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
+            <SkipForward className="h-6 w-6" />
+          </Button>
+          <span className="text-xs hidden sm:block">
+            {elapsedDisplay}&nbsp;/&nbsp;{durationDisplay}
+          </span>
+        </div>
+        <div className="flex items-center justify-center flex-1 max-w-[40%]">
+          <div className="relative w-10 h-10 mr-2 flex-shrink-0">
+            <Image
+              src={getCoverImageSrc(currentSong.song.albumPublicId)}
+              alt="Cover"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-md"
+            />
+          </div>
+          <div className="flex flex-col overflow-hidden">
+            <h3 className="font-medium text-sm truncate">{currentSong?.song.title ?? 'Track ID'}</h3>
+            <p className="text-xs text-muted-foreground truncate">
+              <Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline">
+                {currentSong?.song.ownerName}
+              </Link>
+            </p>
           </div>
         </div>
-      </AudioPlayer>
+        <div className="flex items-center justify-end space-x-2 flex-1">
+          {isDesktop && showVolumeSlider && (
+            <Slider
+              defaultValue={[0.2]}
+              min={0}
+              max={1}
+              step={0.01}
+              value={[volume]}
+              onValueChange={(e) => handleVolumeChange(e[0])}
+              className='max-w-28 hidden sm:inline-flex'
+            />
+          )}
+          {isDesktop && (
+            <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
+              {volume === 0 ? (
+                <VolumeX className="h-6 w-6" />
+              ) : (
+                <Volume2 className="h-6 w-6" />
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
-  )
-
-  // return (
-  //   <div className="sticky bottom-0 bg-background border-t pb-2 sm:pb-4 z-10">
-  //     <div className="h-1">
-  //       <AudioProgressBar
-  //         duration={duration}
-  //         currentProgress={currentProgress}
-  //         buffered={buffered}
-  //         onValueChange={changeAudioProgress}
-  //       />
-  //     </div>
-  //     {currentSong?.song.songPublicId && (
-  //       <audio
-  //         ref={audioRef}
-  //         key={currentSong?.song.songPublicId}
-  //         preload="metadata"
-  //         onDurationChange={(e) => setDuration(e.currentTarget.duration)}
-  //         onEnded={handleEnded}
-  //         onCanPlay={(e) => {
-  //           e.currentTarget.volume = volume;
-  //           setIsReady(true);
-  //         }}
-  //         onTimeUpdate={(e) => {
-  //           setCurrentProgress(e.currentTarget.currentTime);
-  //           handleBufferProgress(e);
-  //         }}
-  //         onProgress={handleBufferProgress}
-  //         onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
-  //       >
-  //         <source
-  //           src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
-  //           type={currentSong.contentType}
-  //         />
-  //       </audio>
-  //     )}
-  //     <div className="flex justify-between items-center mt-3 mb-3"
-  //       onMouseEnter={() => setShowVolumeSlider(true)}
-  //       onMouseLeave={() => setShowVolumeSlider(false)}>
-  //       <div className="flex items-center gap-2 flex-1 mr-3">
-  //         <Button onClick={handlePrev} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
-  //           <SkipBack className="h-6 w-6" />
-  //         </Button>
-  //         <Button disabled={!isReady} variant="ghost" onClick={togglePlayPause} size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
-  //           {!isReady && currentSong ? (
-  //             <Loader2 className="h-10 w-10 animate-spin" />
-  //           ) : isPlaying ? (
-  //             <Pause className="h-10 w-10" />
-  //           ) : (
-  //             <Play className="h-10 w-10" />
-  //           )}
-  //         </Button>
-  //         <Button onClick={handleNext} variant="ghost" size="icon" className='rounded-full hover:bg-primary hover:text-primary-foreground transition-colors'>
-  //           <SkipForward className="h-6 w-6" />
-  //         </Button>
-  //         <span className="text-xs hidden sm:block">
-  //           {elapsedDisplay}&nbsp;/&nbsp;{durationDisplay}
-  //         </span>
-  //       </div>
-  //       <div className="flex items-center justify-center flex-1 max-w-[40%]">
-  //         <div className="relative w-10 h-10 mr-2 flex-shrink-0">
-  //           <Image
-  //             src={getCoverImageSrc(currentSong.song.albumPublicId)}
-  //             alt="Cover"
-  //             layout="fill"
-  //             objectFit="cover"
-  //             className="rounded-md"
-  //           />
-  //         </div>
-  //         <div className="flex flex-col overflow-hidden">
-  //           <h3 className="font-medium text-sm truncate">{currentSong?.song.title ?? 'Track ID'}</h3>
-  //           <p className="text-xs text-muted-foreground truncate">
-  //             <Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline">
-  //               {currentSong?.song.ownerName}
-  //             </Link>
-  //           </p>
-  //         </div>
-  //       </div>
-  //       <div className="flex items-center justify-end space-x-2 flex-1">
-  //         {isDesktop && showVolumeSlider && (
-  //           <Slider
-  //             defaultValue={[0.2]}
-  //             min={0}
-  //             max={1}
-  //             step={0.01}
-  //             value={[volume]}
-  //             onValueChange={(e) => handleVolumeChange(e[0])}
-  //             className='max-w-28 hidden sm:inline-flex'
-  //           />
-  //         )}
-  //         {isDesktop && (
-  //           <Button onClick={handleMuteUnmute} variant="ghost" size="icon" className="hidden sm:inline-flex rounded-full hover:bg-primary hover:text-primary-foreground transition-colors">
-  //             {volume === 0 ? (
-  //               <VolumeX className="h-6 w-6" />
-  //             ) : (
-  //               <Volume2 className="h-6 w-6" />
-  //             )}
-  //           </Button>
-  //         )}
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
+  );
 }
