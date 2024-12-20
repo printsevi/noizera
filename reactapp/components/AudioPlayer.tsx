@@ -15,6 +15,7 @@ import useAuth from '@/hooks/useAuth';
 import AudioPlayer, { RHAP_UI } from 'react-h5-audio-player'
 import 'react-h5-audio-player/lib/styles.css'
 import { toast } from '@/hooks/use-toast';
+import { useIsIOS } from '@/hooks/useIsIos';
 
 export default function MyAudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
@@ -25,18 +26,22 @@ export default function MyAudioPlayer() {
 
   const [isReady, setIsReady] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [currentProgress, setCurrentProgress] = useState(0);
   const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(isDesktop ? 0.2 : 1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
+  const [isSeeking, setIsSeeking] = useState(false);
+  const isIOS = useIsIOS();
 
   const durationDisplay = formatDurationDisplay(duration);
-  const elapsedDisplay = formatDurationDisplay(currentProgress);
+  const elapsedDisplay = formatDurationDisplay(currentTime);
 
   useEffect(() => {
+    play(false);
+    setCurrentTime(0);
     const audio = audioRef.current
-    if (!audio) return
+
+    if (!audio || !currentSong?.song.songPublicId) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime)
     const updateDuration = () => setDuration(audio.duration)
@@ -57,35 +62,36 @@ export default function MyAudioPlayer() {
     // Try to load the audio
     audio.load()
 
+    const timeout = setTimeout(() => {
+      play(true);
+    }, 500);
+
     return () => {
       audio.removeEventListener('timeupdate', updateTime)
       audio.removeEventListener('loadedmetadata', updateDuration)
       audio.removeEventListener('ended', handleNext)
       audio.removeEventListener('error', handleError)
+      clearTimeout(timeout);
     }
   }, [currentSong?.song.songPublicId])
 
   const handleNext = () => {
-    changeAudioProgress(0);
+    setCurrentTime(0);
     next();
   };
 
   const handlePrev = () => {
-    changeAudioProgress(0);
+    setCurrentTime(0);
     prev();
   };
 
-  const handleEnded = () => {
-    play(false);
-    handleNext();
-  };
+  // const handleEnded = () => {
+  //   play(false);
+  //   handleNext();
+  // };
 
   const togglePlayPause = () => {
-    if (isPlaying) {
-      play(false);
-    } else {
-      play(true);
-    }
+    play(!isPlaying);
   };
 
   useEffect(() => {
@@ -111,48 +117,38 @@ export default function MyAudioPlayer() {
     }
   }, [isDesktop]);
 
-  useEffect(() => {
-    play(false);
-    changeAudioProgress(0);
-    if (!currentSong?.song.songPublicId) {
-      return;
-    }
-    const timeout = setTimeout(() => {
-      play(true);
-    }, 500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [currentSong?.song.songPublicId]);
-
-  const handleBufferProgress: React.ReactEventHandler<HTMLAudioElement> = (e) => {
+  const handleBufferProgress = (e: React.SyntheticEvent<HTMLAudioElement, Event>) => {
     const audio = e.currentTarget;
-    const dur = audio.duration;
-    if (dur > 0) {
-      for (let i = 0; i < audio.buffered.length; i++) {
-        if (audio.buffered.start(audio.buffered.length - 1 - i) < audio.currentTime) {
-          const bufferedLength = audio.buffered.end(audio.buffered.length - 1 - i);
-          setBuffered(bufferedLength);
-          break;
-        }
+    if (audio.buffered.length > 0) {
+      setBuffered(audio.buffered.end(audio.buffered.length - 1));
+    }
+  };
+
+  const handleProgressChange = (values: number[]) => {
+    const audio = audioRef.current;
+    if (audio) {
+      const newTime = values[0];
+      setCurrentTime(newTime);
+      if (!isIOS) {
+        audio.currentTime = newTime;
       }
     }
   };
 
-  const changeAudioProgress = (value: number) => {
-    if (!audioRef.current) return;
-    audioRef.current.currentTime = value;
-    setCurrentProgress(value);
+  const handleProgressChangeCommitted = () => {
+    const audio = audioRef.current;
+    if (audio && isIOS) {
+      audio.currentTime = currentTime;
+    }
+    setIsSeeking(false);
   };
 
-  const handleProgressChange = (values: number[]) => {
-    const audio = audioRef.current
-    if (audio) {
-      audio.currentTime = values[0]
-      setCurrentTime(values[0])
-    }
-  }
+  const handleVolumeChange = (values: number[]) => {
+    const volumeValue = values[0];
+    if (!audioRef.current) return;
+    audioRef.current.volume = volumeValue;
+    setVolume(volumeValue);
+  };
 
   const handleMuteUnmute = () => {
     if (!audioRef.current) return;
@@ -162,12 +158,6 @@ export default function MyAudioPlayer() {
     } else {
       audioRef.current.volume = 0.2;
     }
-  };
-
-  const handleVolumeChange = (volumeValue: number) => {
-    if (!audioRef.current) return;
-    audioRef.current.volume = volumeValue;
-    setVolume(volumeValue);
   };
 
   if (!isAuthenticated || !queue.length || !currentSong?.song) {
@@ -247,25 +237,25 @@ export default function MyAudioPlayer() {
         max={duration || 100}
         step={0.05}
         onValueChange={handleProgressChange}
+        onValueCommit={handleProgressChangeCommitted}
+        onPointerDown={() => setIsSeeking(true)}
         className="w-full"
       />
       {currentSong?.song.songPublicId && (
         <audio
           ref={audioRef}
           key={currentSong?.song.songPublicId}
-          preload="metadata"
+          //preload="metadata"
           onDurationChange={(e) => setDuration(e.currentTarget.duration)}
-          onEnded={handleEnded}
-          onCanPlay={(e) => {
-            e.currentTarget.volume = volume;
-            setIsReady(true);
-          }}
+          onEnded={handleNext}
+          onCanPlay={() => setIsReady(true)}
           onTimeUpdate={(e) => {
-            setCurrentProgress(e.currentTarget.currentTime);
+            if (!isSeeking) {
+              setCurrentTime(e.currentTarget.currentTime);
+            }
             handleBufferProgress(e);
           }}
           onProgress={handleBufferProgress}
-          onVolumeChange={(e) => setVolume(e.currentTarget.volume)}
         >
           <source
             src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
@@ -323,7 +313,7 @@ export default function MyAudioPlayer() {
               max={1}
               step={0.01}
               value={[volume]}
-              onValueChange={(e) => handleVolumeChange(e[0])}
+              onValueChange={handleVolumeChange}
               className='max-w-28 hidden sm:inline-flex'
             />
           )}
