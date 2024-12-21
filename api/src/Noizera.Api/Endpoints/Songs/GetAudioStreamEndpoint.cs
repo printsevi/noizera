@@ -20,7 +20,7 @@ internal sealed class GetAudioStreamEndpoint : IEndpoint
         [FromServices] ISender sender,
         CancellationToken ct)
     {
-        var requestedRange = context.Request.Headers["Range"].ToString();
+        string requestedRange = context.Request.Headers["Range"].ToString();
 
         GetAudioStreamQuery query = new(songPublicId, requestedRange, contentLength, audioType);
         var result = await sender.Send(query, ct).ConfigureAwait(false);
@@ -30,6 +30,7 @@ internal sealed class GetAudioStreamEndpoint : IEndpoint
         context.Response.Headers["Accept-Ranges"] = "bytes";
         context.Response.Headers["Content-Range"] = $"bytes {result.Start}-{result.End}/{result.ContentLength}";
         context.Response.Headers["Content-Length"] = result.PartLength.ToString();
+        context.Response.Headers["Content-Type"] = audioType;
 
         await result.Stream.CopyToAsync(context.Response.Body, ct).ConfigureAwait(false);
     }
