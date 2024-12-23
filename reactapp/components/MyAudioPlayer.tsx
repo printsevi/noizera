@@ -18,14 +18,14 @@ import { toast } from '@/hooks/use-toast';
 import { useIsIOS } from '@/hooks/useIsIos';
 
 export default function MyAudioPlayer() {
-  //const { currentSong, next, prev, play, isPlaying, queue } = useSong();
+  const { currentSong, next, prev, play, isPlaying, queue } = useSong();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { isAuthenticated } = useAuth();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [isReady, setIsReady] = useState(false);
-  const [duration, setDuration] = useState(73);
+  const [duration, setDuration] = useState(0);
   const [buffered, setBuffered] = useState(0);
   const [volume, setVolume] = useState(isDesktop ? 0.2 : 1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
@@ -35,7 +35,7 @@ export default function MyAudioPlayer() {
   const playerRef = useRef<AudioPlayer>(null)
 
   const [isMuted, setIsMuted] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
+  //const [isPlaying, setIsPlaying] = useState(false)
 
   // const durationDisplay = formatDurationDisplay(duration);
   // const elapsedDisplay = formatDurationDisplay(currentTime);
@@ -79,10 +79,10 @@ export default function MyAudioPlayer() {
   //   }
   // }, [currentSong?.song.songPublicId])
 
-  // const handleNext = () => {
-  //   setCurrentTime(0);
-  //   next();
-  // };
+  const handleNext = () => {
+    setCurrentTime(0);
+    next();
+  };
 
   // const handlePrev = () => {
   //   setCurrentTime(0);
@@ -98,20 +98,22 @@ export default function MyAudioPlayer() {
   //   play(!isPlaying);
   // };
 
-  // useEffect(() => {
-  //   if (isPlaying) {
-  //     const playPromise = audioRef.current?.play();
-  //     if (playPromise !== undefined) {
-  //       playPromise.then(_ => {
-  //       })
-  //         .catch(error => {
-  //           play(false);
-  //         });
-  //     }
-  //   } else {
-  //     audioRef.current?.pause();
-  //   }
-  // }, [isPlaying]);
+  useEffect(() => {
+    const audio = playerRef.current?.audio.current
+    if (!audio) return;
+    if (isPlaying) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+        })
+          .catch(error => {
+            play(false);
+          });
+      }
+    } else {
+      audio.pause()
+    }
+  }, [isPlaying]);
 
   // useEffect(() => {
   //   const volumeValue = isDesktop ? 0.2 : 1;
@@ -165,33 +167,37 @@ export default function MyAudioPlayer() {
   // };
 
   useEffect(() => {
+    play(false);
     const audio = playerRef.current?.audio.current
-    if (!audio) return
+    if (!audio || !currentSong?.song?.songPublicId) return;
+
+    setDuration(currentSong.song.durationInSeconds);
 
     const updateTime = () => setCurrentTime(audio.currentTime)
-    const updateDuration = () => setDuration(audio.duration)
+    const updateDuration = () => setDuration(currentSong.song.durationInSeconds)
 
     audio.addEventListener('timeupdate', updateTime)
     audio.addEventListener('loadedmetadata', updateDuration)
-    audio.addEventListener('play', () => setIsPlaying(true))
-    audio.addEventListener('pause', () => setIsPlaying(false))
+    audio.addEventListener('ended', handleNext)
+    const timeout = setTimeout(() => {
+      play(true);
+    }, 500);
+    //audio.addEventListener('play', () => play(true))
+    //audio.addEventListener('pause', () => play(false))
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime)
       audio.removeEventListener('loadedmetadata', updateDuration)
-      audio.removeEventListener('play', () => setIsPlaying(true))
-      audio.removeEventListener('pause', () => setIsPlaying(false))
+      audio.removeEventListener('ended', handleNext)
+      audio.addEventListener('ended', handleNext)
+      clearTimeout(timeout);
+      //audio.removeEventListener('play', () => play(true))
+      //audio.removeEventListener('pause', () => play(false))
     }
-  }, [])
+  }, [currentSong?.song])
 
   const togglePlay = () => {
-    if (playerRef.current) {
-      if (isPlaying) {
-        playerRef.current.audio.current?.pause()
-      } else {
-        playerRef.current.audio.current?.play()
-      }
-    }
+    play(!isPlaying);
   }
 
   const handleProgressChange = (newValue: number[]) => {
@@ -224,9 +230,9 @@ export default function MyAudioPlayer() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  // if (!isAuthenticated || !queue.length || !currentSong?.song) {
-  //   return <></>;
-  // }
+  if (!isAuthenticated || !queue.length || !currentSong?.song) {
+    return <></>;
+  }
 
   // return (
   //   <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg">
@@ -287,7 +293,7 @@ export default function MyAudioPlayer() {
   // )
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg">
+    <div className="fixed bottom-0 inset-x-3 bg-background border-t border-border shadow-lg">
       <div className="max-w-screen-xl mx-auto">
         <Slider
           value={[currentTime]}
@@ -336,7 +342,8 @@ export default function MyAudioPlayer() {
       </div>
       <AudioPlayer
         ref={playerRef}
-        src="/test/test.mp3"
+        preload="metadata"
+        src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
         autoPlay={false}
         style={{ display: 'none' }}
       />

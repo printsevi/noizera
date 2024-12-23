@@ -42,7 +42,8 @@ public static class DI
         _ = services.AddSingleton<IAmazonS3>(_ => new AmazonS3Client(s3Settings.SpacesKey, s3Settings.SpacesSecret, new AmazonS3Config
         {
             ServiceURL = s3Settings.ServiceUrl.ToString(),
-            ForcePathStyle = true
+            ForcePathStyle = true,
+            Timeout = TimeSpan.FromSeconds(30)
         }));
 
         _ = services.AddSingleton<S3Context>();

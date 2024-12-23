@@ -49,6 +49,7 @@ const AuthenticationModal = () => {
     setIsLoading(false);
     onClose();
     setEmailOrUsername("");
+    setOtp("");
   }
 
   return (
@@ -62,12 +63,15 @@ const AuthenticationModal = () => {
         disabled={isLoading}
         maxLength={4}
         pattern={REGEXP_ONLY_DIGITS}
-        onChange={onPinChange}>
+        onChange={onPinChange}
+        value={otp}>
         <InputOTPGroup>
-          <InputOTPSlot index={0} />
-          <InputOTPSlot index={1} />
-          <InputOTPSlot index={2} />
-          <InputOTPSlot index={3} />
+          {Array.from({ length: 4 }).map((_, index) => (
+            <InputOTPSlot
+              key={index}
+              index={index}
+            />
+          ))}
         </InputOTPGroup>
       </InputOTP>
     </Modal>

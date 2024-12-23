@@ -88,10 +88,10 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         GetObjectRequest request = new()
         {
             BucketName = settings.BucketName,
-            Key = $"{originalAudioFolder}/{key.ToUpperInvariant()}"
+            Key = $"{originalAudioFolder}/{key.ToUpperInvariant()}",
         };
-
-        return await s3.GetObjectAsync(request, ct).ConfigureAwait(false);
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+        return await s3.GetObjectAsync(request, cts.Token).ConfigureAwait(false);
     }
 
     private async Task<(long ContentLength, string ContentType)> GetFileInfoAsync(string folderName, [NotNull] string key, CancellationToken ct)

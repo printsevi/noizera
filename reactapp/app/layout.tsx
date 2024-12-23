@@ -2,7 +2,6 @@ import getSongsByUserId from '@/api/getSongsByUserId';
 import AppSidebar from '@/components/AppSidebar';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css';
-import MyAudioPlayer from '@/components/AudioPlayer';
 import { AuthProvider } from '@/providers/AuthProvider';
 import ModalProvider from '@/providers/ModalProvider';
 import Header from '@/components/Header';
@@ -19,6 +18,7 @@ import { Metadata, Viewport } from 'next';
 import Head from 'next/head';
 import { Toaster } from '@/components/ui/toaster';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import MyAudioPlayer from '@/components/MyAudioPlayer';
 
 export const viewport: Viewport = {
   width: 'device-width',
