@@ -29,7 +29,7 @@ internal sealed class GetAudioStreamEndpoint : IEndpoint
         context.Response.Headers["Cache-Control"] = "no-cache";
         context.Response.Headers["Accept-Ranges"] = "bytes";
         context.Response.Headers["Content-Range"] = $"bytes {result.Start}-{result.End}/{result.ContentLength}";
-        context.Response.Headers["Content-Length"] = result.PartLength.ToString();
+        context.Response.Headers["Content-Length"] = contentLength.ToString();
         context.Response.Headers["Content-Type"] = audioType;
 
         await result.Stream.CopyToAsync(context.Response.Body, ct).ConfigureAwait(false);

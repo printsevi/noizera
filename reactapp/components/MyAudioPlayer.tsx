@@ -173,11 +173,54 @@ export default function MyAudioPlayer() {
 
     setDuration(currentSong.song.durationInSeconds);
 
+    if ('mediaSession' in navigator && isIOS) {
+      // Set up the Media Session metadata
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentSong.song.title,
+        artist: currentSong.song.ownerName,
+        album: "",
+        artwork: [{ src: getCoverImageSrc(currentSong.song.albumPublicId) }],
+      });
+
+      // Set up action handlers
+      navigator.mediaSession.setActionHandler('play', () => {
+        //audio.play();
+      });
+
+      navigator.mediaSession.setActionHandler('pause', () => {
+        //audio.pause();
+      });
+
+      navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+        const seekTime = audio.currentTime - (details.seekOffset || 10);
+        audio.currentTime = Math.max(seekTime, 0);
+      });
+
+      navigator.mediaSession.setActionHandler('seekforward', (details) => {
+        const seekTime = audio.currentTime + (details.seekOffset || 10);
+        audio.currentTime = Math.min(seekTime, audio.duration);
+      });
+
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        if (details.fastSeek && 'fastSeek' in audio) {
+          audio.fastSeek(details.seekTime!);
+        } else {
+          audio.currentTime = details.seekTime!;
+        }
+      });
+
+      navigator.mediaSession.setActionHandler('stop', () => {
+        //audio.pause();
+        //audio.currentTime = 0;
+      });
+    }
+
     const updateTime = () => setCurrentTime(audio.currentTime)
     const updateDuration = () => setDuration(currentSong.song.durationInSeconds)
 
     audio.addEventListener('timeupdate', updateTime)
     audio.addEventListener('loadedmetadata', updateDuration)
+    audio.addEventListener('durationchange', updateDuration)
     audio.addEventListener('ended', handleNext)
     const timeout = setTimeout(() => {
       play(true);
@@ -194,7 +237,7 @@ export default function MyAudioPlayer() {
       //audio.removeEventListener('play', () => play(true))
       //audio.removeEventListener('pause', () => play(false))
     }
-  }, [currentSong?.song])
+  }, [currentSong?.song, isIOS])
 
   const togglePlay = () => {
     play(!isPlaying);
