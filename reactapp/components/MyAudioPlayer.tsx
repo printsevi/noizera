@@ -281,7 +281,10 @@ export default function MyAudioPlayer() {
     //preload="none"
     controls
   >
-    <source src={`${getURL()}api/songs/TEST/audio?audioType=audio/mpeg&contentLength=18914536`} type="audio/mpeg" />
+    <source
+      src={'https://ams3.digitaloceanspaces.com/noizera-prod/mp3-audio/TEST?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=DO00TAKD6B8NE83W9P3J%2F20241224%2Fams3%2Fs3%2Faws4_request&X-Amz-Date=20241224T183236Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7259c1651005118115de759ea5abca7b3cd52589923d06c14f50d1eb8f0521fd'}
+      //src={`${getURL()}api/songs/TEST/audio?audioType=audio/mpeg&contentLength=18914536`} 
+      type="audio/mpeg" />
   </audio></div>)
 
   if (!isAuthenticated || !queue.length || !currentSong?.song) {
