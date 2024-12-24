@@ -274,6 +274,14 @@ export default function MyAudioPlayer() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
+  return (<div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg"><audio
+    //ref={audioRef}
+    preload="none"
+    controls
+  >
+    <source src={`${getURL()}api/songs/T-K56/audio?audioType=audio/mpeg&contentLength=9247391`} type="audio/mpeg" />
+  </audio></div>)
+
   if (!isAuthenticated || !queue.length || !currentSong?.song) {
     return <></>;
   }
