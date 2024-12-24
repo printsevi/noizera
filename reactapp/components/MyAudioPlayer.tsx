@@ -276,7 +276,7 @@ export default function MyAudioPlayer() {
 
   return (<div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-lg"><audio
     //ref={audioRef}
-    preload="none"
+    preload="auto"
     controls
   >
     <source src={`${getURL()}api/songs/TEST/audio?audioType=audio/mpeg&contentLength=18914536`} type="audio/mpeg" />
