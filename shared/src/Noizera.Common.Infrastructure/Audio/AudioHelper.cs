@@ -28,6 +28,8 @@ public static class AudioHelper
             $"s{bitDepth}",
             "-ar",
             $"{sampleRate}",
+            "-movflags",
+            "faststart",
             outputFilePath
         ];
 
@@ -56,6 +58,8 @@ public static class AudioHelper
             "192000",
             "-ar",
             "44100",
+            "-movflags",
+            "faststart",
             outputFilePath
         ];
 
