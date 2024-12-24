@@ -167,64 +167,65 @@ export default function MyAudioPlayer() {
   // };
 
   useEffect(() => {
-    play(false);
+    //play(false);
     const audio = playerRef.current?.audio.current
-    if (!audio || !currentSong?.song?.songPublicId) return;
+    if (!audio) return;
 
-    setDuration(currentSong.song.durationInSeconds);
+    // console.log(audio.duration);
+    // setDuration(audio.duration);
 
-    if ('mediaSession' in navigator && isIOS) {
-      // Set up the Media Session metadata
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: currentSong.song.title,
-        artist: currentSong.song.ownerName,
-        album: "",
-        artwork: [{ src: getCoverImageSrc(currentSong.song.albumPublicId) }],
-      });
+    // if ('mediaSession' in navigator) {
+    //   // Set up the Media Session metadata
+    //   navigator.mediaSession.metadata = new MediaMetadata({
+    //     title: currentSong.song.title,
+    //     artist: currentSong.song.ownerName,
+    //     album: "",
+    //     artwork: [{ src: getCoverImageSrc(currentSong.song.albumPublicId) }],
+    //   });
 
-      // Set up action handlers
-      navigator.mediaSession.setActionHandler('play', () => {
-        //audio.play();
-      });
+    //   // Set up action handlers
+    //   navigator.mediaSession.setActionHandler('play', () => {
+    //     //audio.play();
+    //   });
 
-      navigator.mediaSession.setActionHandler('pause', () => {
-        //audio.pause();
-      });
+    //   navigator.mediaSession.setActionHandler('pause', () => {
+    //     //audio.pause();
+    //   });
 
-      navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-        const seekTime = audio.currentTime - (details.seekOffset || 10);
-        audio.currentTime = Math.max(seekTime, 0);
-      });
+    //   navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+    //     const seekTime = audio.currentTime - (details.seekOffset || 10);
+    //     audio.currentTime = Math.max(seekTime, 0);
+    //   });
 
-      navigator.mediaSession.setActionHandler('seekforward', (details) => {
-        const seekTime = audio.currentTime + (details.seekOffset || 10);
-        audio.currentTime = Math.min(seekTime, audio.duration);
-      });
+    //   navigator.mediaSession.setActionHandler('seekforward', (details) => {
+    //     const seekTime = audio.currentTime + (details.seekOffset || 10);
+    //     audio.currentTime = Math.min(seekTime, audio.duration);
+    //   });
 
-      navigator.mediaSession.setActionHandler('seekto', (details) => {
-        if (details.fastSeek && 'fastSeek' in audio) {
-          audio.fastSeek(details.seekTime!);
-        } else {
-          audio.currentTime = details.seekTime!;
-        }
-      });
+    //   navigator.mediaSession.setActionHandler('seekto', (details) => {
+    //     if (details.fastSeek && 'fastSeek' in audio) {
+    //       audio.fastSeek(details.seekTime!);
+    //     } else {
+    //       audio.currentTime = details.seekTime!;
+    //     }
+    //   });
 
-      navigator.mediaSession.setActionHandler('stop', () => {
-        //audio.pause();
-        //audio.currentTime = 0;
-      });
-    }
+    //   navigator.mediaSession.setActionHandler('stop', () => {
+    //     //audio.pause();
+    //     //audio.currentTime = 0;
+    //   });
+    // }
 
     const updateTime = () => setCurrentTime(audio.currentTime)
-    const updateDuration = () => setDuration(currentSong.song.durationInSeconds)
+    const updateDuration = () => setDuration(audio.duration)
 
     audio.addEventListener('timeupdate', updateTime)
     audio.addEventListener('loadedmetadata', updateDuration)
     audio.addEventListener('durationchange', updateDuration)
     audio.addEventListener('ended', handleNext)
-    const timeout = setTimeout(() => {
-      play(true);
-    }, 500);
+    // const timeout = setTimeout(() => {
+    //   play(true);
+    // }, 500);
     //audio.addEventListener('play', () => play(true))
     //audio.addEventListener('pause', () => play(false))
 
@@ -233,11 +234,11 @@ export default function MyAudioPlayer() {
       audio.removeEventListener('loadedmetadata', updateDuration)
       audio.removeEventListener('ended', handleNext)
       audio.addEventListener('ended', handleNext)
-      clearTimeout(timeout);
+      //clearTimeout(timeout);
       //audio.removeEventListener('play', () => play(true))
       //audio.removeEventListener('pause', () => play(false))
     }
-  }, [currentSong?.song, isIOS])
+  }, [playerRef.current?.audio.current])
 
   const togglePlay = () => {
     play(!isPlaying);
@@ -386,7 +387,8 @@ export default function MyAudioPlayer() {
       <AudioPlayer
         ref={playerRef}
         preload="metadata"
-        src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
+        src={`${getURL()}api/songs/T-K56/audio?audioType=audio/mpeg&contentLength=9247391`}
+        //src={`${getURL()}api/songs/${currentSong.song.songPublicId}/audio?audioType=${currentSong.contentType}&contentLength=${currentSong.song.contentLength}`}
         autoPlay={false}
         style={{ display: 'none' }}
       />
