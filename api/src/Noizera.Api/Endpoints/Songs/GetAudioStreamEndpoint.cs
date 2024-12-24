@@ -26,7 +26,7 @@ internal sealed class GetAudioStreamEndpoint : IEndpoint
         var result = await sender.Send(query, ct).ConfigureAwait(false);
 
         context.Response.StatusCode = (int)HttpStatusCode.PartialContent;
-        context.Response.Headers["Cache-Control"] = "no-cache";
+        //context.Response.Headers["Cache-Control"] = "no-cache";
         context.Response.Headers["Accept-Ranges"] = "bytes";
         context.Response.Headers["Content-Range"] = $"bytes {result.Start}-{result.End}/{result.ContentLength}";
         context.Response.Headers["Content-Length"] = result.PartLength.ToString();
