@@ -8,10 +8,11 @@ import { AiFillStepBackward, AiFillStepForward } from 'react-icons/ai';
 
 import { Song } from '@/types';
 import usePlayer from '@/hooks/usePlayer';
+import { Slider } from './ui/slider';
 
 // import LikeButton from './LikeButton';
 // import MediaItem from './MediaItem';
-import Slider from './Slider';
+//import Slider from './Slider';
 
 interface PlayerContentProps {
   song: Song;
@@ -185,7 +186,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             className='cursor-pointer'
             size={34}
           />
-          <Slider value={volume} onChange={(value) => setVolume(value)} />
+          <Slider value={[volume]} onValueChange={(value) => setVolume(value[0])} />
         </div>
       </div>
     </div>
