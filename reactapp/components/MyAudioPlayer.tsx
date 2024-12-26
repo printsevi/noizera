@@ -36,6 +36,14 @@ export default function MyAudioPlayer() {
     next();
   };
 
+  const handlePrev = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    prev();
+    setCurrentTime(0);
+    audio.currentTime = 0;
+  };
+
   const togglePlayPause = () => {
     play(!isPlaying);
   };
@@ -98,7 +106,7 @@ export default function MyAudioPlayer() {
   };
 
   useEffect(() => {
-    if ('mediaSession' in navigator && currentSong?.song.songPublicId && isIOS) {
+    if ('mediaSession' in navigator && currentSong?.song.songPublicId) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentSong.song.title,
         artist: currentSong.song.ownerName,
@@ -114,8 +122,11 @@ export default function MyAudioPlayer() {
       navigator.mediaSession.setActionHandler('nexttrack', () => {
         handleNext();
       });
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        handlePrev();
+      });
     }
-  }, [currentSong?.song.songPublicId, isIOS]);
+  }, [currentSong?.song.songPublicId, play, handleNext, prev]);
 
   if (!isAuthenticated || !queue.length || !currentSong?.song) {
     return <></>;
@@ -151,7 +162,7 @@ export default function MyAudioPlayer() {
         onMouseEnter={() => setShowVolumeSlider(true)}
         onMouseLeave={() => setShowVolumeSlider(false)}>
         <div className="flex items-center gap-2 flex-1 mr-3">
-          <Button onClick={prev} variant="ghost" size="icon" className='rounded-full hover:bg-background'>
+          <Button onClick={handlePrev} variant="ghost" size="icon" className='rounded-full hover:bg-background'>
             <SkipBack className="h-6 w-6" />
           </Button>
           <Button disabled={!isReady} variant="ghost" onClick={togglePlayPause} size="icon" className='rounded-full hover:bg-background'>

@@ -182,10 +182,13 @@ const SongContextProvider = ({ children }: Props) => {
             setCurrentSong(prev => prev ? { ...prev, presignedUrl: response.data!.url } : undefined);
         }
         return response.ok;
-    }, [currentSong?.song.songPublicId, auth.userId, axiosPrivate, isReadyToPlay, isPlaying]);
+    }, [currentSong?.song.songPublicId, auth.userId, axiosPrivate]);
 
     useEffect(() => {
         if (currentSong?.song.songPublicId && isReady && isAuthenticated) {
+            if (refreshIntervalId) {
+                clearInterval(refreshIntervalId);
+            }
             const id = setInterval(async () => {
                 const response = await getUrl();
                 if (!response) {
@@ -195,7 +198,7 @@ const SongContextProvider = ({ children }: Props) => {
                     clearInterval(id);
                     setRefreshIntervalId(undefined);
                 }
-            }, 60 * 1000); // every 20 min
+            }, 10 * 1000); // every 20 min
             setRefreshIntervalId(id);
         } else {
             if (refreshIntervalId) {
@@ -209,7 +212,7 @@ const SongContextProvider = ({ children }: Props) => {
                 clearInterval(refreshIntervalId);
             }
         };
-    }, [currentSong?.song.songPublicId, isPlaying, isReady, isAuthenticated, axiosPrivate, getUrl]);
+    }, [currentSong?.song.songPublicId, isReady, isAuthenticated, getUrl]);
 
     useEffect(() => {
         if (currentSong?.song.songPublicId && isReady && isAuthenticated) {
@@ -224,15 +227,24 @@ const SongContextProvider = ({ children }: Props) => {
             }
         };
 
+        const handleBeforeUnload = () => {
+            if (isPlaying) {
+                play(false);
+            }
+        };
+
         if (user?.activeSubscriptions && user.activeSubscriptions.length > 0) {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
             return;
         }
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [user, isPlaying]);
 
