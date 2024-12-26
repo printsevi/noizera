@@ -125,19 +125,24 @@ export default function MyAudioPlayer() {
       navigator.mediaSession.setActionHandler('previoustrack', () => {
         handlePrev();
       });
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        if (details.seekTime !== undefined) {
+          handleProgressChange([details.seekTime]);
+        }
+      });
     }
-  }, [currentSong?.song.songPublicId, play, handleNext, prev]);
+  }, [currentSong?.song.songPublicId, play, handleNext, prev, handleProgressChange]);
 
   if (!isAuthenticated || !queue.length || !currentSong?.song) {
     return <></>;
   }
 
   return (
-    <div className="sm:fixed sm:left-0 sm:right-3 ml-3 sm:ml-0 bottom-0 bg-background pb-safe z-10">
+    <div className="sm:fixed sm:left-0 sm:right-3 ml-5 sm:ml-0 mr-5 sm:mr-0 bottom-0 bg-background pb-safe z-10">
       <Slider
         value={[currentTime]}
         max={duration || 100}
-        step={0.05}
+        step={0.01}
         onValueChange={handleProgressChange}
         className="w-full pt-3 sm:pt-0"
       />

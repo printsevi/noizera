@@ -41,11 +41,9 @@ const SongContextProvider = ({ children }: Props) => {
     const { auth, isAuthenticated } = useAuth();
     const { user } = useUser();
     const { isReady, axiosPrivate } = useAxiosPrivate();
-    const [presignedUrl, setPresignedUrl] = useState("");
     const [songs, setSongs] = useState<ISongModel[]>([]);
     const [currentSong, setCurrentSong] = useState<ISongModel>();
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isReadyToPlay, setIsReadyToPlay] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
     const [refreshIntervalId, setRefreshIntervalId] = useState<NodeJS.Timer>();
     const [limitExceeded, setLimitExceeded] = useState(false);
@@ -79,7 +77,7 @@ const SongContextProvider = ({ children }: Props) => {
             return;
         }
 
-        const audioType = user?.activeSubscriptions && user?.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
+        const audioType = user?.activeSubscriptions && user.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
         const response = await getMusicCollectionSongs(musicSetPublicId, audioType, axiosPrivate, auth.userId!);
         if (response.ok) {
             setLastMusicSetPublicId(musicSetPublicId);
@@ -113,7 +111,7 @@ const SongContextProvider = ({ children }: Props) => {
     };
 
     const play = (isPlayingNew: boolean) => {
-        if (isPlaying === isPlayingNew || !currentSong?.presignedUrl) {
+        if (isPlaying === isPlayingNew || !currentSong?.presignedUrl || (isPlayingNew && document.hidden && (!user?.activeSubscriptions || !user.activeSubscriptions.length))) {
             return;
         }
 
@@ -246,7 +244,7 @@ const SongContextProvider = ({ children }: Props) => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [user, isPlaying]);
+    }, [user?.activeSubscriptions, isPlaying]);
 
     useEffect(() => {
         if (user && user.activeSubscriptions.length === 0 && (user.dayLimitExceeded || user.monthLimitExceeded || user.weekLimitExceeded || user.semiAnnualLimitExceeded)) {
