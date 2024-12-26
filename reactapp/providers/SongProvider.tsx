@@ -196,7 +196,7 @@ const SongContextProvider = ({ children }: Props) => {
                     clearInterval(id);
                     setRefreshIntervalId(undefined);
                 }
-            }, 10 * 1000); // every 20 min
+            }, 20 * 10 * 1000); // every 20 min
             setRefreshIntervalId(id);
         } else {
             if (refreshIntervalId) {
@@ -222,6 +222,10 @@ const SongContextProvider = ({ children }: Props) => {
         const handleVisibilityChange = () => {
             if (document.hidden && isPlaying) {
                 play(false);
+                toast({
+                    title: "Playback paused",
+                    description: "Upgrade to keep listening with the app hidden",
+                })
             }
         };
 

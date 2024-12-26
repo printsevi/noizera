@@ -26,7 +26,7 @@ export default function MyAudioPlayer() {
   const [volume, setVolume] = useState(isDesktop ? 0.2 : 1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const isIOS = useIsIOS();
+  const [isSeeking, setIsSeeking] = useState(false)
 
   const durationDisplay = formatDurationDisplay(duration);
   const elapsedDisplay = formatDurationDisplay(currentTime);
@@ -79,11 +79,23 @@ export default function MyAudioPlayer() {
   }, [isDesktop]);
 
   const handleProgressChange = (values: number[]) => {
+    setIsSeeking(true);
+    setCurrentTime(values[0]);
+  };
+
+  const handleTimeChange = (values: number[]) => {
+    if (!isSeeking) {
+      setCurrentTime(values[0]);
+    }
+  };
+
+  const handleProgressCommit = (values: number[]) => {
     const audio = audioRef.current;
     if (audio) {
       const newTime = values[0];
       audio.currentTime = newTime;
     }
+    setIsSeeking(false);
   };
 
   const handleVolumeChange = (values: number[]) => {
@@ -127,7 +139,7 @@ export default function MyAudioPlayer() {
       });
       navigator.mediaSession.setActionHandler('seekto', (details) => {
         if (details.seekTime !== undefined) {
-          handleProgressChange([details.seekTime]);
+          handleProgressCommit([details.seekTime]);
         }
       });
     }
@@ -144,6 +156,7 @@ export default function MyAudioPlayer() {
         max={duration || 100}
         step={0.01}
         onValueChange={handleProgressChange}
+        onValueCommit={handleProgressCommit}
         className="w-full pt-3 sm:pt-0"
       />
       {currentSong.presignedUrl && (
@@ -154,7 +167,7 @@ export default function MyAudioPlayer() {
           onEnded={handleNext}
           onCanPlay={() => setIsReady(true)}
           onTimeUpdate={(e) => {
-            setCurrentTime(e.currentTarget.currentTime);
+            handleTimeChange([e.currentTarget.currentTime]);
           }}
         >
           <source
