@@ -67,26 +67,8 @@ const SongContextProvider = ({ children }: Props) => {
         return true;
     }, [isAuthenticated, limitExceeded]);
 
-    const fetchAndPlay = useCallback(async (musicSetPublicId: string, songPublicId?: string) => {
-        if (!isReady || !validateUser()) {
-            return;
-        }
-
-        if (lastMusicSetPublicId === musicSetPublicId) {
-            updateQueue(songs, songPublicId);
-            return;
-        }
-
-        const audioType = user?.activeSubscriptions && user.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
-        const response = await getMusicCollectionSongs(musicSetPublicId, audioType, axiosPrivate, auth.userId!);
-        if (response.ok) {
-            setLastMusicSetPublicId(musicSetPublicId);
-            updateQueue(response.data!.map(s => ({ song: s, credits: [], contentType: audioType })), songPublicId);
-        }
-    }, [isReady, songs, user?.activeSubscriptions, auth.userId, validateUser, lastMusicSetPublicId, setLastMusicSetPublicId, axiosPrivate]);
-
     const updateQueue = (newSongs: ISongModel[], songPublicId?: string) => {
-        setIsPlaying(false);
+        play(false);
         setCurrentSong(undefined);
         setSongs([]);
         if (!validateUser()) {
@@ -96,15 +78,13 @@ const SongContextProvider = ({ children }: Props) => {
         if (newSongs.length > 0) {
             let songToPlay = newSongs[0];
             if (songPublicId) {
-                const existingSong = newSongs.filter(x => x.song.songPublicId === songPublicId)[0];
+                const existingSong = newSongs.filter(x => x.song.songPublicId.toUpperCase() === songPublicId.toUpperCase())[0];
                 if (existingSong) {
                     songToPlay = existingSong;
                 }
             }
             setCurrentSong(songToPlay);
-            if (!isPlaying) {
-                setIsPlaying(true);
-            }
+            setIsPlaying(true);
         } else {
             play(false);
         }
@@ -119,7 +99,7 @@ const SongContextProvider = ({ children }: Props) => {
     };
 
     const next = () => {
-        const currentIndex = songs.findIndex(x => x.song.songPublicId === currentSong?.song.songPublicId);
+        const currentIndex = songs.findIndex(x => x.song.songPublicId.toUpperCase() === currentSong?.song.songPublicId.toUpperCase());
         if (currentIndex === -1) {
             //get next bunch of recommended songs
             return;
@@ -132,12 +112,42 @@ const SongContextProvider = ({ children }: Props) => {
     };
 
     const prev = () => {
-        const currentIndex = songs.findIndex(x => x.song.songPublicId === currentSong?.song.songPublicId);
+        const currentIndex = songs.findIndex(x => x.song.songPublicId.toUpperCase() === currentSong?.song.songPublicId.toUpperCase());
         if (currentIndex === -1 || currentIndex === 0) {
             return;
         }
         setCurrentSong(songs[currentIndex - 1]);
     };
+
+    const fetchAndPlay = useCallback(async (musicSetPublicId: string, songPublicId?: string) => {
+        if (!isReady || !validateUser()) {
+            return;
+        }
+
+        if (lastMusicSetPublicId.toUpperCase() === musicSetPublicId.toUpperCase()) {
+            if (songPublicId) {
+                const existingSong = songs.filter(x => x.song.songPublicId.toUpperCase() === songPublicId.toUpperCase())[0];
+                if (existingSong && existingSong.song.songPublicId.toUpperCase() !== currentSong?.song.songPublicId.toUpperCase()) {
+                    setCurrentSong(existingSong);
+                }
+
+            } else {
+                const firstSong = songs[0];
+                if (firstSong && firstSong.song.songPublicId.toUpperCase() !== currentSong?.song.songPublicId.toUpperCase()) {
+                    setCurrentSong(firstSong);
+                }
+            }
+            play(true);
+            return;
+        }
+
+        const audioType = user?.activeSubscriptions && user.activeSubscriptions.length ? "audio/flac" : "audio/mpeg";
+        const response = await getMusicCollectionSongs(musicSetPublicId, audioType, axiosPrivate, auth.userId!);
+        if (response.ok) {
+            setLastMusicSetPublicId(musicSetPublicId);
+            updateQueue(response.data!.map(s => ({ song: s, credits: [], contentType: audioType })), songPublicId);
+        }
+    }, [isReady, songs, play, setCurrentSong, user?.activeSubscriptions, auth.userId, validateUser, lastMusicSetPublicId, setLastMusicSetPublicId]);
 
     useEffect(() => {
         if (isReady && isAuthenticated && currentSong?.song.songPublicId && auth.userId) {

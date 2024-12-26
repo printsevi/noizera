@@ -171,7 +171,7 @@ export default function MusicCollectionContent(props: Props) {
   return (
     <div className="flex flex-col lg:flex-row lg:space-x-8">
       <div className="lg:w-1/3 mb-8 lg:mb-0">
-        <div className="flex flex-col items-center lg:items-start min-w-0 w-full">
+        <div className="flex flex-col items-center min-w-0 w-full">
           <Image
             src={musicCollection.collectionType === CollectionType.Album ? getCoverImageSrc(props.collectionPublicId) : "/images/favourites.png"}
             alt={`${musicCollection.title} by ${musicCollection.title}`}
@@ -179,10 +179,10 @@ export default function MusicCollectionContent(props: Props) {
             height={300}
             className="rounded-lg shadow-lg mb-4"
           />
-          <h1 className="text-4xl font-bold mb-4 text-center lg:text-left line-clamp-2 hover:line-clamp-none transition-all duration-300 ease-in-out">
+          <h1 className="text-4xl font-bold mb-4 text-center line-clamp-2 hover:line-clamp-none transition-all duration-300 ease-in-out">
             {musicCollection.title}
           </h1>
-          <div className="text-muted-foreground mb-4 text-center lg:text-left w-full">
+          <div className="text-muted-foreground mb-4 text-center w-full">
             <p className="mb-1">{musicCollection.releaseDate} • {trackCount} songs</p>
             {credits.length > 0 && <div className="flex flex-wrap justify-center mb-1">
               {musicCollection.ownerProfileType === ProfileType.Artist && credits.length > 0 && <React.Fragment>
