@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Noizera.Common.Contracts.Errors;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Services;
 using Noizera.Common.Infrastructure.Audio;
 using Noizera.Common.Persistence.S3;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 namespace Noizera.Infrastructure.Audio;
 
@@ -34,6 +34,13 @@ public class AudioFileService(
         "original" => await GetOriginalAudioFileAsStream(fileId, requestedRange, fileLength, ct).ConfigureAwait(false),
         "audio/flac" => await GetFlacAudioFileAsStream(fileId, requestedRange, fileLength, ct).ConfigureAwait(false),
         "audio/mpeg" => await GetMp3AudioFileAsStream(fileId, requestedRange, fileLength, ct).ConfigureAwait(false),
+        _ => throw new ArgumentException($"Content type is undefined {audioType}")
+    };
+
+    public async Task<Uri> GetAudioPresignedUrlAsync(string fileId, string audioType, CancellationToken ct) => audioType switch
+    {
+        "audio/flac" => await s3.GetFlacAudioPresignedLinkAsync(fileId, ct).ConfigureAwait(false),
+        "audio/mpeg" => await s3.GetMp3AudioPresignedLinkAsync(fileId, ct).ConfigureAwait(false),
         _ => throw new ArgumentException($"Content type is undefined {audioType}")
     };
 

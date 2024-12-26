@@ -4,6 +4,7 @@ import { GetAlbumCreditsResponse } from "@/api/musicCollections/getAlbumCredits"
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs";
 import getMusicCollectionSongsPublic, { MusicCollectionSongResponse } from "@/api/musicCollections/getMusicCollectionSongsPublic";
 import addStream from "@/api/songs/addStream";
+import getAudioPresignedUrl from "@/api/songs/getAudioPresignedUrl";
 import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
@@ -18,7 +19,8 @@ interface Props {
 export interface ISongModel {
     song: MusicCollectionSongResponse,
     credits: GetAlbumCreditsResponse[],
-    contentType: string
+    contentType: string,
+    presignedUrl?: string
 }
 
 export interface ISongContext {
@@ -39,10 +41,13 @@ const SongContextProvider = ({ children }: Props) => {
     const { auth, isAuthenticated } = useAuth();
     const { user } = useUser();
     const { isReady, axiosPrivate } = useAxiosPrivate();
+    const [presignedUrl, setPresignedUrl] = useState("");
     const [songs, setSongs] = useState<ISongModel[]>([]);
     const [currentSong, setCurrentSong] = useState<ISongModel>();
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isReadyToPlay, setIsReadyToPlay] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timer>();
+    const [refreshIntervalId, setRefreshIntervalId] = useState<NodeJS.Timer>();
     const [limitExceeded, setLimitExceeded] = useState(false);
     const [lastMusicSetPublicId, setLastMusicSetPublicId] = useState("");
     const signUpModal = useSignUpModal();
@@ -100,7 +105,7 @@ const SongContextProvider = ({ children }: Props) => {
             }
             setCurrentSong(songToPlay);
             if (!isPlaying) {
-                play(true);
+                setIsPlaying(true);
             }
         } else {
             play(false);
@@ -108,8 +113,10 @@ const SongContextProvider = ({ children }: Props) => {
     };
 
     const play = (isPlayingNew: boolean) => {
-        if (isPlayingNew) {
+        if (isPlaying === isPlayingNew || !currentSong?.presignedUrl) {
+            return;
         }
+
         setIsPlaying(isPlayingNew);
     };
 
@@ -135,7 +142,7 @@ const SongContextProvider = ({ children }: Props) => {
     };
 
     useEffect(() => {
-        if (isReady && isAuthenticated && currentSong?.song.songPublicId) {
+        if (isReady && isAuthenticated && currentSong?.song.songPublicId && auth.userId) {
             if (isPlaying) {
                 if (intervalId) {
                     clearInterval(intervalId);
@@ -167,7 +174,48 @@ const SongContextProvider = ({ children }: Props) => {
                 clearInterval(intervalId);
             }
         };
-    }, [isPlaying, currentSong?.song.songPublicId, isReady, isAuthenticated]);
+    }, [isPlaying, currentSong?.song.songPublicId, isReady, isAuthenticated, auth.userId, axiosPrivate]);
+
+    const getUrl = useCallback(async () => {
+        const response = await getAudioPresignedUrl(axiosPrivate, auth.userId!, currentSong!.song.songPublicId, currentSong!.contentType);
+        if (response.ok) {
+            setCurrentSong(prev => prev ? { ...prev, presignedUrl: response.data!.url } : undefined);
+        }
+        return response.ok;
+    }, [currentSong?.song.songPublicId, auth.userId, axiosPrivate, isReadyToPlay, isPlaying]);
+
+    useEffect(() => {
+        if (currentSong?.song.songPublicId && isReady && isAuthenticated) {
+            const id = setInterval(async () => {
+                const response = await getUrl();
+                if (!response) {
+                    if (isPlaying) {
+                        play(false);
+                    }
+                    clearInterval(id);
+                    setRefreshIntervalId(undefined);
+                }
+            }, 60 * 1000); // every 20 min
+            setRefreshIntervalId(id);
+        } else {
+            if (refreshIntervalId) {
+                clearInterval(refreshIntervalId);
+                setRefreshIntervalId(undefined);
+            }
+        }
+
+        return () => {
+            if (refreshIntervalId) {
+                clearInterval(refreshIntervalId);
+            }
+        };
+    }, [currentSong?.song.songPublicId, isPlaying, isReady, isAuthenticated, axiosPrivate, getUrl]);
+
+    useEffect(() => {
+        if (currentSong?.song.songPublicId && isReady && isAuthenticated) {
+            getUrl();
+        }
+    }, [currentSong?.song.songPublicId, isReady, isAuthenticated, getUrl]);
 
     useEffect(() => {
         const handleVisibilityChange = () => {
@@ -206,3 +254,4 @@ export const SongProvider: React.FC<Props> = ({ children }) => {
 };
 
 export default SongContext;
+

@@ -10,4 +10,6 @@ public interface IAudioFileService
     Task DeleteOriginalAudioFileAsync(string fileId, CancellationToken ct);
 
     Task<AudioStreamResult> GetAudioFileAsStream(string fileId, string requestedRange, long fileLength, string audioType, CancellationToken ct);
+
+    Task<Uri> GetAudioPresignedUrlAsync(string fileId, string audioType, CancellationToken ct);
 }

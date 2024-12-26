@@ -35,6 +35,10 @@ export interface IdResponse {
     value: string;
 }
 
+export interface UrlResponse {
+    url: string;
+}
+
 export function handleErrorAndReturnProblem(err: any) {
     const problem: Problem = { errorCode: ErrorCodes.Common };
     if (axios.isAxiosError(err)) {

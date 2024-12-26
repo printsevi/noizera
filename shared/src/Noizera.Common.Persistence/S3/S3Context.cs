@@ -1,8 +1,11 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Net;
 
 namespace Noizera.Common.Persistence.S3;
@@ -92,6 +95,36 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         };
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(20));
         return await s3.GetObjectAsync(request, cts.Token).ConfigureAwait(false);
+    }
+
+    public async Task<Uri> GetMp3AudioPresignedLinkAsync([NotNull] string key, CancellationToken ct)
+    {
+        var preSignedUrlRequest = new GetPreSignedUrlRequest
+        {
+            BucketName = settings.BucketName,
+            Key = $"{mp3AudioFolder}/{key.ToUpperInvariant()}",
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            Verb = HttpVerb.GET
+        };
+
+        string result = await s3.GetPreSignedURLAsync(preSignedUrlRequest).ConfigureAwait(false);
+
+        return new(result);
+    }
+
+    public async Task<Uri> GetFlacAudioPresignedLinkAsync([NotNull] string key, CancellationToken ct)
+    {
+        var preSignedUrlRequest = new GetPreSignedUrlRequest
+        {
+            BucketName = settings.BucketName,
+            Key = $"{flacAudioFolder}/{key.ToUpperInvariant()}",
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            Verb = HttpVerb.GET
+        };
+
+        string result = await s3.GetPreSignedURLAsync(preSignedUrlRequest).ConfigureAwait(false);
+
+        return new(result);
     }
 
     private async Task<(long ContentLength, string ContentType)> GetFileInfoAsync(string folderName, [NotNull] string key, CancellationToken ct)
