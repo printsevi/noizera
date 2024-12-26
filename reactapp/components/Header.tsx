@@ -133,10 +133,11 @@ const Header: React.FC = () => {
           <SidebarTrigger className="space-x-4 mr-3 items-center" />
           <Image
             src="/images/logo.png"
+            onClick={() => router.push('/')}
             alt="logo.png"
             width={40}
             height={40}
-            className={`mr-3 object-cover rounded-full transition-opacity group-hover:opacity-80`}
+            className={`mr-3 object-cover rounded-full transition-opacity group-hover:opacity-80 cursor-pointer`}
           />
         </div>
 
