@@ -134,7 +134,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
         )}
       </AspectRatio>
       <Dialog open={isCropperOpen} defaultOpen={isCropperOpen} onOpenChange={onCropperChange}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Crop image</DialogTitle>
             <DialogDescription>

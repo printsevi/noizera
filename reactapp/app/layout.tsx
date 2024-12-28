@@ -33,7 +33,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: {
     default: 'Noizera',
-    template: '%s | Noizera',
+    template: 'Noizera | %s',
   },
   description: 'Discover a music streaming platform for independent artists and labels offering high royalties. Enjoy FLAC-quality songs, curated playlists, and affordable subscriptions.',
   openGraph: {
