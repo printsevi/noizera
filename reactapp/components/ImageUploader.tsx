@@ -92,7 +92,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
 
   return (
     <div className="flex flex-col w-full max-w-xs">
-      <AspectRatio ratio={1} className="mb-4">
+      <AspectRatio ratio={1}>
         {!uploadedImageUrl ? (
           <div className={`relative flex items-center justify-center w-full h-full bg-muted ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
             <Input
@@ -116,6 +116,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
               src={uploadedImageUrl}
               alt="Uploaded cover image"
               fill
+              className="object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button
