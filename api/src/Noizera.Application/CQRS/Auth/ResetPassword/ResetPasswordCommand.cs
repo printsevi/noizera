@@ -28,7 +28,7 @@ public sealed record ResetPasswordCommand(
             var resetToken = user.GetTokenOfValue(request.Token);
             if (resetToken is null || !resetToken.IsValid)
             {
-                throw new AppException("Token is invalid.", ErrorType.BadRequest);
+                throw new AppException("Token is revoked or expired", ErrorType.BadRequest);
             }
 
             resetToken.RevokeToken();

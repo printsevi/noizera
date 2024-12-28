@@ -73,7 +73,7 @@ export default function SubscriptionsContent() {
           Subscriptions
         </h2>
         <p className="mt-1 text-muted-foreground">
-          Immerse yourself in the ultimate music experience with crystal-clear audio, unlimited access, and exclusive features that make every moment unforgettable.
+          Immerse yourself in the ultimate music experience.
         </p>
       </div>
       <div className="flex justify-center items-center">

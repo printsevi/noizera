@@ -205,7 +205,6 @@ const Header: React.FC = () => {
                   }}
                   variant='ghost'
                   className='
-                    rounded-full
                     hidden
                     md:block
                   '
