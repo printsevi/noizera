@@ -32,12 +32,6 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
   const [zoom, setZoom] = useState(1);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    if (imageSrc) {
-      setIsCropperOpen(true);
-    }
-  }, [imageSrc]);
-
   const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
     setCroppedArea(croppedAreaPixels);
   }, []);
@@ -55,6 +49,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
+        setIsCropperOpen(true)
         setImageSrc(reader.result as string);
       };
       reader.readAsDataURL(file);
@@ -91,7 +86,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
   }, [croppedArea, imageSrc]);
 
   return (
-    <div className="flex flex-col w-full max-w-xs">
+    <div className="flex flex-col items-center space-y-4 max-w-xs">
       <AspectRatio ratio={1}>
         {!uploadedImageUrl ? (
           <div className={`relative flex items-center justify-center w-full h-full bg-muted ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
@@ -133,36 +128,37 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
           </div>
         )}
       </AspectRatio>
-      <Dialog open={isCropperOpen} defaultOpen={isCropperOpen} onOpenChange={onCropperChange}>
-        <DialogContent className="max-w-[425px]">
+      <Dialog open={isCropperOpen} onOpenChange={onCropperChange}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Crop image</DialogTitle>
             <DialogDescription>
               Make changes to your image here. Click Upload when you're done.
             </DialogDescription>
           </DialogHeader>
-          <div className="relative w-full h-64">
-            <Cropper
-              cropShape={cropShape}
-              image={imageSrc}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              onCropChange={setCrop}
-              onZoomChange={handleZoomChange}
-              onCropComplete={onCropComplete}
-              minZoom={1}
-              maxZoom={5}
-            />
+          {isCropperOpen && imageSrc && <div className="flex flex-col space-y-4">
+            <div className="relative h-64">
+              <Cropper
+                //cropSize={{ width: 256, height: 256 }}
+                cropShape={cropShape}
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onZoomChange={handleZoomChange}
+                onCropComplete={onCropComplete}
+              />
+            </div>
             <Slider
               defaultValue={[1]}
               min={1}
-              max={5}
+              max={4}
               step={0.1}
               value={[zoom]}
               onValueChange={(e) => handleZoomChange(e[0])}
             />
-          </div>
+          </div>}
           <DialogFooter>
             <Button onClick={handleCrop} disabled={uploading}>{uploading ? 'Uploading...' : 'Crop & Upload'}</Button>
           </DialogFooter>
