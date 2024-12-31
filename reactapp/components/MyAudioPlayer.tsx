@@ -65,19 +65,23 @@ export default function MyAudioPlayer() {
   }, [audioContext]);
 
   const handleNext = () => {
+    play(false);
     const audio = audioRef.current;
     if (!audio) return;
     next();
     setCurrentTime(0);
     audio.currentTime = 0;
+    play(true);
   };
 
   const handlePrev = () => {
+    play(false);
     const audio = audioRef.current;
     if (!audio) return;
     prev();
     setCurrentTime(0);
     audio.currentTime = 0;
+    play(true);
   };
 
   const togglePlayPause = () => {
