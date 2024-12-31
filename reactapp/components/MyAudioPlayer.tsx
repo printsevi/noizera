@@ -107,6 +107,7 @@ export default function MyAudioPlayer() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    audio.volume = volume;
     if (currentSong?.presignedUrl) {
       if (isPlaying) {
         const playPromise = audio.play();
