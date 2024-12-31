@@ -113,7 +113,7 @@ const SongContextProvider = ({ children }: Props) => {
 
     const prev = () => {
         const currentIndex = songs.findIndex(x => x.song.songPublicId.toUpperCase() === currentSong?.song.songPublicId.toUpperCase());
-        if (currentIndex === -1 || (currentIndex === 0 && songs.length === 1)) {
+        if (currentIndex === -1 || currentIndex === 0) {
             return;
         }
         setCurrentSong(songs[currentIndex - 1]);
