@@ -17,8 +17,8 @@ public sealed class AlbumRepository(AppDbContext db)
                 .ThenInclude(i => i.Song)
             .Include(x => x.Owner)
                 .ThenInclude(x => x.Profile)
-            //.Include(x => x.Credits)
-            //    .ThenInclude(i => i.Profile)
+            .Include(x => x.AlbumCredits)
+                .ThenInclude(i => i.Profile)
             .FirstOrDefaultAsync(x => x.Id == albumId, ct).ConfigureAwait(false);
 
     public async Task<Album?> GetLatestDraftAsync(Guid userId, CancellationToken ct) => await Db.Albums
