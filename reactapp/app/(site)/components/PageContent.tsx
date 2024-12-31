@@ -105,7 +105,7 @@ const PageContent = () => {
             <CarouselNext className="right-0 top-1/2 -translate-y-1/2" />
             <CarouselContent>
               {category.items?.map((item, index) => (
-                <CarouselItem key={item.publicId} className="basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+                <CarouselItem key={item.publicId} className="basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/5 mr-3">
                   <MusicArtwork
                     title={item.title}
                     collectionType={item.collectionType}
