@@ -65,23 +65,39 @@ export default function MyAudioPlayer() {
   }, [audioContext]);
 
   const handleNext = () => {
-    play(false);
     const audio = audioRef.current;
     if (!audio) return;
     next();
     setCurrentTime(0);
     audio.currentTime = 0;
-    play(true);
+    if (isPlaying) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+        })
+          .catch(error => {
+            play(false);
+          });
+      }
+    }
   };
 
   const handlePrev = () => {
-    play(false);
     const audio = audioRef.current;
     if (!audio) return;
     prev();
     setCurrentTime(0);
     audio.currentTime = 0;
-    play(true);
+    if (isPlaying) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(_ => {
+        })
+          .catch(error => {
+            play(false);
+          });
+      }
+    }
   };
 
   const togglePlayPause = () => {
