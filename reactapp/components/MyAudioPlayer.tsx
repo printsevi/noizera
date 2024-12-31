@@ -163,6 +163,7 @@ export default function MyAudioPlayer() {
         <audio
           ref={audioRef}
           key={currentSong.song.songPublicId}
+          preload='metadata'
           onDurationChange={(e) => setDuration(e.currentTarget.duration)}
           onEnded={handleNext}
           onCanPlay={() => setIsReady(true)}
