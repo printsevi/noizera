@@ -100,7 +100,7 @@ const SongContextProvider = ({ children }: Props) => {
 
     const next = () => {
         const currentIndex = songs.findIndex(x => x.song.songPublicId.toUpperCase() === currentSong?.song.songPublicId.toUpperCase());
-        if (currentIndex <= 0) {
+        if (currentIndex === -1 || (currentIndex === 0 && songs.length === 1)) {
             //get next bunch of recommended songs
             return;
         }
@@ -113,7 +113,7 @@ const SongContextProvider = ({ children }: Props) => {
 
     const prev = () => {
         const currentIndex = songs.findIndex(x => x.song.songPublicId.toUpperCase() === currentSong?.song.songPublicId.toUpperCase());
-        if (currentIndex <= 0) {
+        if (currentIndex === -1 || (currentIndex === 0 && songs.length === 1)) {
             return;
         }
         setCurrentSong(songs[currentIndex - 1]);
