@@ -16,6 +16,7 @@ import { useIsIOS } from '@/hooks/useIsIos';
 
 export default function MyAudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { isAuthenticated } = useAuth();
 
@@ -30,6 +31,38 @@ export default function MyAudioPlayer() {
 
   const durationDisplay = formatDurationDisplay(duration);
   const elapsedDisplay = formatDurationDisplay(currentTime);
+
+  useEffect(() => {
+    if (!audioContext) {
+      setAudioContext(new (window.AudioContext || (window as any).webkitAudioContext)());
+    }
+  }, [audioContext]);
+
+  // Connect AudioContext to audio element
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && audioContext) {
+      const track = audioContext.createMediaElementSource(audio);
+      track.connect(audioContext.destination);
+    }
+  }, [audioContext]);
+
+  // Resume AudioContext on user interaction
+  useEffect(() => {
+    const handleInteraction = () => {
+      if (audioContext?.state === 'suspended') {
+        audioContext.resume();
+      }
+    };
+
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  }, [audioContext]);
 
   const handleNext = () => {
     setCurrentTime(0);
