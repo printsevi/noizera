@@ -119,7 +119,7 @@ export function MusicArtwork({
   }
 
   return (
-    <div className="space-y-3">
+    <div>
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md cursor-pointer">
@@ -197,9 +197,9 @@ export function MusicArtwork({
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
-      <div className="space-y-1 text-sm">
-        <h3 className="mt-2 text-sm font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount === 1 ? <span>single</span> : <span>{songCount}&nbsp;songs</span>}&nbsp;•&nbsp;{ownerProfileType === ProfileType.Artist && <React.Fragment>
+      <div className="text-sm">
+        <h3 className="mt-2 font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
+        <p className="text-muted-foreground line-clamp-2 text-ellipsis">{songCount === 1 ? <span>single</span> : <span>{songCount}&nbsp;songs</span>}&nbsp;•&nbsp;{ownerProfileType === ProfileType.Artist && <React.Fragment>
           <Link href={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
             {ownerName}
           </Link>
