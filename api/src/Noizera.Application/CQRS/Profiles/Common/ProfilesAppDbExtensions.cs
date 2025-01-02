@@ -6,7 +6,7 @@ namespace Noizera.Application.CQRS.Profiles.Common;
 
 internal static class ProfilesAppDbExtensions
 {
-    public static async Task<List<MusicSetCardQueryResult>> GetProfileMusicSetsAsync(this AppDbContext db, string username, Guid? userId, CancellationToken ct)
+    public static async Task<List<MusicSetQueryResult>> GetProfileMusicSetsAsync(this AppDbContext db, string username, Guid? userId, CancellationToken ct)
     {
         FormattableString sql = $"""
                 SELECT 
@@ -16,6 +16,8 @@ internal static class ProfilesAppDbExtensions
                     p."Username" as OwnerUsername,
                     p."Name" as OwnerName,
                     COUNT(mcs."Id") AS SongCount,
+                    p."ProfileType" as OwnerProfileType,
+                    mc."AlbumReleaseDate" as ReleaseDate,
                     CASE 
                         WHEN smc."UserId" IS NOT NULL 
                         THEN true
@@ -38,12 +40,12 @@ internal static class ProfilesAppDbExtensions
                     AND p."Username" = UPPER({username})
                     AND mc."IsDeleted" = false
                 GROUP BY 
-                    mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id", smc."UserId"
+                    mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id", smc."UserId", p."ProfileType", mc."AlbumReleaseDate"
                 ORDER BY mc."Id" DESC
                 LIMIT 100
             """;
 
         return await db.Database
-            .SqlQuery<MusicSetCardQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+            .SqlQuery<MusicSetQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
     }
 }

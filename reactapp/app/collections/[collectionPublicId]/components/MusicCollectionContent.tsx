@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import { PlayCircle, Heart, PauseCircle, Forward, CopyMinus, CopyPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import getMusicCollectionPublic, { MusicCollectionResponse } from "@/api/musicCollections/getMusicCollectionPublic"
+import getMusicCollectionPublic from "@/api/musicCollections/getMusicCollectionPublic"
 import useAuth from "@/hooks/useAuth"
 import useAxiosPrivate from "@/hooks/useAxiosPrivate"
 import getMusicCollection from "@/api/musicCollections/getMusicCollection"
@@ -24,6 +24,7 @@ import { CollectionType, ProfileType } from "@/api/common"
 import addSongToFavourites from "@/api/songs/addSongToFavourites"
 import getMusicCollectionSongs from "@/api/musicCollections/getMusicCollectionSongs"
 import removeSongFromFavourites from "@/api/songs/removeSongFromFavourites"
+import { MusicCollectionResponse } from "@/api/feed/getFeedPublicCollections"
 
 interface Props {
   collectionPublicId: string,
@@ -128,15 +129,7 @@ export default function MusicCollectionContent(props: Props) {
     if (!collectionIsSaved) {
       const response = await addSavedMusicCollection(axiosPrivate, auth.userId!, props.collectionPublicId);
       if (response.ok) {
-        addCollection({
-          publicId: props.collectionPublicId,
-          title: musicCollection.title,
-          collectionType: musicCollection.collectionType,
-          ownerName: musicCollection.ownerName,
-          ownerUsername: musicCollection.ownerUsername,
-          songCount: trackCount,
-          isSaved: true
-        });
+        addCollection({ ...musicCollection, isSaved: true });
         setCollectionIsSaved(true);
       }
     } else {

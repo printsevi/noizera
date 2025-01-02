@@ -114,6 +114,9 @@ const PageContent = () => {
                     ownerName={item.ownerName}
                     ownerUsername={item.ownerUsername}
                     songCount={item.songCount}
+                    releaseDate={item.releaseDate}
+                    ownerProfileType={item.ownerProfileType}
+                    credits={item.credits}
                   />
                 </CarouselItem>
               ))}

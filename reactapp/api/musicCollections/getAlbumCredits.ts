@@ -3,6 +3,7 @@ import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common
 import { axiosPublic } from '@/libs/axios';
 
 export interface GetAlbumCreditsResponse {
+  musicSetPublicId: string,
   username?: string;
   name?: string;
   profileType?: ProfileType;

@@ -24,10 +24,12 @@ import useLibrary from "@/hooks/useLibrary";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import useAuth from "@/hooks/useAuth";
 import addSavedMusicCollection from "@/api/savedMusicCollections/addSavedMusicCollection";
-import { CollectionType } from "@/api/common";
+import { CollectionType, ProfileType } from "@/api/common";
 import deleteSavedMusicCollection from "@/api/savedMusicCollections/deleteSavedMusicCollection";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
+import { GetAlbumCreditsResponse } from "@/api/musicCollections/getAlbumCredits";
+import React from "react";
 
 interface Props {
   aspectRatio?: "portrait" | "square",
@@ -37,7 +39,10 @@ interface Props {
   collectionType: CollectionType,
   ownerName: string,
   ownerUsername: string,
-  songCount: number
+  ownerProfileType: ProfileType,
+  credits: GetAlbumCreditsResponse[],
+  songCount: number,
+  releaseDate: string
 }
 
 export function MusicArtwork({
@@ -48,6 +53,9 @@ export function MusicArtwork({
   ownerName,
   ownerUsername,
   songCount,
+  releaseDate,
+  ownerProfileType,
+  credits,
   isSaved = false
 }: Props) {
   const { axiosPrivate, isReady } = useAxiosPrivate();
@@ -88,7 +96,10 @@ export function MusicArtwork({
             ownerName: ownerName,
             ownerUsername: ownerUsername,
             songCount: songCount,
-            isSaved: true
+            isSaved: true,
+            releaseDate: releaseDate,
+            ownerProfileType: ownerProfileType,
+            credits: credits
           });
           setCollectionIsSaved(true);
         }
@@ -188,6 +199,19 @@ export function MusicArtwork({
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="mt-2 text-sm font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
+        {credits.length > 0 && <div className="flex flex-wrap justify-center mb-1">
+          {ownerProfileType === ProfileType.Artist && credits.length > 0 && <React.Fragment>
+            <Link href={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
+              {ownerName}
+            </Link>
+          </React.Fragment>}
+          {credits.map((credit, index) => (
+            <React.Fragment key={credit.username}>
+              <span>&nbsp;•&nbsp;</span>
+              {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline truncate max-w-full">{credit.name}</Link> : <span className="truncate max-w-full">{credit.profileName}</span>}
+            </React.Fragment>
+          ))}
+        </div>}
         <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount} songs • by&nbsp;<Link href={`/profiles/${ownerUsername.toLowerCase()}`} key={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
       </div>
     </div>

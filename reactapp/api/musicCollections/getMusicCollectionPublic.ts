@@ -1,17 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { ApiResponse, CollectionType, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
-
-export interface MusicCollectionResponse {
-  title: string;
-  collectionType: CollectionType;
-  releaseDate?: string;
-  description?: string;
-  ownerUsername: string;
-  ownerName: string;
-  ownerProfileType: ProfileType;
-  isSaved: boolean
-}
+import { MusicCollectionResponse } from '../feed/getFeedPublicCollections';
 
 const getMusicCollectionPublic = async (collectionPublicId: string): Promise<ApiResponse<MusicCollectionResponse>> => {
   const result: ApiResponse<MusicCollectionResponse> = { ok: true };

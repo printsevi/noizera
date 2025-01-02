@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Noizera.Application.CQRS.MusicSets.Common;
 using Noizera.Application.CQRS.Profiles.Common;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Persistence.SQL;
@@ -14,7 +15,25 @@ public sealed record GetProfileMusicSetsPublicQuery(
         : IRequestHandler<GetProfileMusicSetsPublicQuery, List<MusicSetCardQueryResult>>
     {
         public async Task<List<MusicSetCardQueryResult>> Handle([NotNull] GetProfileMusicSetsPublicQuery request, CancellationToken cancellationToken)
-            => await db.GetProfileMusicSetsAsync(request.ProfileUsername, null, cancellationToken).ConfigureAwait(false);
+        {
+            var profileSets = await db.GetProfileMusicSetsAsync(request.ProfileUsername, null, cancellationToken).ConfigureAwait(false);
+            var albumPublicIds = profileSets.Select(x => x.PublicId).Distinct();
+            var credits = await db.GetAlbumsCreditsAsync(albumPublicIds, cancellationToken).ConfigureAwait(false);
+            var result = profileSets.Select(x => new MusicSetCardQueryResult(
+                x.PublicId,
+                x.Title,
+                x.CollectionType,
+                x.ReleaseDate,
+                x.IsSaved,
+                x.OwnerUsername,
+                x.OwnerName,
+                x.OwnerProfileType,
+                x.SongCount,
+                credits.Where(c => c.MusicSetPublicId == x.PublicId)
+            ));
+
+            return result.ToList();
+        }
     }
 }
 

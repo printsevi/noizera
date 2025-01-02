@@ -76,6 +76,38 @@ internal static class MusicSetAppDbExtensions
 
         return result;
     }
+
+    public static async Task<List<AlbumCreditQueryResult>> GetAlbumsCreditsAsync(this AppDbContext db, IEnumerable<string> musicSetPublicIds, CancellationToken ct)
+    {
+        var upperIds = musicSetPublicIds.Select(x => x.ToUpperInvariant());
+
+        FormattableString sql = $"""
+            SELECT 
+                mc."PublicId" as MusicSetPublicId,
+                p."ProfileType" as ProfileType,
+                p."Username" as Username,
+                p."Name" as Name,
+                ac."ProfileName" as ProfileName
+            FROM 
+                public."MusicSets" mc
+            JOIN 
+                public."AlbumCredits" ac
+                    ON ac."AlbumId" = mc."Id"
+            LEFT JOIN 
+                public."Profiles" p
+                    ON p."Id" = ac."ProfileId"
+            WHERE 
+                mc."PublicId" = ANY({upperIds})
+                    AND mc."CollectionType" = 'collection_album' 
+                    AND mc."AlbumStatus" = 'Released'
+                    AND mc."IsDeleted" = FALSE
+            """;
+
+        var result = await db.Database
+            .SqlQuery<AlbumCreditQueryResult>(sql).ToListAsync(ct).ConfigureAwait(false);
+
+        return result;
+    }
 }
 
 internal enum AudioType

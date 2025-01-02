@@ -2,15 +2,19 @@
 
 import { ApiResponse, CollectionType, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
+import { GetAlbumCreditsResponse } from '../musicCollections/getAlbumCredits';
 
 export interface MusicCollectionResponse {
   publicId: string,
   title: string,
   collectionType: CollectionType,
+  releaseDate: string,
+  ownerProfileType: ProfileType,
   isSaved: boolean,
   ownerName: string,
   ownerUsername: string,
-  songCount: number
+  songCount: number,
+  credits: GetAlbumCreditsResponse[]
 }
 
 const getFeedPublicCollections = async (api: string)

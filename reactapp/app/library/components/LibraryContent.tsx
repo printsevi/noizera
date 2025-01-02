@@ -62,6 +62,9 @@ const LibraryContent: React.FC = () => {
               ownerName={collection.ownerName}
               ownerUsername={collection.ownerUsername}
               songCount={collection.songCount}
+              releaseDate={collection.releaseDate}
+              ownerProfileType={collection.ownerProfileType}
+              credits={collection.credits}
             />
           </div>
         ))}

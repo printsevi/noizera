@@ -105,6 +105,9 @@ export default function ProfileContent(props: Props) {
               ownerName={item.ownerName}
               ownerUsername={item.ownerUsername}
               songCount={item.songCount}
+              releaseDate={item.releaseDate}
+              ownerProfileType={item.ownerProfileType}
+              credits={item.credits}
             />
           </section>
         ))}

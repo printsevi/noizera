@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using System.Diagnostics.CodeAnalysis;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Noizera.Application.CQRS.MusicSets.Common;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Security;
 using Noizera.Common.Persistence.SQL;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.SavedMusicSets;
 
@@ -25,6 +26,8 @@ public sealed record GetSavedMusicSetsQuery(
                         mc."CollectionType" as CollectionType,
                         p."Username" as OwnerUsername,
                         p."Name" as OwnerName,
+                        p."ProfileType" as OwnerProfileType,
+                        mc."AlbumReleaseDate" as ReleaseDate,
                         COUNT(mcs."Id") AS SongCount,
                         FALSE as IsSaved
                     FROM
@@ -43,7 +46,7 @@ public sealed record GetSavedMusicSetsQuery(
                         AND mc."IsDeleted" = false
                         AND u."Id" = {request.UserId}
                     GROUP BY 
-                        mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username"
+                        mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", p."ProfileType", mc."AlbumReleaseDate"
         
                     UNION ALL
 
@@ -53,6 +56,8 @@ public sealed record GetSavedMusicSetsQuery(
                         mc."CollectionType" as CollectionType,
                         p."Username" as OwnerUsername,
                         p."Name" as OwnerName,
+                        p."ProfileType" as OwnerProfileType,
+                        mc."AlbumReleaseDate" as ReleaseDate,
                         COUNT(mcs."Id") AS SongCount,
                         TRUE as IsSaved
                     FROM
@@ -75,7 +80,7 @@ public sealed record GetSavedMusicSetsQuery(
                         AND mc."IsDeleted" = false
                         AND u."Id" = {request.UserId}
                     GROUP BY 
-                        mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username"
+                        mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", p."ProfileType", mc."AlbumReleaseDate"
                 )
                 SELECT *
                 FROM Results
@@ -86,10 +91,25 @@ public sealed record GetSavedMusicSetsQuery(
                 LIMIT 200
             """;
 
-            var result = await db.Database
-                .SqlQuery<MusicSetCardQueryResult>(sql).ToListAsync(cancellationToken).ConfigureAwait(false);
+            var savedSets = await db.Database
+                .SqlQuery<MusicSetQueryResult>(sql).ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            return result;
+            var albumPublicIds = savedSets.Select(x => x.PublicId).Distinct();
+            var credits = await db.GetAlbumsCreditsAsync(albumPublicIds, cancellationToken).ConfigureAwait(false);
+            var result = savedSets.Select(x => new MusicSetCardQueryResult(
+                x.PublicId,
+                x.Title,
+                x.CollectionType,
+                x.ReleaseDate,
+                x.IsSaved,
+                x.OwnerUsername,
+                x.OwnerName,
+                x.OwnerProfileType,
+                x.SongCount,
+                credits.Where(c => c.MusicSetPublicId == x.PublicId)
+            ));
+
+            return result.ToList();
         }
     }
 }

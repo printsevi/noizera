@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Noizera.Common.Contracts.Errors;
+using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
@@ -9,16 +10,17 @@ namespace Noizera.Application.CQRS.MusicSets;
 
 public sealed record GetAlbumCreditsQuery(
     string AlbumPublicId)
-    : IRequest<List<GetAlbumCreditsResponse>>
+    : IRequest<List<AlbumCreditQueryResult>>
 {
     public sealed class Handler(
         AppDbContext db)
-        : IRequestHandler<GetAlbumCreditsQuery, List<GetAlbumCreditsResponse>>
+        : IRequestHandler<GetAlbumCreditsQuery, List<AlbumCreditQueryResult>>
     {
-        public async Task<List<GetAlbumCreditsResponse>> Handle([NotNull] GetAlbumCreditsQuery request, CancellationToken cancellationToken)
+        public async Task<List<AlbumCreditQueryResult>> Handle([NotNull] GetAlbumCreditsQuery request, CancellationToken cancellationToken)
         {
             FormattableString sql = $"""
                 SELECT 
+                    mc."PublicId" as MusicSetPublicId,
                     p."ProfileType" as ProfileType,
                     p."Username" as Username,
                     p."Name" as Name,
@@ -39,7 +41,7 @@ public sealed record GetAlbumCreditsQuery(
              """;
 
             var result = await db.Database
-                .SqlQuery<GetAlbumCreditsResponse>(sql).ToListAsync(cancellationToken).ConfigureAwait(false);
+                .SqlQuery<AlbumCreditQueryResult>(sql).ToListAsync(cancellationToken).ConfigureAwait(false);
 
             return result
                 ?? throw new AppException("Collection not found", ErrorType.NotFound);
@@ -54,9 +56,3 @@ public sealed class GetAlbumCreditsQueryValidator : AbstractValidator<GetAlbumCr
         _ = RuleFor(x => x.AlbumPublicId).NotEmpty();
     }
 }
-
-public record GetAlbumCreditsResponse(
-    string? Username,
-    string? Name,
-    string? ProfileName,
-    string? ProfileType);
