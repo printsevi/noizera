@@ -21,6 +21,7 @@ internal static class MusicSetAppDbExtensions
                 s."DurationInSeconds" as DurationInSeconds,
                 a."PublicId" as AlbumPublicId,
                 p."Username" as OwnerUsername,
+                p."ProfileType" as OwnerProfileType,
                 p."Name" as OwnerName,
                 CASE 
                     WHEN {userId}::UUID IS NOT NULL AND fav_mcs."Id" IS NOT NULL

@@ -199,21 +199,19 @@ export function MusicArtwork({
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="mt-2 text-sm font-medium truncate"><Link href={`/collections/${publicId.toLowerCase()}`} key={`/collections/${publicId}`} className="hover:underline">{title}</Link></h3>
-        {credits.length > 0 && <div className="flex flex-wrap justify-start text-muted-foreground">
-          {ownerProfileType === ProfileType.Artist && credits.length > 0 && <React.Fragment>
-            <Link href={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
-              {ownerName}
-            </Link>
-            <span>&nbsp;•&nbsp;</span>
-          </React.Fragment>}
+        <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount}&nbsp;songs&nbsp;•&nbsp;{ownerProfileType === ProfileType.Artist && <React.Fragment>
+          <Link href={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
+            {ownerName}
+          </Link>
+          {credits.length > 0 && <span>&nbsp;•&nbsp;</span>}
+        </React.Fragment>}
           {credits.map((credit, index) => (
             <React.Fragment key={credit.username}>
               {index > 0 && <span>&nbsp;•&nbsp;</span>}
               {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline truncate max-w-full">{credit.name}</Link> : <span className="truncate max-w-full">{credit.profileName}</span>}
             </React.Fragment>
-          ))}
-        </div>}
-        <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">{songCount} songs • by&nbsp;<Link href={`/profiles/${ownerUsername.toLowerCase()}`} key={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>
+          ))}</p>
+        {ownerProfileType === ProfileType.Label && <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">by&nbsp;<Link href={`/profiles/${ownerUsername.toLowerCase()}`} key={`/profiles/${ownerUsername.toLowerCase()}`} className="hover:underline">{ownerName}</Link></p>}
       </div>
     </div>
   )

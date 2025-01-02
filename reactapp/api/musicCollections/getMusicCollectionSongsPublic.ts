@@ -1,4 +1,4 @@
-import { ApiResponse, handleErrorAndReturnProblem } from '../common';
+import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
 import { GetAlbumCreditsResponse } from './getAlbumCredits';
 
@@ -11,6 +11,7 @@ export interface MusicCollectionSongResponse {
   albumPublicId: string;
   ownerUsername: string;
   ownerName: string;
+  ownerProfileType: ProfileType;
   favouriteSongId?: string;
   credits: GetAlbumCreditsResponse[]
 }

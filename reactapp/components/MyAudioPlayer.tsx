@@ -13,6 +13,7 @@ import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 import useAuth from '@/hooks/useAuth';
 import 'react-h5-audio-player/lib/styles.css'
 import { useIsIOS } from '@/hooks/useIsIos';
+import { ProfileType } from '@/api/common';
 
 export default function MyAudioPlayer() {
   const { currentSong, next, prev, play, isPlaying, queue } = useSong();
@@ -267,14 +268,22 @@ export default function MyAudioPlayer() {
               className="rounded-md"
             />
           </div>
-          <div className="flex flex-col overflow-hidden">
-            <h3 className="font-medium text-sm truncate">{currentSong?.song.title ?? 'Track ID'}</h3>
-            <p className="text-xs text-muted-foreground truncate">
-              <Link href={`/profiles/${currentSong?.song.ownerUsername}`} className="hover:underline">
-                {currentSong?.song.ownerName}
+          {currentSong?.song && <div className="flex flex-col overflow-hidden">
+            <h3 className="font-medium text-sm truncate">{currentSong.song.title}</h3>
+            <p className="text-xs text-muted-foreground truncate">{currentSong.song.ownerProfileType === ProfileType.Artist && <React.Fragment>
+              <Link href={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
+                {currentSong.song.ownerName}
               </Link>
-            </p>
-          </div>
+              {currentSong.song.credits.length > 0 && <span>&nbsp;•&nbsp;</span>}
+            </React.Fragment>}
+              {currentSong.song.credits.map((credit, index) => (
+                <React.Fragment key={credit.username}>
+                  {index > 0 && <span>&nbsp;•&nbsp;</span>}
+                  {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline truncate max-w-full">{credit.name}</Link> : <span className="truncate max-w-full">{credit.profileName}</span>}
+                </React.Fragment>
+              ))}</p>
+            {currentSong.song.ownerProfileType === ProfileType.Label && <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">by&nbsp;<Link href={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} key={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} className="hover:underline">{currentSong.song.ownerName}</Link></p>}
+          </div>}
         </div>
         <div className="flex items-center justify-end space-x-2 flex-1">
           {isDesktop && showVolumeSlider && (

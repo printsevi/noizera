@@ -1,6 +1,6 @@
 ﻿namespace Noizera.Common.Contracts.QueryResults;
 
-public record MusicSetSongQueryResult(
+public record MusicSetSongResult(
     string SongPublicId,
     string Title,
     long ContentLength,
@@ -10,5 +10,4 @@ public record MusicSetSongQueryResult(
     string OwnerName,
     string OwnerProfileType,
     string AlbumPublicId,
-    Guid? FavouriteSongId,
-    IEnumerable<AlbumCreditQueryResult> Credits);
+    Guid? FavouriteSongId);
