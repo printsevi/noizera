@@ -182,10 +182,11 @@ export default function MusicCollectionContent(props: Props) {
                 <Link href={`/profiles/${musicCollection.ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">
                   {musicCollection.ownerName}
                 </Link>
+                <span>&nbsp;•&nbsp;</span>
               </React.Fragment>}
               {credits.map((credit, index) => (
                 <React.Fragment key={credit.username}>
-                  <span>&nbsp;•&nbsp;</span>
+                  {index > 0 && <span>&nbsp;•&nbsp;</span>}
                   {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline truncate max-w-full">{credit.name}</Link> : <span className="truncate max-w-full">{credit.profileName}</span>}
                 </React.Fragment>
               ))}
