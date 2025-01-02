@@ -1,5 +1,6 @@
 import { ApiResponse, handleErrorAndReturnProblem } from '../common';
 import { axiosPublic } from '@/libs/axios';
+import { GetAlbumCreditsResponse } from './getAlbumCredits';
 
 export interface MusicCollectionSongResponse {
   songPublicId: string;
@@ -11,6 +12,7 @@ export interface MusicCollectionSongResponse {
   ownerUsername: string;
   ownerName: string;
   favouriteSongId?: string;
+  credits: GetAlbumCreditsResponse[]
 }
 
 const getMusicCollectionSongsPublic = async (collectionPublicId: string): Promise<ApiResponse<MusicCollectionSongResponse[]>> => {

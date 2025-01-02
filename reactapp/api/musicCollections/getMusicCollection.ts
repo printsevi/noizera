@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { ApiResponse, handleErrorAndReturnProblem, ProfileType } from '../common';
 import { axiosPublic } from '@/libs/axios';
-import { MusicCollectionResponse } from './getMusicCollectionPublic';
+import { MusicCollectionResponse } from '../feed/getFeedPublicCollections';
 
 const getMusicCollection = async (collectionPublicId: string, axiosPrivate: AxiosInstance, userId: string): Promise<ApiResponse<MusicCollectionResponse>> => {
   const result: ApiResponse<MusicCollectionResponse> = { ok: true };

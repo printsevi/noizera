@@ -18,7 +18,6 @@ interface Props {
 
 export interface ISongModel {
     song: MusicCollectionSongResponse,
-    credits: GetAlbumCreditsResponse[],
     contentType: string,
     presignedUrl?: string
 }
@@ -145,7 +144,7 @@ const SongContextProvider = ({ children }: Props) => {
         const response = await getMusicCollectionSongs(musicSetPublicId, audioType, axiosPrivate, auth.userId!);
         if (response.ok) {
             setLastMusicSetPublicId(musicSetPublicId);
-            updateQueue(response.data!.map(s => ({ song: s, credits: [], contentType: audioType })), songPublicId);
+            updateQueue(response.data!.map(s => ({ song: s, contentType: audioType })), songPublicId);
         }
     }, [isReady, songs, play, setCurrentSong, user?.activeSubscriptions, auth.userId, validateUser, lastMusicSetPublicId, setLastMusicSetPublicId]);
 
