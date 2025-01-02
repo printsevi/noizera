@@ -282,7 +282,7 @@ export default function MyAudioPlayer() {
                   {credit.username ? <Link href={`/profiles/${credit.username.toLowerCase()}`} className="hover:underline truncate max-w-full">{credit.name}</Link> : <span className="truncate max-w-full">{credit.profileName}</span>}
                 </React.Fragment>
               ))}</p>
-            {currentSong.song.ownerProfileType === ProfileType.Label && <p className="text-sm text-muted-foreground line-clamp-2 text-ellipsis">by&nbsp;<Link href={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} key={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} className="hover:underline">{currentSong.song.ownerName}</Link></p>}
+            {/* {currentSong.song.ownerProfileType === ProfileType.Label && <p className="text-xs text-muted-foreground truncate">by&nbsp;<Link href={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} key={`/profiles/${currentSong.song.ownerUsername.toLowerCase()}`} className="hover:underline">{currentSong.song.ownerName}</Link></p>} */}
           </div>}
         </div>
         <div className="flex items-center justify-end space-x-2 flex-1">
