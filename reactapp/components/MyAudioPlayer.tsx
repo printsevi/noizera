@@ -12,7 +12,6 @@ import Link from 'next/link';
 import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 import useAuth from '@/hooks/useAuth';
 import 'react-h5-audio-player/lib/styles.css'
-import { useIsIOS } from '@/hooks/useIsIos';
 import { ProfileType } from '@/api/common';
 
 export default function MyAudioPlayer() {
@@ -76,7 +75,7 @@ export default function MyAudioPlayer() {
       if (playPromise !== undefined) {
         playPromise.then(_ => {
         })
-          .catch(error => {
+          .catch(_error => {
             play(false);
           });
       }
@@ -115,7 +114,7 @@ export default function MyAudioPlayer() {
         if (playPromise !== undefined) {
           playPromise.then(_ => {
           })
-            .catch(error => {
+            .catch(_error => {
               play(false);
             });
         }
