@@ -51,7 +51,7 @@ check docker "sudo systemctl status docker"
 
 14. update nginx after docker compose pull https://gist.github.com/hlubek/02955a3f28db168417884b5397ce07c0
 
-sudo nano /etc/nginx/sites-available/noizera
+sudo nano /etc/nginx/sites-available/default
 
 sudo nginx -t
 sudo systemctl restart nginx
@@ -204,3 +204,7 @@ INSERT INTO public."Subscriptions" (
 INSERT INTO public."Terms" ("Id", "EffectiveDate", "Content")
 VALUES 
     (gen_random_uuid(), '2024-12-16', 'Terms and conditions for December 2024.');
+
+22. Manually update certificate
+
+sudo certbot renew
