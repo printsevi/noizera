@@ -24,6 +24,7 @@ public class FfmpegDockerService(IDockerClient dockerClient)
                     Binds = [volumeBind],
                     AutoRemove = true
                 },
+                User = "1000:1000",
                 Cmd = cmd
             }, ct).ConfigureAwait(false);
 
