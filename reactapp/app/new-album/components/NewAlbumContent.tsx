@@ -201,13 +201,16 @@ const NewAlbumContent = () => {
   };
 
   const uploadAudio = async (key: string, file: File) => {
+    setIsUploading(true);
     const tokenResponse = await getAntiforgeryToken(axiosPrivate);
     if (!tokenResponse.ok) {
+      setIsUploading(false);
       return false;
     }
 
     const response = await uploadAudioFile(axiosPrivate, auth.userId!, key, file, tokenResponse.data!);
     if (!response.ok) {
+      setIsUploading(false);
       return false;
     }
 
@@ -224,6 +227,7 @@ const NewAlbumContent = () => {
     });
 
     setSongs(updatedSongs);
+    setIsUploading(false);
 
     return true;
   };
@@ -412,7 +416,7 @@ const NewAlbumContent = () => {
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <Label className='mt-2.5 mb-1 block'>Album name</Label>
+      <Label className='mt-4 mb-1 block'>Album name</Label>
       <Input
         value={albumTitle}
         onBlur={(e) => updateAlbumTitle(e.target.value)}
@@ -420,14 +424,14 @@ const NewAlbumContent = () => {
         placeholder='Type your album title'
         maxLength={100}
       />
-      <Label className='mt-2.5 mb-1 block'>Release date</Label>
+      <Label className='mt-4 mb-1 block'>Release date</Label>
       <div className="flex flex-col items-start space-y-4">
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
               className={cn(
-                "w-[280px] justify-start text-left font-normal",
+                "w-[280px] justify-start text-left font-normal rounded-md w-full",
                 !date && "text-muted-foreground"
               )}
             >
@@ -479,9 +483,9 @@ const NewAlbumContent = () => {
           </PopoverContent>
         </Popover>
       </div>
-      <Label className='mt-2.5 mb-1 block'>Cover image</Label>
+      <Label className='mt-4 mb-1 block'>Cover image</Label>
       <ImageUploader onUpload={onUploadCoverImage} uploadedImageUrl={coverImageSrc} onDelete={onDeleteCoverImage} />
-      <Label className='mt-2.5 block'>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
+      <Label className='mt-4 block'>{user.profileType === ProfileType.Artist ? "Collaborators" : "Main Artists"}</Label>
       <div className="space-y-1">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-2">
           {featuredArtists.map(artist => (
@@ -590,7 +594,7 @@ const NewAlbumContent = () => {
             ))}
           </SortableContext>
         </DndContext>
-        <Button onClick={onAddNewSong} variant='ghost' className="w-full">
+        <Button disabled={isUploading} onClick={onAddNewSong} variant='ghost' className="w-full">
           <Plus size={18} />
           <span>Add song</span>
         </Button>
@@ -598,7 +602,7 @@ const NewAlbumContent = () => {
       <AlertDialog>
         <AlertDialogTrigger asChild>
           {/* {submitted && <Button disabled={submitted} variant="outline">Edit</Button>} */}
-          <PurpleButton className='px-6 py-2 mt-2' disabled={submitted}>{submitted ? "Submitted & Processing" : "Submit"}</PurpleButton>
+          <PurpleButton className='px-6 py-2 mt-2' disabled={submitted || isUploading}>{submitted ? "Submitted & Processing" : "Submit"}</PurpleButton>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>

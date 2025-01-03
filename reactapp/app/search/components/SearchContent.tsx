@@ -54,7 +54,7 @@ const SearchContent: React.FC<Props> = ({ query }) => {
             {isProfile ? "Artists & Labels" : "Albums & Singles"}
           </h2>
         </div>
-        <ul className="space-y-6">
+        <ul className="mt-3">
           {visibleItems.map((item, index) => (
             <li key={item.publicId}>
               <div className="flex items-center space-x-4 mb-4">
