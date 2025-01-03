@@ -418,7 +418,7 @@ const NewAlbumContent = () => {
         onBlur={(e) => updateAlbumTitle(e.target.value)}
         onChange={(e) => setAlbumTitle(e.target.value.slice(0, 150))}
         placeholder='Type your album title'
-        maxLength={150}
+        maxLength={100}
       />
       <Label className='mt-2.5 mb-1 block'>Release date</Label>
       <div className="flex flex-col items-start space-y-4">

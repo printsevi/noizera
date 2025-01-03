@@ -172,7 +172,7 @@ export default function MusicCollectionContent(props: Props) {
             height={300}
             className="rounded-lg shadow-lg mb-4"
           />
-          <h1 className="text-4xl font-bold mb-4 text-center line-clamp-2 hover:line-clamp-none transition-all duration-300 ease-in-out">
+          <h1 className="text-4xl font-bold mb-1 text-center line-clamp-2 hover:line-clamp-none transition-all duration-300 ease-in-out">
             {musicCollection.title}
           </h1>
           <div className="text-muted-foreground mb-4 text-center w-full">
