@@ -10,7 +10,7 @@ public class StripeService(
     Stripe.SubscriptionService subscriptionService,
     Stripe.AccountService accountService,
     Stripe.AccountLinkService accountLinkService,
-    AccountLoginLinkService loginLinkService,
+    //AccountLoginLinkService loginLinkService,
     Stripe.BillingPortal.SessionService billingSessionService)
 {
     public async Task<(Uri Url, string SessionId)?> CreateCheckoutSessionAsync(
@@ -161,10 +161,11 @@ public class StripeService(
         return accountLink?.Url is null ? null : new Uri(accountLink.Url);
     }
 
-    public async Task<Uri?> GetLoginAccountLinkAsync(string accountId, CancellationToken ct)
+    public static Task<Uri> GetLoginAccountLinkAsync(string accountId, CancellationToken ct)
     {
-        AccountLoginLinkCreateOptions loginLinkOptions = new();
-        var loginLink = await loginLinkService.CreateAsync(accountId, loginLinkOptions, cancellationToken: ct).ConfigureAwait(false);
-        return loginLink?.Url is null ? null : new Uri(loginLink.Url);
+        //AccountLoginLinkCreateOptions loginLinkOptions = new();
+        //var loginLink = await loginLinkService.CreateAsync(accountId, loginLinkOptions, cancellationToken: ct).ConfigureAwait(false);
+        //return loginLink?.Url is null ? null : new Uri(loginLink.Url);
+        return Task.FromResult(new Uri("https://dashboard.stripe.com/login"));
     }
 }

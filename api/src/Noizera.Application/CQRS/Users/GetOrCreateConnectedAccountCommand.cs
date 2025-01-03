@@ -39,8 +39,8 @@ public sealed record GetOrCreateConnectedAccountCommand(
 
             if (account.Requirements.CurrentlyDue.Count == 0)
             {
-                var loginLink = await stripeService.GetLoginAccountLinkAsync(user.ConnectedAccountStripeId!, cancellationToken).ConfigureAwait(false)
-                    ?? throw new AppException($"Stripe connected account is not found by stripe id: {user.ConnectedAccountStripeId}", ErrorType.NotFound);
+                var loginLink = await StripeService.GetLoginAccountLinkAsync(user.ConnectedAccountStripeId!, cancellationToken).ConfigureAwait(false);
+                    //?? throw new AppException($"Stripe connected account is not found by stripe id: {user.ConnectedAccountStripeId}", ErrorType.NotFound);
 
                 return new(loginLink);
             }

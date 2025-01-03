@@ -215,7 +215,7 @@ export default function SettingsContent() {
     const response = await getOrCreateConnectedAccount(axiosPrivate, auth.userId!);
     setIsLoading(false);
     if (response.ok) {
-      document.location.href = response.data!.url;
+      window.open(response.data!.url, '_blank');
     }
   }, [isReady, axiosPrivate, isAuthenticated, auth.userId, setIsLoading]);
 
