@@ -118,7 +118,6 @@ const NewAlbumContent = () => {
   );
 
   const handleDateSelect = async (selectedDate: Date | undefined) => {
-    setIsUploading(true);
     const response = await updateAlbumReleaseDate(axiosPrivate, auth.userId!, data?.data?.albumId!, selectedDate ? format(selectedDate, "yyyy-MM-dd") : "");
     if (response.ok) {
       setDate(selectedDate);
@@ -129,7 +128,6 @@ const NewAlbumContent = () => {
       setMonth(data?.data?.releaseDate ? new Date(data.data.releaseDate).getMonth() : new Date().getMonth());
       setYear(data?.data?.releaseDate ? new Date(data.data.releaseDate).getFullYear() : new Date().getFullYear());
     }
-    setIsUploading(false);
   }
 
   const handleMonthChange = (value: string) => {
@@ -574,12 +572,14 @@ const NewAlbumContent = () => {
           <SortableContext
             items={itemIds}
             strategy={verticalListSortingStrategy}
+            disabled={isUploading}
           >
             {songs.map((songItem, index) => (
               <SongAccordionItem
                 id={songItem.key}
                 key={songItem.key}
                 isOpen={songItem.isOpen}
+                isUploading={isUploading}
                 toggleAccordion={() => toggleSongAccordionItem(songItem.key)}
                 title={songItem.title}
                 onTitleUpdate={(newTitle) => updateSongTitle(songItem.key, newTitle)}

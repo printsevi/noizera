@@ -26,6 +26,7 @@ interface Props {
     contentLength?: number;
     contentType?: string;
     songPublicId: string;
+    isUploading: boolean;
     toggleAccordion: () => void,
     onTitleUpdate: (newTitle: string) => Promise<boolean>;
     onAudioUpload: (file: File) => Promise<boolean>;
@@ -48,7 +49,6 @@ export const SongAccordionItem = (props: Props) => {
 
     const [songTitle, setSongTitle] = useState(props.title ?? "");
 
-    const [isUploading, setIsUploading] = useState(false);
     const [audioSrc, setAudioSrc] = useState(props.audioFileName ? `${getURL()}api/songs/${props.songPublicId}/audio?audioType=original&contentLength=${props.contentLength}` : "");
 
     const { user } = useUser();
@@ -73,9 +73,7 @@ export const SongAccordionItem = (props: Props) => {
     }
 
     const audioUploadHandler = async (file: File) => {
-        setIsUploading(true);
         const result = await props.onAudioUpload(file);
-        setIsUploading(false);
 
         return result;
     }
@@ -104,7 +102,7 @@ export const SongAccordionItem = (props: Props) => {
                     <div className='flex items-center'>
                         <Button
                             variant='ghost'
-                            disabled={isUploading}
+                            disabled={props.isUploading}
                             className="rounded-full items-center mr-2"
                             size="icon"
                             onClick={(e) => {
