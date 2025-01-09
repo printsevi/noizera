@@ -63,7 +63,7 @@ export default function ProfileContent(props: Props) {
           /></AvatarFallback>
         </Avatar>
         <div className="text-center md:text-left flex-grow">
-          <h1 className="text-2xl font-bold mb-1 truncate max-w-xs">{data.data!.name}</h1>
+          <h1 className="text-2xl font-bold mb-1">{data.data!.name}</h1>
           <p className="text-xl text-muted-foreground mb-1">@{props.username}</p>
           <p className="text-muted-foreground mb-2">{data.data!.profileType}</p>
           {data.data?.bio && <p className="mb-4 max-w-md">{data.data!.bio}</p>}
