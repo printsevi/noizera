@@ -30,10 +30,10 @@ public sealed record GetMyUserQuery(Guid UserId)
                     u.Songs.Count(x => x.IsPublic),
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddDays(-1))
-                        .Sum(s => s.TimeInSeconds) >= 15 * 60,
+                        .Sum(s => s.TimeInSeconds) >= 25 * 60,
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddDays(-7))
-                        .Sum(s => s.TimeInSeconds) >= 30 * 60,
+                        .Sum(s => s.TimeInSeconds) >= 45 * 60,
                     db.Streams
                         .Where(s => s.UserId == request.UserId && s.StreamedAt >= currentTime.AddMonths(-1))
                         .Sum(s => s.TimeInSeconds) >= 60 * 60,

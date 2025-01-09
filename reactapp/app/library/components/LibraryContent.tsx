@@ -8,12 +8,19 @@ import AuthRequired from '@/components/AuthRequired';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import PurpleButton from '@/components/Button';
 import { useRouter } from 'next/navigation';
+import { useSidebar } from '@/components/ui/sidebar';
+import { useEffect } from 'react';
 
 const LibraryContent: React.FC = () => {
+  const { setOpenMobile } = useSidebar();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const { collections } = useLibrary();
   const { isReady } = useAxiosPrivate();
+
+  useEffect(() => {
+    setOpenMobile(false);
+  }, []);
 
   if (!isReady) {
     return <></>;

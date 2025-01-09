@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 using Noizera.Common.Persistence.S3;
+using Noizera.Common.Persistence.SQL;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Application.CQRS.Profiles;
@@ -9,11 +10,20 @@ public sealed record GetProfileImageQuery(
     string ProfilePublicId) : IRequest<(Stream Stream, string ContentType)?>
 {
     public sealed class Handler(
+        AppDbContext db,
         S3Context s3Context)
         : IRequestHandler<GetProfileImageQuery, (Stream Stream, string ContentType)?>
     {
         public async Task<(Stream Stream, string ContentType)?> Handle([NotNull] GetProfileImageQuery request, CancellationToken cancellationToken)
-            => await s3Context.GetProfileImageAsync(request.ProfilePublicId, cancellationToken).ConfigureAwait(false);
+        {
+            var profile = await db.Profiles.FirstOrDefaultByPublicIdAsync(request.ProfilePublicId, cancellationToken).ConfigureAwait(false);
+            if (profile?.ImageOriginalName is null)
+            {
+                return null;
+            }
+
+            return await s3Context.GetProfileImageAsync(request.ProfilePublicId, cancellationToken).ConfigureAwait(false);
+        }
     }
 }
 

@@ -15,6 +15,8 @@ import { AxiosInstance } from 'axios';
 import getFeedCollections from '@/api/feed/getFeedCollections';
 import Image from 'next/image';
 import { CollectionType } from '@/api/common';
+import { useSidebar } from '@/components/ui/sidebar';
+import { useMediaQuery } from '@custom-react-hooks/use-media-query';
 
 interface PageContentProps {
   songs: Song[];
@@ -47,6 +49,7 @@ const fetchCollectionsForCategory = async (category: GetFeedMusicCollectionItem,
 };
 
 const PageContent = () => {
+  const { setOpenMobile } = useSidebar();
   const { auth, isAuthenticated } = useAuth();
   const { isReady, axiosPrivate } = useAxiosPrivate();
   const [musicCategories, setMusicCategories] = useState<FeedMusicCategoryItem[]>([]);
@@ -71,6 +74,10 @@ const PageContent = () => {
     }
     setMusicCategories(apiMusicCategories);
   }, [isAuthenticated, isReady, axiosPrivate, auth.userId]);
+
+  useEffect(() => {
+    setOpenMobile(false);
+  }, []);
 
   useEffect(() => {
     if (isReady) {

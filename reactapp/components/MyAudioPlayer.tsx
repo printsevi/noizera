@@ -178,7 +178,7 @@ export default function MyAudioPlayer() {
     if ('mediaSession' in navigator && currentSong?.song.songPublicId) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentSong.song.title,
-        artist: `${currentSong.song.ownerProfileType === ProfileType.Artist ? `${currentSong.song.ownerName}, ` : ""}${currentSong.song.credits.map(x => x.name ?? x.profileName).join(', ')}`,
+        artist: `${currentSong.song.ownerProfileType === ProfileType.Artist ? `${currentSong.song.ownerName}${currentSong.song.credits.length ? ", " : ""}` : ""}${currentSong.song.credits.map(x => x.name ?? x.profileName).join(', ')}`,
         artwork: [{ src: getCoverImageSrc(currentSong.song.albumPublicId), sizes: '512x512', type: 'image/jpeg' }]
       });
 

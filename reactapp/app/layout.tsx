@@ -75,7 +75,7 @@ export default function RootLayout({
                 <LibraryProvider>
                   <SongProvider>
                     <ModalProvider />
-                    <SidebarProvider>
+                    <SidebarProvider defaultOpen={false}>
                       <div className='flex flex-1 overflow-hidden'>
                         <AppSidebar />
                         <div className="flex flex-col flex-1 overflow-hidden">

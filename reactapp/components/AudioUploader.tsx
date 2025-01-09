@@ -87,12 +87,6 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
             <div>
               <p className="font-medium">{uploadedFileName}</p>
               <p className="text-sm text-muted-foreground">Uploaded</p>
-              {contentType === 'audio/wav' && audioSrc && contentType && !isIos && <div>
-                <audio controls>
-                  <source src={audioSrc} type={contentType} />
-                  Your browser does not support the audio tag.
-                </audio>
-              </div>}
             </div>
           </div>
           <Button
