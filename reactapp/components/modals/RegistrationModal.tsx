@@ -126,7 +126,7 @@ const RegistrationModal = () => {
             onChange={onPasswordChange}
           />
           <PasswordChecklist
-            rules={["minLength", "specialChar", "number", "capital"]}
+            rules={["minLength", "specialChar", "number", "capitalAndLowercase"]}
             iconSize={12}
             minLength={8}
             value={inputPassword}
