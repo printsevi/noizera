@@ -25,7 +25,7 @@ const FormSchema = z.object({
   })
     .max(MAX_USERNAME_LENGTH, `Username must not exceed ${MAX_USERNAME_LENGTH} characters.`)
     .regex(USERNAME_REGEX, {
-      message: "Username can only contain letters, numbers, dots, and underscores, cannot start or end with a dot, and must not contain sequences of '..' or '__'."
+      message: "Username must be 2-30 characters, contain only latin letters, numbers, dots, and cannot start or end with a dot or contain sequences of '..'"
     }),
   password: z.string().regex(PASSWORD_REGEX, {
     message: "Password is incorrect"

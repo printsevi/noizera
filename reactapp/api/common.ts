@@ -63,7 +63,7 @@ export function handleErrorAndReturnProblem(err: any) {
             toast({
                 variant: "destructive",
                 title: "Oops... something went wrong",
-                description: err.response.data?.detail,
+                description: "Please try again",
             });
             const errorCode = err.response.data?.errorCode as string;
             if (errorCode) {

@@ -268,7 +268,7 @@ export default function SettingsContent() {
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Username must be 2-30 characters, contain only letters, numbers, dots, and cannot start or end with a dot or contain sequences of '..'
+                    Username must be 2-30 characters, contain only latin letters, numbers, dots, and cannot start or end with a dot or contain sequences of '..'
                   </div>
                 </div>
               </div>
