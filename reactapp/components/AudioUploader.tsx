@@ -28,6 +28,26 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
   const MAX_FILE_SIZE = 300 * 1024 * 1024; // 310MB
   const MIN_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 
+  const isWavFile = async (file: File): Promise<boolean> => {
+    // Check file extension
+    if (!file.name.toLowerCase().endsWith('.wav')) {
+      return false;
+    }
+
+    // Check MIME type
+    if (file.type !== '' && !file.type.startsWith('audio/wav')) {
+      return false;
+    }
+
+    // Check file content (magic numbers for WAV files)
+    const buffer = await file.slice(0, 12).arrayBuffer();
+    const header = new Uint8Array(buffer);
+    const isRiffHeader = header[0] === 0x52 && header[1] === 0x49 && header[2] === 0x46 && header[3] === 0x46; // "RIFF"
+    const isWaveHeader = header[8] === 0x57 && header[9] === 0x41 && header[10] === 0x56 && header[11] === 0x45; // "WAVE"
+
+    return isRiffHeader && isWaveHeader;
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
 
@@ -38,7 +58,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
       } else if (selectedFile.size <= MIN_FILE_SIZE) {
         setError('File size less than the 15MB limit.');
         setFile(null);
-      } else if (!selectedFile.type.startsWith('audio/wav')
+      } else if (!isWavFile(selectedFile)
         // && !selectedFile.type.startsWith('audio/aif')
         // && !selectedFile.type.startsWith('audio/aiff')
       ) {
