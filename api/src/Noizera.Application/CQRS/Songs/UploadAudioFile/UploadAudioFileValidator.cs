@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 
 namespace Noizera.Application.CQRS.Songs.UploadAudioFile;
 
@@ -19,11 +20,49 @@ public sealed class UploadAudioFileValidator : AbstractValidator<UploadAudioFile
             .LessThanOrEqualTo(300 * 1024 * 1024) //a bit greater than 200mb
             .WithMessage("File size is larger than allowed");
 
-        _ = RuleFor(x => x.File.ContentType).Must(x
-            => x.StartsWith("audio/wav", StringComparison.InvariantCultureIgnoreCase)
-            //|| x.StartsWith("audio/aif", StringComparison.InvariantCultureIgnoreCase)
-            //|| x.StartsWith("audio/aiff", StringComparison.InvariantCultureIgnoreCase)
-            )
-            .WithMessage("File type is incorrect");
+        _ = RuleFor(x => x.File)
+            .NotNull()
+            .WithMessage("File is required.")
+            .Must(BeValidWavFile)
+            .WithMessage("The file must be a valid WAV audio file.");
+    }
+
+    private static bool BeValidWavFile(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return false;
+
+        // Check file extension
+        var allowedExtensions = new[] { ".wav" };
+        var fileExtension = Path.GetExtension(file.FileName);
+        if (!allowedExtensions.Contains(fileExtension.ToLower(System.Globalization.CultureInfo.CurrentCulture)))
+            return false;
+
+        // Check MIME type
+        if (!string.IsNullOrEmpty(file.ContentType) &&
+            !file.ContentType.Equals("audio/wav", StringComparison.OrdinalIgnoreCase) &&
+            !file.ContentType.Equals("audio/x-wav", StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        // Check file content (WAV file signature)
+        using (var reader = new BinaryReader(file.OpenReadStream()))
+        {
+            // Check if file is long enough to contain WAV header
+            if (reader.BaseStream.Length < 12)
+                return false;
+
+            // Check RIFF header
+            if (new string(reader.ReadChars(4)) != "RIFF")
+                return false;
+
+            // Skip file size
+            reader.ReadInt32();
+
+            // Check WAVE header
+            if (new string(reader.ReadChars(4)) != "WAVE")
+                return false;
+        }
+
+        return true;
     }
 }
