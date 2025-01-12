@@ -29,7 +29,7 @@ public sealed record GetAccessTokenQuery(
                 ?? throw new AppException("A user not found", ErrorType.NotFound);
 
             var refreshToken = user.GetTokenOfValue(request.RefreshToken)
-                ?? throw new AppException("Refresh token is revoked", ErrorType.Authorization, ErrorCode.RefreshTokenRevoked);
+                ?? throw new AppException("Your session is expired. Please sign in.", ErrorType.Authorization, ErrorCode.RefreshTokenRevoked);
 
             refreshToken.RevokeToken();
 
