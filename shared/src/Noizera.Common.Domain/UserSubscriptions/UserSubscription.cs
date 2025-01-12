@@ -68,10 +68,9 @@ public sealed class UserSubscription : Entity
         }
     }
 
-    public void DeclareFailedPayment(DateTimeOffset nextCheck)
+    public void DeclareFailedPayment()
     {
         AddDomainEvent(new SubscriptionPaymentFailedEvent(Id));
-        AddDomainEvent(new SubscriptionRenewalPlannedEvent(Id, nextCheck));
     }
 
     public void CancelSubscription()

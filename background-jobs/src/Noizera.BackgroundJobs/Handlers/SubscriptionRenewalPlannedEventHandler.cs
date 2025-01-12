@@ -25,8 +25,8 @@ internal sealed class SubscriptionRenewalPlannedEventHandler(AppDbContext db, St
         switch (stripeSubscription.Status)
         {
             case "past_due":
-                subscription.DeclareFailedPayment(SystemClock.UtcNow.AddDays(1));
-                break;
+                subscription.DeclareFailedPayment();
+                throw new RetryException(delayInSeconds: 24 * 60 * 60);
             case "canceled" or "unpaid":
                 subscription.CancelSubscription();
                 break;
