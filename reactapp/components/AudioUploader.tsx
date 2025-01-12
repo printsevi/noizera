@@ -53,16 +53,16 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ contentType, existingFile
 
     if (selectedFile) {
       if (selectedFile.size >= MAX_FILE_SIZE) {
-        setError('File size exceeds the 300MB limit.');
+        setError('The file size exceeds the 300MB limit.');
         setFile(null);
       } else if (selectedFile.size <= MIN_FILE_SIZE) {
-        setError('File size less than the 15MB limit.');
+        setError('The file size is less than the 15MB limit.');
         setFile(null);
       } else if (!isWavFile(selectedFile)
         // && !selectedFile.type.startsWith('audio/aif')
         // && !selectedFile.type.startsWith('audio/aiff')
       ) {
-        setError('Please upload .wav file');
+        setError('The file must be a valid WAV audio file.');
         setFile(null);
       } else {
         setError('');

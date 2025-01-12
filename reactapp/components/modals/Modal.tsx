@@ -17,12 +17,12 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} defaultOpen={isOpen} onOpenChange={onChange}>
-      <DialogContent className="sm:max-w-[425px] max-w-full h-full sm:h-auto" 
+      <DialogContent className="sm:max-w-[425px] max-w-full h-full sm:h-auto"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
       >
-        <DialogHeader>
+        <DialogHeader className='justify-end'>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
             {description}
