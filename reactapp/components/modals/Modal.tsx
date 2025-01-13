@@ -22,7 +22,7 @@ const Modal: React.FC<ModalProps> = ({
           e.preventDefault();
         }}
       >
-        <DialogHeader className='justify-end'>
+        <DialogHeader className='justify-start'>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
             {description}

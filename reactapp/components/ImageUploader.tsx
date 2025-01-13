@@ -34,6 +34,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
 
   const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
     setCroppedArea(croppedAreaPixels);
+    setIsCropperOpen(false);
   }, []);
 
   const onCropperChange = (open: boolean) => {
@@ -88,7 +89,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
   return (
     <div className="flex flex-col items-center space-y-4 max-w-xs">
       <AspectRatio ratio={1}>
-        {!uploadedImageUrl ? (
+        {!imageSrc && !uploadedImageUrl && (
           <div className={`relative flex items-center justify-center w-full h-full bg-muted ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
             <Input
               id="image-file"
@@ -105,7 +106,8 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
               <span className="text-sm font-medium text-muted-foreground">Upload image</span>
             </Label>
           </div>
-        ) : (
+        )}
+        {!imageSrc && uploadedImageUrl && (
           <div className={`group relative w-full h-full ${cropShape === 'round' ? 'rounded-full' : 'rounded-md'} overflow-hidden`}>
             <Image
               src={uploadedImageUrl}
@@ -127,8 +129,33 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
             </div>
           </div>
         )}
+        {imageSrc && <div className="flex flex-col space-y-4 w-full">
+          <div className="relative h-64">
+            <Cropper
+              cropShape={cropShape}
+              image={imageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onZoomChange={handleZoomChange}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+          <Slider
+            defaultValue={[1]}
+            min={1}
+            max={4}
+            step={0.1}
+            value={[zoom]}
+            onValueChange={(e) => handleZoomChange(e[0])}
+          />
+          <Button onClick={handleCrop} disabled={uploading}>{uploading ? 'Uploading...' : 'Crop & Upload'}</Button>
+        </div>}
+
       </AspectRatio>
-      <Dialog open={isCropperOpen} onOpenChange={onCropperChange}>
+
+      {/* <Dialog open={isCropperOpen} onOpenChange={onCropperChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Crop image</DialogTitle>
@@ -163,7 +190,7 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ uploadedImageUrl, onUpload,
             <Button onClick={handleCrop} disabled={uploading}>{uploading ? 'Uploading...' : 'Crop & Upload'}</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };
