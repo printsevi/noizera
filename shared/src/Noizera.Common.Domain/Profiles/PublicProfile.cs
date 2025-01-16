@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Noizera.Common.Domain.AlbumCredits;
 using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.ExternalLinks;
 using Noizera.Common.Domain.ProfileRelations;
 using Noizera.Common.Domain.Users;
 using System.Diagnostics.CodeAnalysis;
@@ -23,6 +24,7 @@ public class PublicProfile : EntityExtended, IDeletable
     public ICollection<AlbumCredit> AlbumCredits { get; } = [];
     public ICollection<ProfileRelation> Followers { get; } = [];
     public ICollection<ProfileRelation> Followings { get; } = [];
+    public ICollection<ExternalLink> ExternalLinks { get; } = [];
 
     public override string PublicIdPrefix => "u-";
 

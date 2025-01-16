@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Noizera.Common.Domain.AlbumCredits;
 using Noizera.Common.Domain.Common;
+using Noizera.Common.Domain.ExternalLinks;
 using Noizera.Common.Domain.ListeningHistories;
 using Noizera.Common.Domain.MusicSets;
 using Noizera.Common.Domain.MusicSetSongs;
@@ -19,7 +21,6 @@ using Noizera.Common.Domain.Terms;
 using Noizera.Common.Domain.Users;
 using Noizera.Common.Domain.UserSubscriptions;
 using Noizera.Common.Domain.VerificationCodes;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Noizera.Common.Persistence.SQL;
 
@@ -48,6 +49,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public required DbSet<SecretToken> SecretTokens { get; set; }
     public required DbSet<OutboxMessage> OutboxMessages { get; set; }
     public required DbSet<TermsOfUse> Terms { get; set; }
+    public required DbSet<ExternalLink> ExternalLinks { get; set; }
 
     public virtual async Task InsertAsync<TEntity>(TEntity entity, CancellationToken ct)
         where TEntity : BaseEntity

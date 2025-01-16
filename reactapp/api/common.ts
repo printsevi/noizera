@@ -60,11 +60,20 @@ export function handleErrorAndReturnProblem(err: any) {
                 title: err.response.data?.detail
             });
         } else {
-            toast({
-                variant: "destructive",
-                title: "Oops... something went wrong",
-                description: "Please try again",
-            });
+            if (err.response?.status === 403) {
+                toast({
+                    variant: "destructive",
+                    title: "Please sign in",
+                    description: "Your session is expired",
+                });
+            } else {
+                toast({
+                    variant: "destructive",
+                    title: "Oops... something went wrong",
+                    description: "Please try again",
+                });
+            }
+
             const errorCode = err.response.data?.errorCode as string;
             if (errorCode) {
                 problem.errorCode = errorCode;

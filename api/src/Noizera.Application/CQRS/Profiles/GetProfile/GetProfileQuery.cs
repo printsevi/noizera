@@ -24,6 +24,15 @@ public sealed record GetProfileQuery(string Username)
                     p."Bio" as Bio,
                     (
                         SELECT
+                            el."Url"
+                        FROM 
+                            public."ExternalLinks" el
+                        WHERE
+                            el."ProfileId" = p."Id"
+                        LIMIT 1
+                     ) as Link,
+                    (
+                        SELECT
                             COUNT(*)
                         FROM 
                             public."ProfileRelations" pr

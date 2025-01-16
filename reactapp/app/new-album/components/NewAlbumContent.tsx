@@ -123,6 +123,7 @@ const NewAlbumContent = () => {
       setDate(selectedDate);
       setMonth(selectedDate!.getMonth())
       setYear(selectedDate!.getFullYear())
+      toast({ title: 'Release Date saved' });
     } else {
       setDate(data?.data?.releaseDate ? new Date(data.data.releaseDate) : undefined);
       setMonth(data?.data?.releaseDate ? new Date(data.data.releaseDate).getMonth() : new Date().getMonth());
@@ -195,6 +196,8 @@ const NewAlbumContent = () => {
 
     setSongs(updatedSongs);
 
+    toast({ title: 'Song title saved' });
+
     return true;
   };
 
@@ -227,6 +230,8 @@ const NewAlbumContent = () => {
     setSongs(updatedSongs);
     setIsUploading(false);
 
+    toast({ title: 'Audio uploaded' });
+
     return true;
   };
 
@@ -243,6 +248,8 @@ const NewAlbumContent = () => {
 
     setCoverImageSrc(getCoverImageSrc(data?.data?.albumPublicId, true));
 
+    toast({ title: 'Cover image uploaded' });
+
     return true;
   };
 
@@ -250,6 +257,7 @@ const NewAlbumContent = () => {
     const response = await deleteAlbumCoverImage(axiosPrivate, auth.userId!, data?.data?.albumId!);
     if (response.ok) {
       setCoverImageSrc("");
+      toast({ title: 'Cover image deleted' });
     }
   };
 
@@ -263,6 +271,7 @@ const NewAlbumContent = () => {
         profilePublicId: artist.publicId,
         profileUsername: artist.username
       }]);
+      toast({ title: 'Artist added' });
     }
     setArtistInput('')
     setSearchResults([])
@@ -275,6 +284,7 @@ const NewAlbumContent = () => {
         id: response.data?.value!,
         profileName: artistInput
       }]);
+      toast({ title: 'New artist added' });
     }
     setArtistInput('')
     setSearchResults([])
@@ -284,6 +294,7 @@ const NewAlbumContent = () => {
     const response = await deleteAlbumCredit(axiosPrivate, id, auth.userId!);
     if (response.ok) {
       setFeaturedArtists(prevItems => prevItems.filter(x => x.id !== id));
+      toast({ title: 'Artist removed' });
     }
   }
 
@@ -317,6 +328,7 @@ const NewAlbumContent = () => {
         songPublicId: response.data!.songPublicId,
         isOpen: false
       }]);
+      toast({ title: 'New song added' });
     }
   };
 
@@ -324,6 +336,7 @@ const NewAlbumContent = () => {
     const response = await deleteAlbumSong(axiosPrivate, auth.userId!, data?.data?.albumId!, key);
     if (response.ok) {
       setSongs(prevItems => prevItems.filter(x => x.key !== key));
+      toast({ title: 'Song deleted' });
     }
   };
 
@@ -338,6 +351,7 @@ const NewAlbumContent = () => {
       });
 
       setSongs(updatedSongs);
+      toast({ title: 'Audio deleted' });
     }
   };
 

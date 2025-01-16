@@ -21,7 +21,8 @@ public sealed record GetSettingsQuery(Guid UserId)
             return new(
                 user.Profile.Name,
                 user.Profile.Bio,
-                user.Profile.ImageOriginalName);
+                user.Profile.ImageOriginalName,
+                user.Profile.ExternalLinks.FirstOrDefault()?.Url);
         }
     }
 }

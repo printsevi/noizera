@@ -26,7 +26,7 @@ internal sealed class SubscriptionRenewalPlannedEventHandler(AppDbContext db, St
         {
             case "past_due":
                 subscription.DeclareFailedPayment();
-                throw new RetryException(delayInSeconds: 24 * 60 * 60);
+                throw new RetryException(delayInSeconds: 2 * 24 * 60 * 60);
             case "canceled" or "unpaid":
                 subscription.CancelSubscription();
                 break;

@@ -7,5 +7,6 @@ public record ProfileQueryResult(
     //bool? IsFollowing,
     string? Bio,
     int FollowersCount,
-    int FollowingsCount
+    int FollowingsCount,
+    string? Link
     );

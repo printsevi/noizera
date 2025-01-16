@@ -73,13 +73,13 @@ export default function DashboardContent() {
             {sortedAlbums.map((album) => (
               <TableRow key={album.publicId}>
                 <TableCell>
-                  {album.status === "Released" ? <Link href={`/collections/${album.publicId.toLowerCase()}`} className="hover:underline">{album.publicId}</Link> : album.publicId}
+                  {album.status === "Released" ? <Link href={`/collections/${album.publicId.toLowerCase()}`} className="hover:underline">{album.publicId}</Link> : ""}
                 </TableCell>
                 <TableCell className='truncate max-w-[100px]'>{album.title}</TableCell>
                 <TableCell>{album.releaseDate}</TableCell>
                 <TableCell>
                   <Badge>
-                    {album.status}
+                    {album.status === "Submitted" ? "Processing" : album.status}
                   </Badge>
                 </TableCell>
               </TableRow>

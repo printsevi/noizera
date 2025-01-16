@@ -14,7 +14,7 @@ import useAuth from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import useUser from "@/hooks/useUser";
 import { getProfileImageSrc, getURL } from "@/libs/helpers";
-import { Heart, PlayCircle, Share2 } from "lucide-react";
+import { ExternalLink, Heart, PlayCircle, Share2 } from "lucide-react";
 import useSWR from "swr";
 
 interface Props {
@@ -62,11 +62,20 @@ export default function ProfileContent(props: Props) {
             className="w-full"
           /></AvatarFallback>
         </Avatar>
-        <div className="text-center md:text-left flex-grow">
+        <div className="place-items-center text-center md:place-items-start md:text-left flex-grow">
           <h1 className="text-2xl font-bold mb-1">{data.data!.name}</h1>
           <p className="text-xl text-muted-foreground mb-1">@{props.username}</p>
-          <p className="text-muted-foreground mb-2">{data.data!.profileType}</p>
-          {data.data?.bio && <p className="mb-4 max-w-md">{data.data!.bio}</p>}
+          <p className="text-muted-foreground mb-1">{data.data!.profileType}</p>
+          {data.data?.bio && <p className="max-w-md mb-1">{data.data!.bio}</p>}
+          {data.data?.link && <a
+            href={data.data.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-sky-500 hover:text-sky-600 transition-colors duration-200 flex items-center"
+          >
+            <ExternalLink className="w-4 h-4 mr-1" />
+            {data.data.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+          </a>}
           {/* <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-4">
             <div>
               <span className="font-semibold">{data?.data?.followersCount ?? 0}</span> followers

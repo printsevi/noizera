@@ -5,6 +5,7 @@ import { axiosPublic } from '@/libs/axios';
 export interface SettingsResponse {
   name: string;
   bio?: string;
+  externalLink?: string;
   imageOriginalName?: string;
 }
 

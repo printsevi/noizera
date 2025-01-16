@@ -40,6 +40,8 @@ import getSubscriptionPortal from "@/api/users/getSubscriptionPortal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import useSWR from "swr"
 import getOrCreateConnectedAccount from "@/api/users/getOrCreateConnectedAccount"
+import updateExternalLink from "@/api/users/updateExternalLink"
+import { toast } from "@/hooks/use-toast"
 
 const MAX_BIO_LENGTH = 150
 
@@ -56,6 +58,8 @@ export default function SettingsContent() {
   const [name, setName] = useState(user?.name ?? "");
   const [settings, setSettings] = useState<SettingsResponse>();
   const [bio, setBio] = useState(settings?.bio ?? "");
+  const [link, setLink] = useState(settings?.externalLink ?? "");
+  const [isLinkValid, setIsLinkValid] = useState(true);
   const [isUsernameValid, setIsUsernameValid] = useState(true)
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(false)
   const [isCheckingUsername, setIsCheckingUsername] = useState(false)
@@ -64,6 +68,7 @@ export default function SettingsContent() {
   const [profileType, setProfileType] = useState(user?.profileType ?? "")
   const [coverImageSrc, setCoverImageSrc] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [charsLeft, setCharsLeft] = useState(MAX_BIO_LENGTH - (settings?.bio ?? "").length);
 
   const fetchSettings = useCallback(async () => {
     if (isReady && isAuthenticated && auth.userId) {
@@ -71,6 +76,7 @@ export default function SettingsContent() {
       if (settingsResult.ok) {
         setSettings(settingsResult.data);
         setBio(settingsResult.data?.bio ?? "");
+        setLink(settingsResult.data?.externalLink ?? "");
       }
     }
   }, [isReady, isAuthenticated, axiosPrivate, auth.userId]);
@@ -86,6 +92,10 @@ export default function SettingsContent() {
       fetchSettings();
     }
   }, [isReady, isAuthenticated, fetchSettings]);
+
+  useEffect(() => {
+    setCharsLeft(MAX_BIO_LENGTH - bio.length)
+  }, [bio])
 
   useEffect(() => {
     setUsername(user?.username.toLowerCase() ?? "");
@@ -118,6 +128,7 @@ export default function SettingsContent() {
     const updateResult = await updateUsername(axiosPrivate, auth.userId!, usernameToUpdate);
     if (updateResult.ok) {
       setUser(prev => ({ ...prev!, username: usernameToUpdate.toLowerCase() }));
+      toast({ title: 'Username saved' });
     } else {
       setUsername(user?.username.toLowerCase() ?? "");
     }
@@ -133,6 +144,7 @@ export default function SettingsContent() {
     const updateResult = await updateName(axiosPrivate, auth.userId!, name);
     if (updateResult.ok) {
       setUser(prev => ({ ...prev!, name: name }));
+      toast({ title: 'Name saved' });
     } else {
       setName(user?.name ?? "");
     }
@@ -144,6 +156,7 @@ export default function SettingsContent() {
     const updateResult = await updateProfileType(axiosPrivate, auth.userId!, value);
     if (updateResult.ok) {
       setUser(prev => ({ ...prev!, profileType: value as ProfileType }));
+      toast({ title: 'Profile type updated' });
     } else {
       setProfileType(user?.profileType ?? "");
     }
@@ -155,6 +168,7 @@ export default function SettingsContent() {
     const updateResult = await updateBio(axiosPrivate, auth.userId!, bio);
     if (updateResult.ok) {
       setSettings(prev => ({ ...prev!, bio: bio }));
+      toast({ title: 'Bio saved' });
     } else {
       setBio(settings?.bio ?? "");
     }
@@ -183,14 +197,36 @@ export default function SettingsContent() {
     }
 
     setCoverImageSrc(getProfileImageSrc(user?.profilePublicId, true));
+    toast({ title: 'Image saved' });
 
     return true;
   };
+
+  const validateLink = (value: string) => {
+    const urlRegex = /^(https:\/\/)/;
+    setIsLinkValid(urlRegex.test(value));
+  };
+
+  const updateLinkHandler = useCallback(async () => {
+    if (settings?.externalLink === link || !isLinkValid) {
+      return;
+    }
+    setIsUpdating(true)
+    const updateResult = await updateExternalLink(axiosPrivate, auth.userId!, link);
+    if (updateResult.ok) {
+      setSettings(prev => ({ ...prev!, link: link }));
+      toast({ title: 'Link saved' });
+    } else {
+      setLink(settings?.externalLink ?? "");
+    }
+    setIsUpdating(false)
+  }, [axiosPrivate, isLinkValid, auth.userId, settings?.externalLink, setSettings, setLink, link, setIsUpdating])
 
   const onDeleteProfileImage = async () => {
     const response = await deleteProfileImage(axiosPrivate, auth.userId!);
     if (response.ok) {
       setCoverImageSrc("");
+      toast({ title: 'Image deleted' });
     }
   };
 
@@ -333,6 +369,36 @@ export default function SettingsContent() {
                   onBlur={updateBioHandler}
                   maxLength={150}
                   className="resize-none" />
+                <div className="text-sm text-muted-foreground text-right">
+                  {charsLeft} left
+                </div>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <Label>Link</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 relative">
+                    <Input
+                      value={link}
+                      disabled={isUpdating}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        setLink(newValue);
+                        validateLink(newValue);
+                      }}
+                      onBlur={updateLinkHandler}
+                      className="w-full"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                  {!isLinkValid && (
+                    <div className="text-sm text-red-600">
+                      Link must start with https://
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground">
+                    Add a link to your website or social media profile
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
@@ -372,6 +438,6 @@ export default function SettingsContent() {
           </TabsContent>}
         </Tabs>
       </div>
-    </div>
+    </div >
   )
 }

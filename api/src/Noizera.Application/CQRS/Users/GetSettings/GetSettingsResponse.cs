@@ -3,4 +3,5 @@
 public sealed record GetSettingsResponse(
     string Name,
     string? Bio,
-    string? ImageOriginalName);
+    string? ImageOriginalName,
+    Uri? ExternalLink);

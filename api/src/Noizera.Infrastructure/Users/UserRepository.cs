@@ -16,6 +16,7 @@ public sealed class UserRepository(AppDbContext db) : BaseEntityRepository<User>
 
     public async Task<User?> GetAsync(Guid userId, CancellationToken ct) => await Db.Users
         .Include(u => u.Profile)
+        .ThenInclude(p => p.ExternalLinks)
         .FirstOrDefaultAsync(u => u.Id == userId, ct).ConfigureAwait(false);
 
     public async Task<User?> GetWithSavedCollectionsAsync(Guid userId, CancellationToken ct) => await Db.Users

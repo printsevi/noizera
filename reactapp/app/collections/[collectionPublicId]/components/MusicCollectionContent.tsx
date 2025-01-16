@@ -176,7 +176,7 @@ export default function MusicCollectionContent(props: Props) {
             {musicCollection.title}
           </h1>
           <div className="text-muted-foreground mb-4 text-center w-full">
-            <p className="mb-1">{musicCollection.releaseDate} • {trackCount} songs</p>
+            <p className="mb-1">{musicCollection.releaseDate} • {trackCount > 1 ? `${trackCount} songs` : "Single"}</p>
             {credits.length > 0 && <div className="flex flex-wrap justify-center mb-1">
               {musicCollection.ownerProfileType === ProfileType.Artist && credits.length > 0 && <React.Fragment>
                 <Link href={`/profiles/${musicCollection.ownerUsername.toLowerCase()}`} className="hover:underline truncate max-w-full">

@@ -9,6 +9,7 @@ export interface GetProfileResponse {
   name: string,
   isFollowing: boolean,
   bio: string,
+  link: string,
   followersCount: number,
   followingsCount: number
 }
