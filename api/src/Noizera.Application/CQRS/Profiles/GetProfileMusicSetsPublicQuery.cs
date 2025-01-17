@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Noizera.Application.CQRS.Feed.Common;
 using Noizera.Application.CQRS.MusicSets.Common;
 using Noizera.Application.CQRS.Profiles.Common;
 using Noizera.Common.Contracts.QueryResults;

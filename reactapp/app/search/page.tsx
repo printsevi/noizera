@@ -19,7 +19,7 @@ const Search = async ({
 }) => {
   const { query } = await searchParams;
   return (
-    <div className='min-h-full px-6'>
+    <div className='min-h-full px-6 sm:px-20'>
       <SearchContent query={query} />
     </div>
   );

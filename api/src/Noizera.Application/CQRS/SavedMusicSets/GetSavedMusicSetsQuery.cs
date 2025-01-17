@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Noizera.Application.CQRS.Feed.Common;
 using Noizera.Application.CQRS.MusicSets.Common;
 using Noizera.Common.Contracts.QueryResults;
 using Noizera.Common.Contracts.Security;

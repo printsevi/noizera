@@ -1,6 +1,7 @@
 ﻿namespace Noizera.Common.Contracts.QueryResults;
 
-public record ArtistCardQueryResult(
+public record ProfileCardQueryResult(
+    string Username,
     string PublicId,
-    string Type,
+    string ProfileType,
     string Name);

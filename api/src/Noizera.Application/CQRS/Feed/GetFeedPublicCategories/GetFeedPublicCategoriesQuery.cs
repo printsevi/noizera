@@ -12,9 +12,14 @@ public sealed record GetFeedPublicCategoriesQuery()
         {
             var result = await Task.FromResult<GetFeedPublicCategoriesResponse>(
                 new([
-                    new("popular", "Popular"),
-                    new("new-releases", "New releases")],
-                [])).ConfigureAwait(false);
+                        new("popular", "Popular"),
+                        new("new-releases", "New releases")
+                    ],
+                    [
+                        new("artists", "Our artists"),
+                        new("labels", "Our labels")
+                    ]
+                )).ConfigureAwait(false);
 
             return result;
         }

@@ -14,8 +14,8 @@ public sealed record GetFeedCategoriesQuery(Guid UserId)
             var result = await Task.FromResult<GetFeedCategoriesResponse>(
                 new([new("recommendations", "Recommendations"),
                     new("new-releases", "New Releases")],
-                [new("artists", "Artists"),
-                    new("labels", "Labels")])).ConfigureAwait(false);
+                [new("artists", "Our artists"),
+                    new("labels", "Our labels")])).ConfigureAwait(false);
 
             return result;
         }

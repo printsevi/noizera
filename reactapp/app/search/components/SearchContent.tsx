@@ -108,7 +108,7 @@ const SearchContent: React.FC<Props> = ({ query }) => {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 sm:pt-7">
       {Object.entries(groupedResults).map(([category, items]) => renderResults(category, items))}
     </div>
   )

@@ -162,7 +162,7 @@ export default function MusicCollectionContent(props: Props) {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row lg:space-x-8">
+    <div className="flex flex-col lg:flex-row lg:space-x-8 sm:mt-7">
       <div className="lg:w-1/3 mb-8 lg:mb-0">
         <div className="flex flex-col items-center min-w-0 w-full">
           <Image
