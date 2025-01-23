@@ -97,8 +97,8 @@ const SignInModal = () => {
 
   return (
     <Modal
-      title='Sign In'
-      description='Sign in to your account.'
+      title='Login'
+      description='Log in to your account.'
       isOpen={isOpen}
       onChange={onChange}
     >
@@ -124,7 +124,7 @@ const SignInModal = () => {
           />
           <PurpleButton className='mt-auto' type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {!isLoading ? 'Sign In' : 'Signing In'}
+            {!isLoading ? 'Log in' : 'Loginning'}
           </PurpleButton>
         </form>
       </Form>
@@ -134,7 +134,7 @@ const SignInModal = () => {
         </Button>
         <div>Don&apos;t have an account?
           <Button onClick={onSignUpClick} variant="link" className="underline">
-            Sign up
+            Create free account now
           </Button>
         </div>
       </div>

@@ -51,8 +51,8 @@ export function handleErrorAndReturnProblem(err: any) {
         } else if (err.response?.status === 401) {
             toast({
                 variant: "destructive",
-                title: "Please sign in",
-                description: "Please sign in and try again",
+                title: "Please log in",
+                description: "Please log in and try again",
             });
         } else if (err.response?.status === 400) {
             toast({
@@ -63,7 +63,7 @@ export function handleErrorAndReturnProblem(err: any) {
             if (err.response?.status === 403) {
                 toast({
                     variant: "destructive",
-                    title: "Please sign in",
+                    title: "Please log in",
                     description: "Your session is expired",
                 });
             } else {

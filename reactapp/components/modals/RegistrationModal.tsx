@@ -99,7 +99,7 @@ const RegistrationModal = () => {
 
   return (
     <Modal
-      title='Create New Account'
+      title='Create new account'
       description='Almost done!'
       isOpen={isOpen}
       onChange={onChange}

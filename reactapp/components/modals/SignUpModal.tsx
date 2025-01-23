@@ -77,7 +77,7 @@ const SignUpModal = () => {
 
   return (
     <Modal
-      title='Sign up for free'
+      title='Create free account now'
       description='Enter your email below to create an account'
       isOpen={isOpen}
       onChange={onChange}
@@ -100,7 +100,7 @@ const SignUpModal = () => {
           <div className="mt-4 text-center text-sm">
             <div>Already have an account?
               <Button onClick={onSignInClick} variant="link" className="underline">
-                Sign In
+                Log in
               </Button>
             </div>
           </div>
