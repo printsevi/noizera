@@ -209,7 +209,7 @@ const Header: React.FC = () => {
                     md:block
                   '
                 >
-                  Sign up
+                  Create free account
                 </Button>
               </div>
               <div>
@@ -217,7 +217,7 @@ const Header: React.FC = () => {
                   onClick={signInModal.onOpen}
                   className='px-6 py-2'
                 >
-                  Sign in
+                  Log in
                 </PurpleButton>
               </div>
               <div className={cn('md:block', showMobileSearch ? "hidden" : "")}>

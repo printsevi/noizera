@@ -106,7 +106,7 @@ const SignUpModal = () => {
           </div>
           <PurpleButton className='mt-auto' type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {!isLoading ? 'Sign Up' : 'Signing Up'}
+            {!isLoading ? 'Create free account' : 'Signing Up'}
           </PurpleButton>
         </form>
       </Form>

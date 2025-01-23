@@ -97,7 +97,7 @@ const SignInModal = () => {
 
   return (
     <Modal
-      title='Login'
+      title='Log in'
       description='Log in to your account.'
       isOpen={isOpen}
       onChange={onChange}
