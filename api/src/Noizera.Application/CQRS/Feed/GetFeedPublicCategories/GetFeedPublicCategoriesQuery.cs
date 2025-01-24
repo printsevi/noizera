@@ -17,7 +17,7 @@ public sealed record GetFeedPublicCategoriesQuery()
                     ],
                     [
                         new("artists", "Our artists"),
-                        new("labels", "Our labels")
+                        //new("labels", "Our labels")
                     ]
                 )).ConfigureAwait(false);
 

@@ -21,7 +21,7 @@ export default function AuthRequired() {
             </CardHeader>
             <CardContent>
                 <p className="text-center text-muted-foreground mb-6">
-                    To view this page, you need to be signed in. Please sign in to access the content.
+                    To view this page, you need to be logged in. Please log in to access the content.
                 </p>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
@@ -29,12 +29,12 @@ export default function AuthRequired() {
                     onClick={signInModal.onOpen}
                     className='px-6 py-2'
                 >
-                    Sign in
+                    Log in
                 </PurpleButton>
                 <p className="text-sm text-center text-muted-foreground">
                     Don't have an account?{" "}
                     <Button onClick={signUpModal.onOpen} variant="link" className="underline">
-                        Sign up
+                        Create free account
                     </Button>
                 </p>
             </CardFooter>
