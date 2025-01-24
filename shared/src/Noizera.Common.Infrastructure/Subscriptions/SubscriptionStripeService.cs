@@ -33,9 +33,6 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
             {
                 throw new InvalidOperationException($"The subscription {subscription.SubscriptionType} is already paid. Please, wait a bit for the activation.");
             }
-
-            await stripeService.ExpireSessionAsync(incompleteUserSubscription.CheckoutSessionId, cancellationToken).ConfigureAwait(false);
-            incompleteUserSubscription.ExpireCheckoutSession();
         }
 
         short? trialPeriodDays = user.GetTrialDaysIfEntitled(subscription);
@@ -58,15 +55,18 @@ public class SubscriptionStripeService(AppDbContext db, StripeService stripeServ
         if (incompleteUserSubscription is null)
         {
             incompleteUserSubscription = UserSubscription.Create(user, subscription, checkoutSession.Value.SessionId);
-            _ = await db.UserSubscriptions.AddAsync(incompleteUserSubscription, cancellationToken).ConfigureAwait(false);
+            await db.InsertAsync(incompleteUserSubscription, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            incompleteUserSubscription.CreateCheckoutSession(checkoutSession.Value.SessionId);
-            _ = db.UserSubscriptions.Update(incompleteUserSubscription);
-        }
+            if (incompleteUserSubscription.CheckoutSessionId is not null)
+            {
+                await stripeService.ExpireSessionAsync(incompleteUserSubscription.CheckoutSessionId, cancellationToken).ConfigureAwait(false);
+            }
 
-        _ = await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            incompleteUserSubscription.CreateCheckoutSession(checkoutSession.Value.SessionId);
+            await db.UpdateAsync(incompleteUserSubscription, cancellationToken).ConfigureAwait(false);
+        }
 
         return checkoutSession.Value.Url;
     }
