@@ -3,6 +3,8 @@
 import { ProfileType } from "@/api/common";
 import getFollowersCount from "@/api/profiles/getFollowersCount";
 import getProfile from "@/api/profiles/getProfile";
+import getProfileFeaturedMusicSets from "@/api/profiles/getProfileFeaturedMusicSets";
+import getProfileFeaturedMusicSetsPublic from "@/api/profiles/getProfileFeaturedMusicSetsPublic";
 import getProfileMusicSets from "@/api/profiles/getProfileMusicSets";
 import getProfileMusicSetsPublic from "@/api/profiles/getProfileMusicSetsPublic";
 import ImageWithFallback from "@/components/ImageWithFallback";
@@ -31,6 +33,12 @@ export default function ProfileContent(props: Props) {
   });
 
   const { data: musicData, isLoading: isMusicLoading } = useSWR(!isReady ? null : (isAuthenticated ? getProfileMusicSets.name : getProfileMusicSetsPublic.name), () => (isAuthenticated ? getProfileMusicSets(axiosPrivate, props.username, auth.userId!) : getProfileMusicSetsPublic(props.username)), {
+    revalidateIfStale: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false
+  });
+
+  const { data: featuredMusicData, isLoading: isFeaturedMusicLoading } = useSWR(!isReady ? null : (isAuthenticated ? getProfileFeaturedMusicSets.name : getProfileFeaturedMusicSetsPublic.name), () => (isAuthenticated ? getProfileFeaturedMusicSets(axiosPrivate, props.username, auth.userId!) : getProfileFeaturedMusicSetsPublic(props.username)), {
     revalidateIfStale: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -105,6 +113,25 @@ export default function ProfileContent(props: Props) {
       {musicData?.data && musicData?.data.length > 0 && <h2 className="text-2xl font-bold mb-4">Released Music</h2>}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {musicData?.data?.map((item) => (
+          <section key={item.publicId}>
+            <MusicArtwork
+              title={item.title}
+              collectionType={item.collectionType}
+              publicId={item.publicId}
+              isSaved={item.isSaved}
+              ownerName={item.ownerName}
+              ownerUsername={item.ownerUsername}
+              songCount={item.songCount}
+              releaseDate={item.releaseDate}
+              ownerProfileType={item.ownerProfileType}
+              credits={item.credits}
+            />
+          </section>
+        ))}
+      </div>
+      {featuredMusicData?.data && featuredMusicData.data.length > 0 && <h2 className="text-2xl font-bold mb-4">Featured On</h2>}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {featuredMusicData?.data?.map((item) => (
           <section key={item.publicId}>
             <MusicArtwork
               title={item.title}

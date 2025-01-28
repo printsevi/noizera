@@ -102,6 +102,8 @@ internal static class MusicSetAppDbExtensions
                     AND mc."CollectionType" = 'collection_album' 
                     AND mc."AlbumStatus" = 'Released'
                     AND mc."IsDeleted" = FALSE
+            ORDER BY 
+                (p."Username" IS NOT NULL) DESC
             """;
 
         var result = await db.Database
