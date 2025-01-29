@@ -77,7 +77,7 @@ internal static class ProfilesAppDbExtensions
                         AND smc."UserId" = {userId}
                 LEFT JOIN 
                     public."Profiles" p
-                        ON p."UserId" = ac."ProfileId"
+                        ON p."Id" = ac."ProfileId"
                 LEFT JOIN 
                     public."MusicSetSongs" mcs
                         ON mcs."MusicSetId" = mc."Id"
