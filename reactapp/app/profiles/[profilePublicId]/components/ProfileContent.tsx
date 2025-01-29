@@ -129,7 +129,7 @@ export default function ProfileContent(props: Props) {
           </section>
         ))}
       </div>
-      {featuredMusicData?.data && featuredMusicData.data.length > 0 && <h2 className="text-2xl font-bold mb-4">Featured On</h2>}
+      {featuredMusicData?.data && featuredMusicData.data.length > 0 && <h2 className="text-2xl font-bold mb-4 mt-8">Featured On</h2>}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {featuredMusicData?.data?.map((item) => (
           <section key={item.publicId}>

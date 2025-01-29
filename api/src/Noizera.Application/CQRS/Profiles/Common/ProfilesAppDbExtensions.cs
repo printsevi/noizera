@@ -56,10 +56,10 @@ internal static class ProfilesAppDbExtensions
                     mc."PublicId" as PublicId,
                     mc."Title" as Title,
                     mc."CollectionType" as CollectionType,
-                    p."Username" as OwnerUsername,
-                    p."Name" as OwnerName,
+                    po."Username" as OwnerUsername,
+                    po."Name" as OwnerName,
                     COUNT(mcs."Id") AS SongCount,
-                    p."ProfileType" as OwnerProfileType,
+                    po."ProfileType" as OwnerProfileType,
                     mc."AlbumReleaseDate" as ReleaseDate,
                     CASE 
                         WHEN smc."UserId" IS NOT NULL 
@@ -79,6 +79,9 @@ internal static class ProfilesAppDbExtensions
                     public."Profiles" p
                         ON p."Id" = ac."ProfileId"
                 LEFT JOIN 
+                    public."Profiles" po
+                        ON po."UserId" = mc."OwnerId"
+                LEFT JOIN 
                     public."MusicSetSongs" mcs
                         ON mcs."MusicSetId" = mc."Id"
                 WHERE 
@@ -86,7 +89,7 @@ internal static class ProfilesAppDbExtensions
                     AND p."Username" = UPPER({username})
                     AND mc."IsDeleted" = false
                 GROUP BY 
-                    mc."PublicId", mc."Title", mc."CollectionType", p."Name", p."Username", mc."Id", smc."UserId", p."ProfileType", mc."AlbumReleaseDate"
+                    mc."PublicId", mc."Title", mc."CollectionType", po."Name", po."Username", mc."Id", smc."UserId", po."ProfileType", mc."AlbumReleaseDate"
                 ORDER BY mc."Id" DESC
                 LIMIT 100
             """;

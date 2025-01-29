@@ -32,7 +32,7 @@ public sealed record GetProfileFeaturedMusicSetsQuery(
                 x.OwnerName,
                 x.OwnerProfileType,
                 x.SongCount,
-                credits.Where(c => c.MusicSetPublicId == x.PublicId)
+                credits.Where(c => c.MusicSetPublicId == x.PublicId && (string.IsNullOrEmpty(c.Username) || !c.Username.Equals(request.ProfileUsername, StringComparison.OrdinalIgnoreCase)))
             ));
 
             return result.ToList();
