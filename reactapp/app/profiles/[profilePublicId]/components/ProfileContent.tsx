@@ -79,7 +79,7 @@ export default function ProfileContent(props: Props) {
             href={data.data.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-bold text-sky-500 hover:text-sky-600 transition-colors duration-200 flex items-center"
+            className="font-bold text-sky-500 hover:text-sky-600 transition-colors duration-200 flex items-center justify-center md:justify-start"
           >
             <ExternalLink className="w-4 h-4 mr-1" />
             {data.data.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}
