@@ -35,7 +35,6 @@ public sealed class Song : EntityExtended
     public Album Album { get; } = null!;
     public User Owner { get; } = null!;
     public ICollection<MusicSetSong> MusicSetSongs { get; } = [];
-    public ICollection<Royalty> AssignedRoyalties { get; } = [];
     public ICollection<ListeningHistory> ListeningHistories { get; } = [];
     public ICollection<StreamInfo> Streams { get; } = [];
 

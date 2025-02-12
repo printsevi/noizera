@@ -86,7 +86,7 @@ export function ProfileMenu() {
           </DropdownMenuItem>
           {(user?.profileType === ProfileType.Artist || user?.profileType === ProfileType.Label) && <DropdownMenuItem onClick={() => router.push(`/dashboard`)}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Your releases</span>
+            <span>Your Dashboard</span>
           </DropdownMenuItem>}
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
