@@ -32,7 +32,6 @@ PasswordAuthentication no
 
 sudo systemctl restart ssh
 
-
 9. Setup GitHub actions in .github folder
 
 10. Add Actions secrets (token from Digital Ocean API, ssh keys etc)

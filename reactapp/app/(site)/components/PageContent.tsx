@@ -171,7 +171,7 @@ const PageContent = () => {
       ))}
       {profileCategories.map((category) => (
         <section key={category.api} className="space-y-4">
-          <div className="mt-6 space-y-1">
+          <div className="mt-12 space-y-1">
             <h2 className="text-2xl font-semibold tracking-tight">
               {category.title}
             </h2>
