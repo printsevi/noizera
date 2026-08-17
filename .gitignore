@@ -475,3 +475,30 @@ yarn-error.log*
 
 build
 docker-compose.local.yml
+
+########################################################################
+# Secrets — do not remove.
+#
+# Local developer configuration holds real credentials (DB passwords,
+# S3 keys, Stripe keys, JWT signing secrets) and must never be tracked.
+# Copy the committed *.Local.template.json files instead, or use
+# .NET User Secrets:  dotnet user-secrets set "S3:SpacesSecret" "<value>"
+########################################################################
+appsettings.Local.json
+**/appsettings.Local.json
+appsettings.*.Local.json
+**/appsettings.*.Local.json
+secrets.json
+**/secrets.json
+*.pfx
+*.p12
+*.key
+!aspnetcore.template.key
+
+# …but templates are meant to be tracked
+!**/appsettings.*.template.json
+
+# Internal security/architecture notes. This repository is PUBLIC — the brief
+# enumerates unremediated vulnerabilities and must not be published alongside
+# the code it describes. Remove this line only once those are fixed.
+NOIZERA-ARCHITECTURE-BRIEF.md
