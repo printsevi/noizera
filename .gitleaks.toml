@@ -1,0 +1,74 @@
+# gitleaks configuration for Noizera
+#
+# Run locally:   gitleaks detect --config .gitleaks.toml --redact
+# Scan staged:   gitleaks protect --staged --config .gitleaks.toml --redact
+#
+# CI runs this on every push and pull request (.github/workflows/secret-scan.yml).
+
+title = "Noizera secret scanning"
+
+[extend]
+# Start from the maintained upstream rule set (AWS, Stripe, GitHub, Slack, private keys, …)
+useDefault = true
+
+# ---------------------------------------------------------------------------
+# Project-specific rules
+# ---------------------------------------------------------------------------
+
+[[rules]]
+id = "digitalocean-spaces-key"
+description = "DigitalOcean Spaces access key"
+regex = '''DO00[A-Z0-9]{16}'''
+tags = ["key", "digitalocean"]
+
+[[rules]]
+id = "digitalocean-spaces-secret"
+description = "DigitalOcean Spaces secret in configuration"
+regex = '''(?i)"SpacesSecret"\s*:\s*"[A-Za-z0-9+/=_-]{20,}"'''
+tags = ["secret", "digitalocean"]
+
+[[rules]]
+id = "brevo-api-key"
+description = "Brevo (Sendinblue) API key"
+regex = '''xkeysib-[A-Za-z0-9-]{40,}'''
+tags = ["key", "brevo"]
+
+[[rules]]
+id = "seq-api-key"
+description = "Seq ingestion API key in configuration"
+regex = '''(?i)"SeqApiKey"\s*:\s*"[A-Za-z0-9]{16,}"'''
+tags = ["key", "seq"]
+
+[[rules]]
+id = "jwt-signing-secret"
+description = "JWT signing secret in configuration"
+regex = '''(?i)"Secret"\s*:\s*"[A-Za-z0-9_+/=-]{16,}"'''
+tags = ["secret", "jwt"]
+
+[[rules]]
+id = "db-connection-password"
+description = "Password embedded in a connection string"
+regex = '''(?i)Password=(?!REPLACE_WITH|\$\{|")[^\s";]{4,}'''
+tags = ["password", "database"]
+
+# ---------------------------------------------------------------------------
+# Allowlist
+# ---------------------------------------------------------------------------
+
+[allowlist]
+description = "Placeholders, templates and documentation"
+
+paths = [
+    # Templates are meant to contain REPLACE_WITH_* placeholders only; the
+    # regexes above already exclude those, but keep templates explicit.
+    '''.*appsettings\..*\.template\.json$''',
+    '''\.gitleaks\.toml$''',
+    # The architecture brief quotes redacted/《historical》 values for context.
+    '''NOIZERA-ARCHITECTURE-BRIEF\.md$''',
+]
+
+regexes = [
+    '''REPLACE_WITH_[A-Z_]+''',
+    '''\$\{\{\s*secrets\.[A-Z_]+\s*\}\}''',   # GitHub Actions secret references
+    '''"\s*"''',                               # deliberately blanked values
+]

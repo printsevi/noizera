@@ -1,0 +1,92 @@
+#!/bin/sh
+#
+# Blocks commits that contain credentials.
+#
+# ENABLE THIS HOOK (once per clone):
+#     git config core.hooksPath .githooks
+#
+# Bypass in a genuine emergency with `git commit --no-verify` — but understand
+# that a secret pushed to a public repository is compromised permanently, and
+# rotation, not deletion, is the only real remedy.
+
+set -eu
+
+fail=0
+red=''
+reset=''
+if [ -t 1 ]; then red='\033[0;31m'; reset='\033[0m'; fi
+
+note() { printf "${red}pre-commit: %s${reset}\n" "$1" >&2; }
+
+# ---------------------------------------------------------------------------
+# 1. Files that must never be staged at all
+# ---------------------------------------------------------------------------
+staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+forbidden="$(printf '%s\n' "$staged_files" \
+    | grep -E 'appsettings(\..*)?\.Local\.json$|(^|/)secrets\.json$|\.(pfx|p12|key)$' || true)"
+
+if [ -n "$forbidden" ]; then
+    note "these files hold credentials and must not be committed:"
+    printf '%s\n' "$forbidden" >&2
+    note "they are gitignored; if one was force-added, run: git rm --cached <file>"
+    fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# 2. High-signal credential patterns in staged content
+# ---------------------------------------------------------------------------
+# Placeholders, GitHub Actions secret references and blanked values are allowed.
+allow='REPLACE_WITH_|\$\{\{[[:space:]]*secrets\.|:[[:space:]]*""'
+
+# The scanner's own rule lists necessarily contain these patterns — skip them,
+# and skip templates, which carry placeholders only.
+scan_paths="$(printf '%s\n' "$staged_files" \
+    | grep -Ev '^\.githooks/|^\.gitleaks\.toml$|\.template\.json$' || true)"
+
+candidates=''
+if [ -n "$scan_paths" ]; then
+    added="$(printf '%s\n' "$scan_paths" | tr '\n' '\0' \
+        | xargs -0 -r git diff --cached --unified=0 -- \
+        | grep -E '^\+' | grep -Ev '^\+\+\+' || true)"
+    candidates="$(printf '%s\n' "$added" | grep -Ev "$allow" || true)"
+fi
+
+# check <label> <extended-regex>
+check() {
+    _label="$1"; _regex="$2"
+    [ -n "$candidates" ] || return 0
+    # `--` stops grep parsing patterns that begin with a dash.
+    _hit="$(printf '%s\n' "$candidates" | grep -E -- "$_regex" || true)"
+    if [ -n "$_hit" ]; then
+        note "possible $_label in staged changes:"
+        printf '%s\n' "$_hit" | cut -c1-120 | sed 's/^/    /' >&2
+        fail=1
+    fi
+}
+
+check "Stripe secret key"              'sk_(test|live)_[A-Za-z0-9]{20,}'
+check "DigitalOcean Spaces access key" 'DO00[A-Z0-9]{16}'
+check "Brevo API key"                  'xkeysib-[A-Za-z0-9-]{40,}'
+check "private key material"           '[-]{5}BEGIN [A-Z ]*PRIVATE KEY[-]{5}'
+check "S3 secret in config"            '"SpacesSecret"[[:space:]]*:[[:space:]]*"[A-Za-z0-9+/=_-]{20,}"'
+check "Seq API key in config"          '"SeqApiKey"[[:space:]]*:[[:space:]]*"[A-Za-z0-9]{16,}"'
+check "JWT signing secret in config"   '"Secret"[[:space:]]*:[[:space:]]*"[A-Za-z0-9_+/=-]{16,}"'
+check "password in a connection string" 'Password=[^[:space:]";$]{4,}'
+
+# ---------------------------------------------------------------------------
+# 3. Defer to gitleaks when it is installed — it is far more thorough
+# ---------------------------------------------------------------------------
+if command -v gitleaks >/dev/null 2>&1; then
+    if ! gitleaks protect --staged --config .gitleaks.toml --redact --no-banner; then
+        note "gitleaks flagged staged content"
+        fail=1
+    fi
+fi
+
+if [ "$fail" -ne 0 ]; then
+    note "commit aborted. Move the value to an environment variable or User Secrets."
+    exit 1
+fi
+
+exit 0
