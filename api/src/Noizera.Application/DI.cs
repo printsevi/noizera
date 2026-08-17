@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Noizera.Application.Behaviors;
+using Noizera.Application.CQRS.Songs.Common;
 using System.Reflection;
 
 namespace Noizera.Application;
@@ -20,6 +21,8 @@ public static class DI
         });
 
         _ = services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+        _ = services.AddScoped<AudioAccessGuard>();
 
         return services;
     }

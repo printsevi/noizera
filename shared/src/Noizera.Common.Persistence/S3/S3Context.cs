@@ -97,6 +97,21 @@ public class S3Context(IAmazonS3 s3, IOptions<S3BucketSettings> s3Settings)
         return await s3.GetObjectAsync(request, cts.Token).ConfigureAwait(false);
     }
 
+    public async Task<Uri> GetOriginalAudioPresignedLinkAsync([NotNull] string key, CancellationToken ct)
+    {
+        var preSignedUrlRequest = new GetPreSignedUrlRequest
+        {
+            BucketName = settings.BucketName,
+            Key = $"{originalAudioFolder}/{key.ToUpperInvariant()}",
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            Verb = HttpVerb.GET
+        };
+
+        string result = await s3.GetPreSignedURLAsync(preSignedUrlRequest).ConfigureAwait(false);
+
+        return new(result);
+    }
+
     public async Task<Uri> GetMp3AudioPresignedLinkAsync([NotNull] string key, CancellationToken ct)
     {
         var preSignedUrlRequest = new GetPreSignedUrlRequest

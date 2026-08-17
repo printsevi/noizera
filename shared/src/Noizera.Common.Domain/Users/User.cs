@@ -90,6 +90,8 @@ public sealed class User : Entity
             x.Subscription.SubscriptionType.Equals(subscriptionType, StringComparison.OrdinalIgnoreCase)
             && x.IsActive);
 
+    public bool HasAnyActiveSubscription => Subscriptions.Any(x => x.IsActive);
+
     public SecretToken? GetTokenOfValue(string secretToken) => SecretTokens.FirstOrDefault(x => x.Token == secretToken);
 
     public UserSubscription? GetIncompleteSubscriptionOfType(string subscriptionType)

@@ -39,6 +39,7 @@ public class AudioFileService(
 
     public async Task<Uri> GetAudioPresignedUrlAsync(string fileId, string audioType, CancellationToken ct) => audioType switch
     {
+        "original" => await s3.GetOriginalAudioPresignedLinkAsync(fileId, ct).ConfigureAwait(false),
         "audio/flac" => await s3.GetFlacAudioPresignedLinkAsync(fileId, ct).ConfigureAwait(false),
         "audio/mpeg" => await s3.GetMp3AudioPresignedLinkAsync(fileId, ct).ConfigureAwait(false),
         _ => throw new ArgumentException($"Content type is undefined {audioType}")

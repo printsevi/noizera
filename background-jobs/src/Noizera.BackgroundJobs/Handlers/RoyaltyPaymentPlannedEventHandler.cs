@@ -31,16 +31,22 @@ internal sealed class RoyaltyPaymentPlannedEventHandler(AppDbContext db)
             }
         }
 
+        if (fullTime <= 0)
+        {
+            return;
+        }
+
         float amountToPay = (float)notification.DomainEvent.SubscriptionPrice * notification.DomainEvent.RoyaltyShare;
         float amountLeft = amountToPay;
-        foreach (var pair in dict)
+        foreach (var pair in dict.OrderByDescending(x => x.Value))
         {
             if (amountLeft <= 0)
             {
                 break;
             }
 
-            float amount = amountToPay * (pair.Value / fullTime);
+            float share = (float)pair.Value / fullTime;
+            float amount = amountToPay * share;
 
             if (amountLeft <= amount)
             {
